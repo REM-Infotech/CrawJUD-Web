@@ -21,10 +21,11 @@ login_manager = LoginManager()
 
 def init_app() -> None:
     
-    # from app.models import init_database
+    from app.models import init_database
     age = timedelta(days=31).max.seconds
     db.init_app(app)
     mail.init_app(app)
+    login_manager.init_app(app)
     tlsm.init_app(app, content_security_policy=csp(),
                 session_cookie_http_only=True,
                 session_cookie_samesite='Lax',
@@ -35,6 +36,7 @@ def init_app() -> None:
     login_manager.login_view = 'auth.login'
     login_manager.login_message = "Faça login para acessar essa página."
     login_manager.login_message_category = "info"
+    init_database()
     
 init_app()
 

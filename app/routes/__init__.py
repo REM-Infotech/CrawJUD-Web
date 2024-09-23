@@ -6,6 +6,7 @@ from app.routes.auth import auth
 from app.routes.dashboard import dash
 
 app.register_blueprint(auth)
+app.register_blueprint(dash)
 
 @app.route("/", methods = ["GET"])
 def index():

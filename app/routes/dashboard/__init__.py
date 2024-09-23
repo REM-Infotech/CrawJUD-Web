@@ -4,7 +4,7 @@ import os
 import pathlib
 
 path_template = os.path.join(pathlib.Path(__file__).parent.resolve(), "templates")
-dash = Blueprint("dashboard", __name__, template_folder=path_template)
+dash = Blueprint("dash", __name__, template_folder=path_template)
 
 @dash.route("/dashboard", methods = ["GET"])
 def dashboard():
