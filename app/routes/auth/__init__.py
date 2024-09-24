@@ -1,4 +1,5 @@
-from flask import Blueprint, render_template, redirect, url_for, flash
+from flask import (Blueprint, render_template, redirect, 
+                   url_for, flash, session)
 from flask_login import login_user, logout_user
 import os
 import pathlib
@@ -23,6 +24,9 @@ def login():
             
             flash("Senha incorreta!", "error")
             return redirect(url_for("auth.login"))
+        
+        session.permanent = form.remember_me.data
+        session["nome_usuario"] = usr.nome_usuario
         
         login_user(usr, remember=form.remember_me.data)
         flash("Login efetuado com sucesso!", "success")

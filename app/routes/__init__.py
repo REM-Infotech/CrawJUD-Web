@@ -4,14 +4,20 @@ import os
 from app import app
 from app.routes.auth import auth
 from app.routes.dashboard import dash
+from app.routes.bot import bot
+from app.routes.execution import exe
+
 
 app.register_blueprint(auth)
 app.register_blueprint(dash)
+app.register_blueprint(bot)
+app.register_blueprint(exe)
 
 @app.route("/", methods = ["GET"])
 def index():
     
     return redirect(url_for("auth.login")), 302
+
 
 @app.route('/favicon.png', methods=["GET"])
 def serve_img():

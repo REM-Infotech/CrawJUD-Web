@@ -2,6 +2,8 @@ from app import db
 from app import app
 
 from app.models.users import Users
+from app.models.bots import BaseTextBots
+
 
 from uuid import uuid4
 
