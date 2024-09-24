@@ -2,7 +2,7 @@ from app import db
 from app import app
 
 from app.models.users import Users, LicensesUsers
-from app.models.bots import BotsCrawJUD
+from app.models.bots import BotsCrawJUD, Credentials
 
 import pandas as pd
 from uuid import uuid4

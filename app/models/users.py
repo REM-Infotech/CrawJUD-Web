@@ -71,7 +71,7 @@ class LicensesUsers(db.Model):
     # Foreign key para a tabela users
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     # Foreign key para a tabela Credentials
-    credential_id = db.Column(db.Integer, db.ForeignKey('credentials.id'), nullable=False)
+    credential_id = db.Column(db.Integer, db.ForeignKey('credentials.id'))
     
     # Relacionamento com Bots (conforme já definido antes)
     bots = db.relationship('BotsCrawJUD', secondary=licenses_users_bots, backref=db.backref('licenses_users', lazy=True))
