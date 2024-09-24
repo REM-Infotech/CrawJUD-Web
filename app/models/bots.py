@@ -1,9 +1,23 @@
 from app import db
 
-class BaseTextBots(db.Model):
+class BotsCrawJUD(db.Model):
     
-    __tablename__ = 'TextBots'
+    __tablename__ = 'bots'
     id = db.Column(db.Integer, primary_key=True)
-    bot_name = db.Column(db.String(length=45), nullable=False)
-    TitleBot = db.Column(db.String(length=45), nullable=False)
-    TextBots = db.Column(db.String(length=512), nullable=False)
+    display_name = db.Column(db.String(length=45), nullable=False)
+    system = db.Column(db.String(length=45), nullable=False)
+    state = db.Column(db.String(length=45), nullable=False)
+    type = db.Column(db.String(length=45), nullable=False)
+    text = db.Column(db.String(length=512), nullable=False)
+    
+class Credentials(db.Model):
+    
+    __tablename__ = 'credentials'
+    id = db.Column(db.Integer, primary_key=True)
+    user = db.Column(db.String(length=45), nullable=False)
+    password = db.Column(db.String(length=45))
+    key = db.Column(db.String(length=45))
+    certficate = db.Column(db.String(length=45))
+    certficate_blob = db.Column(db.LargeBinary(length=(2**32)-1))
+    licenses = db.relationship('LicensesUsers', backref='credential', lazy=True)
+    

@@ -1,7 +1,42 @@
 <div class="container-fluid px-4">
     <div class="card mt-4 mb-4">
         <div class="card-header">
-            <h1 class="mb-3">Robôs</h1>
+            <h1 class="m-3">Robôs</h1>
+        </div>
+        <div class="card-body bg-warning bg-opacity-25">
+            <div class="row">
+                <div class="col-md-12">
+                    <form role="search">
+                        <div class="form-floating mb-3">
+                            <input type="search" class="form-control" id="floatingInput" placeholder="..."
+                                oninput="filterCards(this)">
+                            <label class="fw-semibold" for="floatingInput">Buscar Robô</label>
+                        </div>
+                    </form>
+                    <hr>
+                </div>
+                <div class="col-md-12">
+                    <div class="row">
+                        {% for bot in bots %}
+                        <div class="col-md-3">
+                            <div class="card bg-secondary bg-opacity-50 m-4" style="min-height: 430px;">
+                                <h5 class="card-header bg-white text-black bg-opacity-75">{{ bot.display_name }}</h5>
+                                {% set file_path = 'include/figures/' ~ bot.system.lower() ~ ".html" %}
+                                {% include file_path %}
+                                <div class="card-body">
+                                    <h5 class="card-text">{{ bot.text }}</h5>
+                                </div>
+                                <div
+                                    class="card-footer d-flex align-items-center justify-content-between bg-white bg-opacity-75">
+                                    <a href="#" class="btn btn-success fw-semibold">Acessar Robô</a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+            </div>
         </div>
 
     </div>

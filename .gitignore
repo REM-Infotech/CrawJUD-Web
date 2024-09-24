@@ -1,6 +1,6 @@
 credentials.json
 config.yml
-
+~$*
 Temp/*.json
 # Byte-compiled / optimized / DLL files
 __pycache__/
