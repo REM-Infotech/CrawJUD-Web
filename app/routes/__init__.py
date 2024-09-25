@@ -6,12 +6,14 @@ from app.routes.auth import auth
 from app.routes.dashboard import dash
 from app.routes.bot import bot
 from app.routes.execution import exe
+from app.routes.credentials import cred
 
 
 app.register_blueprint(auth)
 app.register_blueprint(dash)
 app.register_blueprint(bot)
 app.register_blueprint(exe)
+app.register_blueprint(cred)
 
 @app.route("/", methods = ["GET"])
 def index():

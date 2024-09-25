@@ -14,7 +14,8 @@ class Credentials(db.Model):
     
     __tablename__ = 'credentials'
     id = db.Column(db.Integer, primary_key=True)
-    user = db.Column(db.String(length=45), nullable=False)
+    nome_credencial = db.Column(db.String(length=45), nullable=False)
+    login = db.Column(db.String(length=45), nullable=False)
     password = db.Column(db.String(length=45))
     key = db.Column(db.String(length=45))
     certficate = db.Column(db.String(length=45))
