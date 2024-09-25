@@ -1,5 +1,5 @@
 from app.models import Credentials, BotsCrawJUD
-from flask import Blueprint, render_template, request, url_for, redirect
+from flask import Blueprint, render_template, request, url_for, redirect, flash
 from flask_login import login_required
 import os
 import pathlib
@@ -30,7 +30,7 @@ def cadastro():
     systems = [bot.system for bot in BotsCrawJUD.query.all()]
     count_system = Counter(systems).keys()
     
-    system = [system for system in count_system]
+    system = [(syst, syst) for syst in count_system]
     
     form = CredentialsForm(**{
         "system": system
@@ -39,15 +39,29 @@ def cadastro():
     func = "Cadastro"
     title = "Credenciais"
 
-    
-    
-    
-    
-    
-    
     action_url = url_for('creds.cadastro')
 
     if form.validate_on_submit():
+        
+        if Credentials.query.filter(
+            Credentials.nome_credencial == form.nome_cred.data).first():
+            flash("Existem credenciais com este nome já cadastrada!", "error")
+            return redirect(url_for("creds.cadastro"))
+        
+
+        def pw(form):
+            pass
+        
+        def cert(form):
+            pass
+            
+        for name, func in locals().items():
+            
+            if name == form.auth_method.data:
+                func(form)
+        
+        
+        
         return redirect(url_for("creds.credentials"))
 
     return render_template("index.html", page=page, form=form,

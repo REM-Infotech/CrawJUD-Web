@@ -12,8 +12,7 @@ class CredentialsForm(FlaskForm):
     nome_cred = StringField("Nome da credencial", validators=[
                             DataRequired("Informe o nome de referência!")])
     
-    system = SelectField("Selecione o sistema", choices=[
-                         "Selecione", "Selecione"])
+    system = SelectField("Selecione o sistema", choices=[("Selecione", "Selecione")])
     
     auth_method = SelectField(
         "Selecione o método de login", id="auth_method", choices=[("Selecione", "Selecione"),
