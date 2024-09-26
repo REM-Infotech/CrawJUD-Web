@@ -25,9 +25,10 @@ def login():
             flash("Senha incorreta!", "error")
             return redirect(url_for("auth.login"))
         
+        license_usr = usr.licenseusr[0]
         session.permanent = form.remember_me.data
         session["nome_usuario"] = usr.nome_usuario
-        
+        session["license_token"] = license_usr.license_token
         login_user(usr, remember=form.remember_me.data)
         flash("Login efetuado com sucesso!", "success")
         return redirect(url_for("dash.dashboard"))

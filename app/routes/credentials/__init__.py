@@ -1,9 +1,10 @@
-from app.models import Credentials, BotsCrawJUD
-from flask import Blueprint, render_template, request, url_for, redirect, flash
+from app.models import Credentials, BotsCrawJUD, LicensesUsers
+from flask import Blueprint, render_template, session, url_for, redirect, flash
 from flask_login import login_required
+from app import db
+
 import os
 import pathlib
-
 from collections import Counter
 
 from app.forms.credentials import CredentialsForm
@@ -50,15 +51,29 @@ def cadastro():
         
 
         def pw(form):
-            pass
-        
+            
+            passwd = Credentials(
+                nome_credencial = form.nome_cred.data,
+                system = form.system.data,
+                login_method = form.auth_method.data,
+                login = form.login.data,
+                password = form.password.data
+            )
+            db.session.add(passwd)
+            licenseusr = LicensesUsers.query.filter(
+                LicensesUsers.license_token == session["license_token"]).first()
+            licenseusr.credentials.append(passwd)
+            db.session.commit()
+            
         def cert(form):
             pass
             
-        for name, func in locals().items():
+        local_defs = list(locals().items())
+        for name, func in local_defs:
             
             if name == form.auth_method.data:
                 func(form)
+                break
         
         
         

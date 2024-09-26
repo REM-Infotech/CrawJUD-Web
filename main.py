@@ -41,7 +41,5 @@ ingress:
         
     with open(credentials_json, "w") as f:
         f.write(json.dumps(credentials))
-    
-    run_with_cloudflared(app)
-    
-    app.run("0.0.0.0", port=int(port), debug=debug, config_path=config_yml)
+
+    app.run("0.0.0.0", port=int(port), debug=debug)

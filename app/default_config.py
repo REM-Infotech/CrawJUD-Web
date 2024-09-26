@@ -60,8 +60,8 @@ for paths in [DOCS_PATH, TEMP_PATH, IMAGE_TEMP_PATH, CSV_TEMP_PATH, PDF_TEMP_PAT
         plataforma = platform.system()
         
         if plataforma == "Linux":
-            path =  f"{paths}/*" 
-            comand = "rm -r " + path
+            path =  f"{paths}" 
+            command = "rm -r " + path
              
         
         elif plataforma == "Windows":

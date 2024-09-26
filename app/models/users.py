@@ -18,10 +18,25 @@ def load_user(user_id) -> int:
 
     return Users.query.get(int(user_id))
 
-licenses_users_bots = db.Table('licenses_users_bots',
+
+licenseusr = db.Table(
+    'licenseusr', 
+    db.Column('license_user_id', db.Integer, db.ForeignKey('licenses_users.id'), primary_key=True),
+    db.Column('users_id', db.Integer, db.ForeignKey('users.id'), primary_key=True))
+
+licenses_users_bots = db.Table(
+    'licenses_users_bots',
     db.Column('licenses_user_id', db.Integer, db.ForeignKey('licenses_users.id'), primary_key=True),
     db.Column('bot_id', db.Integer, db.ForeignKey('bots.id'), primary_key=True)
 )
+
+# Tabela de associação para LicensesUsers e Credentials
+licenses_users_credentials = db.Table(
+    'licenses_users_credentials',
+    db.Column('license_user_id', db.Integer, db.ForeignKey('licenses_users.id'), primary_key=True),
+    db.Column('credential_id', db.Integer, db.ForeignKey('credentials.id'), primary_key=True)
+)
+
 
 class Users(db.Model, UserMixin):
 
@@ -36,9 +51,6 @@ class Users(db.Model, UserMixin):
     login_id = db.Column(db.String(length=64), nullable=False, default=str(uuid4()))
     filename = db.Column(db.String(length=128))
     blob_doc = db.Column(db.LargeBinary(length=(2**32)-1))
-    
-    # Relacionamento com LicensesUsers
-    licenses = db.relationship('LicensesUsers', backref='user', lazy=True)
 
     def __init__(self, login: str = None, nome_usuario: str = None,
                  email: str = None, license_key: str = None) -> None:
@@ -68,10 +80,11 @@ class LicensesUsers(db.Model):
     email_admin = db.Column(db.String(length=50), nullable=False, unique=True)
     license_token = db.Column(db.String(length=512), nullable=False, unique=True)
     
-    # Foreign key para a tabela users
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    # Foreign key para a tabela Credentials
-    credential_id = db.Column(db.Integer, db.ForeignKey('credentials.id'))
+    # Relacionamento de muitos para muitos com users
+    users = db.relationship('Users', secondary=licenseusr, backref='licenseusr')
+    
+    # Relacionamento de muitos para muitos com Credentials
+    credentials = db.relationship('Credentials', secondary=licenses_users_credentials, backref='licenses')
     
     # Relacionamento com Bots (conforme já definido antes)
     bots = db.relationship('BotsCrawJUD', secondary=licenses_users_bots, backref=db.backref('licenses_users', lazy=True))

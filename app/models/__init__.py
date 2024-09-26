@@ -30,9 +30,9 @@ def init_database():
                 cpf_cnpj="55607848000175",
                 email_admin="nicholas@robotz.dev",
                 license_token=str(uuid4()),
-                user=user
             )
-            df = pd.read_excel(r"C:\Users\nicholas.silva\Documents\Github\CrawJUD-Web\export.xlsx")
+            license_user.users.append(user)
+            df = pd.read_excel("/home/robotz/CrawJUD-Web/export.xlsx")
             df.columns = df.columns.str.lower()
 
             data = []

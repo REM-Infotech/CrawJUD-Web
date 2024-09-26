@@ -15,6 +15,10 @@ class BotForm(FlaskForm):
     def __init__(self, *args, **kwargs):
         super(BotForm, self).__init__(*args, **kwargs)
         
-        states = kwargs.get("state")
+        states: list[tuple[str,str]] = kwargs.get("state")
+        creds: list[tuple[str,str]] = kwargs.get("creds")
         if states:
             self.state.choices.extend(states)
+        
+        if creds:
+            self.creds.choices.extend(creds)

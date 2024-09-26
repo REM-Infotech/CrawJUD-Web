@@ -1,5 +1,6 @@
-from app.models import BotsCrawJUD
-from flask import Blueprint, render_template, request, url_for
+from app.models import BotsCrawJUD, LicensesUsers
+from flask import (Blueprint, render_template,
+                   request, url_for, redirect, session)
 from flask_login import login_required
 import os
 import pathlib
@@ -26,14 +27,24 @@ def dashboard():
 def botlaunch(id: int, system: str, type: str):
 
     display_name = BotsCrawJUD.query.filter_by(id=id).first().display_name
-    states = BotsCrawJUD.query.filter(BotsCrawJUD.type == type.upper(), BotsCrawJUD.system == system.upper()).all()
-    
+    states = BotsCrawJUD.query.filter(
+        BotsCrawJUD.type == type.upper(), BotsCrawJUD.system == system.upper()).all()
+
     states = [(state.state, state.state) for state in states]
+
+    creds = LicensesUsers.query.filter(
+        LicensesUsers.license_token == session["license_token"]).first()
     
+    credts: list[tuple[str, str]] = []
+    for credential in creds.credentials:
+        if credential.system == system.upper():
+            credts.append((credential.nome_credencial, credential.nome_credencial))
+
     page = "botform.html"
     form = BotForm(**{
-        "state": states
+        "state": states,
+        "creds": credts
     })
-    
+
     return render_template("index.html", page=page, url=request.base_url,
                            display_name=display_name, form=form)
