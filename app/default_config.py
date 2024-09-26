@@ -8,10 +8,10 @@ from datetime import timedelta
 load_dotenv()
 values = dotenv_values()
 
-login_db = os.getenv('login')
-passwd_db = os.getenv('password')
-host_db = os.getenv('host')
-database_name = os.getenv('database')
+login_db = values.get('login')
+passwd_db = values.get('password')
+host_db = values.get('host')
+database_name = values.get('database')
 
 
 ## FLASK-MAIL CONFIG
@@ -24,7 +24,7 @@ MAIL_PASSWORD = values['MAIL_PASSWORD']
 MAIL_DEFAULT_SENDER = values['MAIL_DEFAULT_SENDER']
 
 ## SQLALCHEMY CONFIG
-debug = os.getenv('DEBUG', 'False').lower() in (
+debug = values.get('DEBUG', 'False').lower() in (
         'true', '1', 't', 'y', 'yes')
 
 database_uri = f"mysql://{login_db}:{passwd_db}@{host_db}/{database_name}"

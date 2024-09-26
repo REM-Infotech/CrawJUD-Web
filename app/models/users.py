@@ -81,12 +81,12 @@ class LicensesUsers(db.Model):
     license_token = db.Column(db.String(length=512), nullable=False, unique=True)
     
     # Relacionamento de muitos para muitos com users
-    users = db.relationship('Users', secondary=licenseusr, backref='licenseusr')
+    users = db.relationship('Users', secondary=licenseusr, backref='licenses')
     
     # Relacionamento de muitos para muitos com Credentials
     credentials = db.relationship('Credentials', secondary=licenses_users_credentials, backref='licenses')
     
     # Relacionamento com Bots (conforme já definido antes)
-    bots = db.relationship('BotsCrawJUD', secondary=licenses_users_bots, backref=db.backref('licenses_users', lazy=True))
+    bots = db.relationship('BotsCrawJUD', secondary=licenses_users_bots, backref=db.backref('licenses', lazy=True))
 
 

@@ -1,35 +1,36 @@
 from flask import redirect, url_for, send_from_directory, make_response, abort
 import os
 
-from app import app
-from app.routes.auth import auth
-from app.routes.dashboard import dash
-from app.routes.bot import bot
-from app.routes.execution import exe
-from app.routes.credentials import cred
-
-
-app.register_blueprint(auth)
-app.register_blueprint(dash)
-app.register_blueprint(bot)
-app.register_blueprint(exe)
-app.register_blueprint(cred)
-
-@app.route("/", methods = ["GET"])
-def index():
+def blueprint_reg(app):
     
-    return redirect(url_for("auth.login")), 302
+    from app.routes.auth import auth
+    from app.routes.dashboard import dash
+    from app.routes.bot import bot
+    from app.routes.execution import exe
+    from app.routes.credentials import cred
 
 
-@app.route('/favicon.png', methods=["GET"])
-def serve_img():
+    app.register_blueprint(auth)
+    app.register_blueprint(dash)
+    app.register_blueprint(bot)
+    app.register_blueprint(exe)
+    app.register_blueprint(cred)
 
-    try:
+    @app.route("/", methods = ["GET"])
+    def index():
         
-        paht_icon = os.path.join(os.getcwd(), "static", "img")
-        url = send_from_directory(paht_icon, "crawjud.png")
-        return url
+        return redirect(url_for("auth.login")), 302
 
-    except Exception as e:
-        print(e)
-        abort(500)
+
+    @app.route('/favicon.png', methods=["GET"])
+    def serve_img():
+
+        try:
+            
+            paht_icon = os.path.join(os.getcwd(), "static", "img")
+            url = send_from_directory(paht_icon, "crawjud.png")
+            return url
+
+        except Exception as e:
+            print(e)
+            abort(500)

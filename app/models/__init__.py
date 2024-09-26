@@ -1,13 +1,13 @@
 from app import db
-from app import app
 
 from app.models.users import Users, LicensesUsers
 from app.models.bots import BotsCrawJUD, Credentials
+from app.models.srv import Servers
 
 import pandas as pd
 from uuid import uuid4
 
-def init_database():
+def init_database(app):
     
     with app.app_context():
         
@@ -52,12 +52,13 @@ def init_database():
                         data_append.update({coluna.name: "Sem Informação"})
 
                 appends = BotsCrawJUD(**data_append)
+                license_user.bots.append(appends)
                 data.append(appends)
             
             
             db.session.add(user)
-            db.session.add(license_user)
             db.session.add_all(data)
+            db.session.add(license_user)
             db.session.commit()
             
             print(f" * Root Pw: {senha}")
