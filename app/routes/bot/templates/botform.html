@@ -9,18 +9,13 @@
                 <div class="card-body bg-warning bg-opacity-25 p-4 p-sm-5">
 					{{ form.hidden_tag() }}
 					<div class="row g-3 rounded justify-content-center p-3">
+						{% for field in form %}
 						<div class="col-md-10 mb-3 border border-secondary p-2 border-2 rounded bg-primary bg-opacity-25">
-                            {{ form.xlsx.label(class="form-label") }}
-                            {{ form.xlsx(**{"class":"form-control", "data-placeholder":form.xlsx.label.text}) }}
-                        </div>
-						<div class="col-md-10 mb-3 border border-secondary p-2 border-2 rounded bg-primary bg-opacity-25">
-                            {{ form.creds.label(class="form-label") }}
-                            {{ form.creds(**{"class":"form-control", "data-placeholder":form.creds.label.text}) }}
-                        </div>
-						<div class="col-md-10 mb-3 border border-secondary p-2 border-2 rounded bg-primary bg-opacity-25">
-                            {{ form.state.label(class="form-label") }}
-                            {{ form.state(**{"class":"form-control", "data-placeholder":form.state.label.text}) }}
-                        </div>
+							{{ field.label(class="form-label") }}
+							{{ field(class="form-control", placeholder=field.label.text) }}
+							
+						</div>
+						{% endfor %}
 					</div>
 				</div>
 				<div class="card-footer d-grid gap-2">

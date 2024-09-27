@@ -63,4 +63,6 @@ def init_database(app):
             
             print(f" * Root Pw: {senha}")
         
-        
+def setServer(args):
+    
+    pass

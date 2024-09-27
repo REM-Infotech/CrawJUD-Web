@@ -9,6 +9,7 @@ class BotsCrawJUD(db.Model):
     state = db.Column(db.String(length=45), nullable=False)
     client = db.Column(db.String(length=45), nullable=False)
     type = db.Column(db.String(length=45), nullable=False)
+    form_cfg = db.Column(db.String(length=45), nullable=False)
     classification = db.Column(db.String(length=45), nullable=False)
     text = db.Column(db.String(length=512), nullable=False)
     

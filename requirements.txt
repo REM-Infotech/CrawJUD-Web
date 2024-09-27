@@ -18,4 +18,6 @@ reportlab
 pillow
 pandas
 deep-translator
-
+flask-cloudflared
+google-auth
+google-cloud-storage
