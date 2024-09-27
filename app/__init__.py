@@ -48,7 +48,6 @@ def create_app() -> tuple[Flask, int, bool]:
     values = dotenv_values()
     
     ## Cloudflare Tunnel Configs
-    hostname = values.get("HOSTNAME")
     port = int(values.get("PORT", 5000))
     debug = values.get('DEBUG', 'False').lower() in (
         'true', '1', 't', 'y', 'yes')

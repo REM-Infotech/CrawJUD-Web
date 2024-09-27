@@ -10,7 +10,7 @@ import requests
 
 from app.forms import BotForm
 from app.misc import generate_pid
-from app.models import BotsCrawJUD, LicensesUsers
+from app.models import BotsCrawJUD, LicensesUsers, Servers
 
 
 path_template = os.path.join(pathlib.Path(
@@ -81,7 +81,11 @@ def botlaunch(id: int, system: str, type: str):
 
         data = {}
         pid = generate_pid()
-        data.update({"pid": pid})
+        data.update({
+            "pid": pid, 
+            "login": session["login"]
+        })
+        
         headers = {'CONTENT_TYPE': request.environ['CONTENT_TYPE']}
         data_form = form.data.items()
         files = {}
@@ -129,11 +133,12 @@ def botlaunch(id: int, system: str, type: str):
                 
                 if item == "password" and system.upper() == "PROJUDI" and type.upper() == "PROTOCOLO" and bot_info.state == "AM":
                     data.update({"token": value})
-                             
-        code = requests.post(f"https://back.robotz.dev{request.path}", data=data, headers=headers, files=files)
-        if code.status_code == 200:
-            flash(f"Execução iniciada com sucesso! PID: {pid}", "success")
-            return redirect(url_for("dash.dashboard"))
+
+        for server in Servers.query.all():
+            response = requests.post(f"https://{server.address}{request.path}", data=data, headers=headers, files=files)
+            if response.status_code == 200:
+                flash(f"Execução iniciada com sucesso! PID: {pid}", "success")
+                return redirect(url_for("dash.dashboard"))
 
         flash("Erro ao iniciar robô", "error")
         

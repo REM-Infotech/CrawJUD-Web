@@ -35,6 +35,7 @@ def login():
         
         license_usr = usr.licenses[0]
         session.permanent = form.remember_me.data
+        session["login"] = usr.login
         session["nome_usuario"] = usr.nome_usuario
         session["license_token"] = license_usr.license_token
         login_user(usr, remember=form.remember_me.data)

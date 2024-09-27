@@ -6,6 +6,8 @@ Temp/*.json
 __pycache__/
 *.py[cod]
 *$py.class
+.vscode
+Temp/
 
 # C extensions
 *.so
