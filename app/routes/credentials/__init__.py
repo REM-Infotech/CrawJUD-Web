@@ -1,14 +1,14 @@
-from app.models import Credentials, BotsCrawJUD, LicensesUsers
-from flask import Blueprint, render_template, session, url_for, redirect, flash
+from flask import Blueprint, render_template, session, url_for, redirect, flash, current_app
 from flask_login import login_required
-from app import db
+from werkzeug.utils import secure_filename
 
 import os
 import pathlib
 from collections import Counter
 
+from app import db
 from app.forms.credentials import CredentialsForm
-
+from app.models import Credentials, BotsCrawJUD, LicensesUsers
 
 path_template = os.path.join(pathlib.Path(
     __file__).parent.resolve(), "templates")
@@ -66,7 +66,31 @@ def cadastro():
             db.session.commit()
             
         def cert(form):
-            pass
+            
+            temporarypath = current_app.config["TEMP_PATH"]
+            filecert = form.cert.data
+            
+            cer_path = os.path.join(temporarypath, secure_filename(filecert.filename))          
+            filecert.save(cer_path)
+
+            
+            with open(cer_path, "rb") as f:
+                certficate_blob = f.read()
+            
+            passwd = Credentials(
+                nome_credencial = form.nome_cred.data,
+                system = form.system.data,
+                login_method = form.auth_method.data,
+                login = form.doc_cert.data,
+                key = form.key.data,
+                certficate = filecert.filename,
+                certficate_blob = certficate_blob
+            )
+            db.session.add(passwd)
+            licenseusr = LicensesUsers.query.filter(
+                LicensesUsers.license_token == session["license_token"]).first()
+            licenseusr.credentials.append(passwd)
+            db.session.commit()
             
         local_defs = list(locals().items())
         for name, func in local_defs:

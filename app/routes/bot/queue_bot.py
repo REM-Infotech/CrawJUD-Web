@@ -62,16 +62,16 @@ class QueueBot:
     def zip_arquivo(self, identify: str, app: Flask) -> tuple[str, str]:
         
         file_paths = []
-        temp_path = os.path.join(app.config['BOT_TEMP_PATH'], identify)
+        temp_path = os.path.join(app.config['CSV_TEMP_PATH'], identify)
         for root, dirs, files in os.walk(temp_path):
             for file in files:
                 
-                file_path = os.path.join(app.config['BOT_TEMP_PATH'], identify, file)
+                file_path = os.path.join(app.config['CSV_TEMP_PATH'], identify, file)
                 file_paths.append(file_path)
         
         namezip = f"{identify}.zip"
         
-        zip_file = os.path.join(app.config['BOT_TEMP_PATH'], namezip)       
+        zip_file = os.path.join(app.config['CSV_TEMP_PATH'], namezip)       
         with zipfile.ZipFile(zip_file, 'w', zipfile.ZIP_DEFLATED) as zipf:
             for file in file_paths:
                 zipf.write(file)

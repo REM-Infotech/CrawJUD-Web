@@ -4,7 +4,7 @@ from flask_wtf.form import _Auto
 from wtforms import StringField, PasswordField, SubmitField, SelectField
 from wtforms.validators import DataRequired
 
-file_allowed = FileAllowed([".pfx", 'Apenas arquivos ".pfx" são permitidos!'])
+file_allowed = FileAllowed(["pfx", 'Apenas arquivos ".pfx" são permitidos!'])
 
 
 class CredentialsForm(FlaskForm):
@@ -18,9 +18,11 @@ class CredentialsForm(FlaskForm):
         "Selecione o método de login", id="auth_method", choices=[("Selecione", "Selecione"),
                                                                   ("cert", "Certificado",), ("pw", "Login/Senha")])
 
+    
     login = StringField("Usuário")
     password = PasswordField("Senha")
 
+    doc_cert = StringField("CPF/CNPJ do Certificado")
     cert = FileField("Selecione o certificado", validators=[
                      file_allowed], render_kw={"accept": ".pfx"})
     key = PasswordField("Informe a senha do certificado")

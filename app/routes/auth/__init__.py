@@ -1,5 +1,5 @@
 from flask import (Blueprint, render_template, redirect, 
-                   url_for, flash, session)
+                   url_for, flash, session, request)
 from flask_login import login_user, logout_user
 import os
 import pathlib
@@ -10,7 +10,11 @@ auth = Blueprint("auth", __name__, template_folder=path_template)
 from app.forms.auth.login import LoginForm
 from app.models.users import Users
 
-
+@auth.before_request
+def nexturl():
+    
+    if request.args.get("next"):
+        session["location"] = request.args.get("next")
 
 @auth.route("/login", methods=["GET", "POST"])
 def login():
@@ -25,13 +29,17 @@ def login():
             flash("Senha incorreta!", "error")
             return redirect(url_for("auth.login"))
         
+        
+        if not session.get("location"):
+            session["location"] = url_for("dash.dashboard")
+        
         license_usr = usr.licenses[0]
         session.permanent = form.remember_me.data
         session["nome_usuario"] = usr.nome_usuario
         session["license_token"] = license_usr.license_token
         login_user(usr, remember=form.remember_me.data)
         flash("Login efetuado com sucesso!", "success")
-        return redirect(url_for("dash.dashboard"))
+        return redirect(session["location"])
     
     return render_template("login.html", form=form)
 

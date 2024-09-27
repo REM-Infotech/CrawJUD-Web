@@ -76,3 +76,9 @@ function authMethodChange(element) {
         div_pw.style.display = "block";
     }
 }
+
+function showLoad(){
+    setTimeout(() => {
+        $('#modalLoading').modal('show');
+    }, 500)
+}

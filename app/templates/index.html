@@ -55,8 +55,9 @@
         {% include 'include/message.html' %}
         {% endif %}
         {% endwith %}
+        
     </div>
-    
+    {% include 'include/loading.html' %}
     <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
     <script src="{{ url_for('static', filename='assets/demo/chart-area-demo.js') }}"></script>
     <script src="{{ url_for('static', filename='assets/demo/chart-bar-demo.js') }}"></script>
