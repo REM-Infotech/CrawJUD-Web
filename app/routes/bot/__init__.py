@@ -107,11 +107,11 @@ def botlaunch(id: int, system: str, type: str):
                     for credential in creds.credentials:
                         if credential.nome_credencial == value:
                             if credential.login_method == "pw":
-                                data.update({"credentials": {
+                                data.update({
                                     "login": credential.login,
                                     "password": credential.password
-                                }
                                 })
+                                
                                 
                             if credential.login_method == "cert":
                                 certpath = os.path.join(temporarypath, credential.certficate)
@@ -120,14 +120,16 @@ def botlaunch(id: int, system: str, type: str):
                                 
                                 buff = open(os.path.join(certpath), "rb")
                                 files.update({credential.certficate: (credential.certficate, buff)})
-                                data.update({"credentials": {
+                                data.update({
                                     "login": credential.login,
                                     "key": credential.key,
                                     "login_method": credential.login_method
-                                }
                                 })
                             break
-                                
+                
+                if item == "password" and system.upper() == "PROJUDI" and type.upper() == "PROTOCOLO" and bot_info.state == "AM":
+                    data.update({"token": value})
+                             
         code = requests.post(f"https://back.robotz.dev{request.path}", data=data, headers=headers, files=files)
         if code.status_code == 200:
             flash(f"Execução iniciada com sucesso! PID: {pid}", "success")

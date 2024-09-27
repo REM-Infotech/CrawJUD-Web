@@ -88,5 +88,7 @@ class LicensesUsers(db.Model):
     
     # Relacionamento com Bots (conforme já definido antes)
     bots = db.relationship('BotsCrawJUD', secondary=licenses_users_bots, backref=db.backref('licenses', lazy=True))
+    
+    
 
 

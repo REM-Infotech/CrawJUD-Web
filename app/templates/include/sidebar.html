@@ -11,6 +11,14 @@
                     </div>
                     <span class="text">Dashboard</span>
                 </a>
+                <a class="nav-link" href="{{ url_for('exe.executions') }}">
+                    <div class="sb-nav-link-icon">
+                        <span class="icon text-white-50">
+                            <i class="fa-solid fa-table"></i>
+                        </span>
+                    </div>
+                    <span class="text">Execuções</span>
+                </a>
                 <div class="sb-sidenav-menu-heading">Interface</div>
                 <a class="nav-link" href="{{ url_for('bot.dashboard') }}">
                     <div class="sb-nav-link-icon">
@@ -20,14 +28,7 @@
                     </div>
                     <span class="text">Robôs</span>
                 </a>
-                <a class="nav-link" href="{{ url_for('exe.executions') }}">
-                    <div class="sb-nav-link-icon">
-                        <span class="icon text-white-50">
-                            <i class="fa-solid fa-table"></i>
-                        </span>
-                    </div>
-                    <span class="text">Execuções</span>
-                </a>
+
                 <a class="nav-link" href="{{ url_for('creds.credentials') }}">
                     <div class="sb-nav-link-icon">
                         <span class="icon text-white-50">
