@@ -83,7 +83,7 @@ def botlaunch(id: int, system: str, type: str):
         pid = generate_pid()
         data.update({
             "pid": pid, 
-            "login": session["login"]
+            "user": session["login"]
         })
         
         headers = {'CONTENT_TYPE': request.environ['CONTENT_TYPE']}
@@ -113,7 +113,8 @@ def botlaunch(id: int, system: str, type: str):
                             if credential.login_method == "pw":
                                 data.update({
                                     "login": credential.login,
-                                    "password": credential.password
+                                    "password": credential.password,
+                                    "login_method": credential.login_method
                                 })
                                 
                                 
@@ -126,7 +127,7 @@ def botlaunch(id: int, system: str, type: str):
                                 files.update({credential.certficate: (credential.certficate, buff)})
                                 data.update({
                                     "login": credential.login,
-                                    "key": credential.key,
+                                    "token": credential.key,
                                     "login_method": credential.login_method
                                 })
                             break
@@ -134,11 +135,18 @@ def botlaunch(id: int, system: str, type: str):
                 if item == "password" and system.upper() == "PROJUDI" and type.upper() == "PROTOCOLO" and bot_info.state == "AM":
                     data.update({"token": value})
 
-        for server in Servers.query.all():
+                if item == "state":
+                    data.update({"state": value})
+                
+        servers = Servers.query.all()
+        for server in servers:
+            data.update({
+                "url_socket": server.address
+            })
             response = requests.post(f"https://{server.address}{request.path}", data=data, headers=headers, files=files)
             if response.status_code == 200:
-                flash(f"Execução iniciada com sucesso! PID: {pid}", "success")
-                return redirect(url_for("dash.dashboard"))
+                flash(f"Execução iniciada dashcom sucesso! PID: {pid}", "success")
+                return redirect(url_for("logsbot.logs_bot", sid=pid))
 
         flash("Erro ao iniciar robô", "error")
         

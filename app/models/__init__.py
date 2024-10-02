@@ -1,14 +1,15 @@
+from flask import current_app
 from app import db
 
 from app.models.users import Users, LicensesUsers
-from app.models.bots import BotsCrawJUD, Credentials
+from app.models.bots import BotsCrawJUD, Credentials, Executions
 from app.models.srv import Servers
 
 import pandas as pd
 from uuid import uuid4
 
-def init_database(app):
-    
+def init_database():
+    app = current_app
     with app.app_context():
         
         db.create_all()

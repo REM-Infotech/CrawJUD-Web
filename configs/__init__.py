@@ -4,7 +4,9 @@ import json
 
 
 def csp() -> dict[str]:
-
+    
+    from app.models import Servers
+    srvs = Servers.query.all()
     csp_vars = {
     'default-src': [
         '\'self\''
@@ -60,5 +62,10 @@ def csp() -> dict[str]:
         'https://avatars.githubusercontent.com'
         
     ]
-}
+}   
+    if srvs:
+        for srv in srvs:
+            csp_vars.get('connect-src').append(f"https://{srv.address}")
+            csp_vars.get('connect-src').append(f"wss://{srv.address}")
+    
     return csp_vars

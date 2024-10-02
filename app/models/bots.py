@@ -53,7 +53,6 @@ class Executions(db.Model):
     __tablename__ = 'executions'
     pid = db.Column(db.String(length=12), nullable=False)
     id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(length=50), nullable=False)
     status = db.Column(db.String(length=45), nullable=False)
     file_output = db.Column(db.String(length=512))
     total_rows = db.Column(db.String(length=45))

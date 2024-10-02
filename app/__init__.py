@@ -33,7 +33,16 @@ def create_app() -> tuple[Flask, int, bool]:
     db.init_app(app)
     mail.init_app(app)
     login_manager.init_app(app)
-    tlsm.init_app(app, content_security_policy=csp(),
+    
+    
+        
+    
+    
+    with app.app_context():
+        from app.models import init_database
+        from app import routes
+        init_database()
+        tlsm.init_app(app, content_security_policy=csp(),
                 session_cookie_http_only=True,
                 session_cookie_samesite='Lax',
                 strict_transport_security=True,
@@ -41,10 +50,6 @@ def create_app() -> tuple[Flask, int, bool]:
                 x_content_type_options= True,
                 x_xss_protection=True)
     
-    from app.models import init_database
-    from app.routes import  blueprint_reg
-    init_database(app)
-    blueprint_reg(app)
     values = dotenv_values()
     
     ## Cloudflare Tunnel Configs
