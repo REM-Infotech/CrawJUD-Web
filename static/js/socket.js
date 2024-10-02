@@ -5,20 +5,20 @@ Chart.defaults.global.defaultFontColor = '#292b2c';
 document.addEventListener('DOMContentLoaded', function () {
 
     var pid = document.documentElement.dataset.pid;
-    var total_rows = this.documentElement.dataset.total_rows;
 
     var ul = document.getElementById('messages'); // Elemento <ul> onde as mensagens de log são exibidas
     var percent_progress = document.getElementById('progress_info');
 
     var ctx = document.getElementById("LogsBotChart");
     var LogsBotChart = new Chart(ctx, {
-        type: 'pie',
+        type: 'doughnut',
         data: {
-        labels: ["TOTAL", "SUCESSOS", "ERROS"],
-        datasets: [{
-            data: [total_rows, 0, 0],
-            backgroundColor: ['#d3e3f5', '#42cf06', "#FF0000"],
-        }],
+            labels: ["RESTANTES", "SUCESSOS", "ERROS"],
+            datasets: [{
+                data: [0.1, 0.1, 0.1],
+                backgroundColor: ['#0096C7', '#42cf06', "#FF0000"],
+            }],
+
         },
     });
 
@@ -35,75 +35,48 @@ document.addEventListener('DOMContentLoaded', function () {
             });
 
             socket.on('log_message', function (data) {
+
+                updateElements(data)
                 var messagePid = data.pid;
                 var pos = parseInt(data.pos);
                 var typeLog = data.type;
-                var value_error = LogsBotChart.data.datasets[0].data[2];
-                var value_success = LogsBotChart.data.datasets[0].data[1];
+
+                updateElements(data)
+
                 if (messagePid === pid) {
 
                     var msg = data.message;
-                    var li = document.createElement('li');
 
-                    li.style.fontWeight = "bold";
-                    li.style.color = '#d3e3f5';
+                    if (msg === null){
+                        var msg = data.last_log;
+                    }
 
-                    if (typeLog === "error") {
+                    if (msg != null) {
+                        var li = document.createElement('li');
 
                         li.style.fontWeight = "bold";
-                        li.style.color = 'RED';
-                        LogsBotChart.data.datasets[0].data[2] += 1;
-                        LogsBotChart.data.datasets[0].data[0] -= 1;
+                        li.style.color = '#d3e3f5';
 
-                        if (pos === 0){
-                            LogsBotChart.data.datasets[0].data[0] = 0;
-                            LogsBotChart.data.datasets[0].data[2] = total_rows;
+                        if (typeLog === "error") {
+
+                            li.style.fontWeight = "bold";
+                            li.style.color = 'RED';
+
+                        } else if (typeLog === "success") {
+
+                            li.style.color = '#42cf06';
+                            li.style.fontWeight = "bold";
+
                         };
 
-                    } else if (typeLog === "success") {
+                        li.appendChild(document.createTextNode(msg));
+                        ul.appendChild(li);
 
-                        value_success = value_success + 1
-                        LogsBotChart.data.datasets[0].data[1] += 1;
-                        li.style.color = '#42cf06';
-                        li.style.fontWeight = "bold";
-                        LogsBotChart.data.datasets[0].data[0] -= 1;
+                        var randomId = "id_" + pos + pid;
 
+                        li.setAttribute("id", randomId);
+                        document.getElementById(randomId).scrollIntoView({ behavior: "smooth", block: "end" });
                     };
-                    
-                    LogsBotChart.update();
-                    li.appendChild(document.createTextNode(msg));
-                    ul.appendChild(li);
-
-                    var randomId = "id_" + pos + pid;
-
-                    li.setAttribute("id", randomId);
-                    document.getElementById(randomId).scrollIntoView({ behavior: "smooth", block: "end" });
-
-                    var total_rows_subtract = total_rows - 1;
-                    var progress = (pid / total_rows_subtract) * 100;
-                    var textNode = document.createTextNode(progress.toFixed(2) + '%');
-
-                    if (pos !== 0) {
-                        var subtrac = pos - 1;
-                        var progress = (subtrac / total_rows_subtract) * 100;
-                        var textNode = document.createTextNode(progress.toFixed(2) + '%');
-
-                    }
-                    percent_progress.innerHTML = '';
-                    percent_progress.appendChild(textNode);
-                    percent_progress.style.width = progress + '%';
-
-                    // if (data.labels.length > 0){
-                    //     LogsBotChart.data.labels = data.labels;
-                    //   };
-              
-                    //   if (data.values.length > 0){
-                    //     LogsBotChart.data.datasets[0].data = data.values;
-                    //   };
-              
-                    //   if (data.labels.length > 0 && data.values.length > 0){
-                    //     LogsBotChart.update();
-                    //   }
                 }
             });
         });
@@ -131,8 +104,44 @@ document.addEventListener('DOMContentLoaded', function () {
                 console.error('Erro de rede:', error);
             });
     }
+    function updateElements(data) {
 
-    setInterval(checkStatus, 15000);
-    checkStatus(pid);
+        console.log(data)
+        var total = parseInt(data.total) - 1;
+        var remaining = parseInt(data.remaining) - 1;
+        var success = parseInt(data.success);
+        var errors = parseInt(data.errors);
+        var status = data.status;
+        var executed = success + errors;
+
+        if (status === "Finalizado") {
+            checkStatus()
+        };
+
+        if (executed > total) {
+            executed -= 1
+        };
+
+        var CountErrors = document.querySelector('span[id="errors"]');
+        var Countremaining = document.querySelector('span[id="remaining"]');
+        var CountSuccess = document.querySelector('span[id="success"]');
+        var TextStatus = document.querySelector('span[id="status"]');
+
+        LogsBotChart.data.datasets[0].data = [remaining, success, errors]
+        CountErrors.innerHTML = `Erros: ${errors}`
+        Countremaining.innerHTML = `Restantes: ${remaining}`
+        CountSuccess.innerHTML = `Sucessos: ${success}`
+        TextStatus.innerHTML = `Status: ${status} | Total: ${total}`
+
+        var progress = (executed / total) * 100;
+        var textNode = document.createTextNode(progress.toFixed(2) + '%');
+
+        percent_progress.innerHTML = '';
+        percent_progress.appendChild(textNode);
+        percent_progress.style.width = progress + '%';
+        LogsBotChart.update();
+    }
 })
+
+
 

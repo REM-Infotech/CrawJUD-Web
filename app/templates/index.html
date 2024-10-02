@@ -7,8 +7,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <title>Dashboard - CrawJUD</title>
 
+    {% if not title %}
+    {% set title = "Home" %}
+    {% endif %}
+    <title>{{ title }} - CrawJUD</title>
+    <a href="http://"></a>
     <!-- Styles -->
     <link rel="stylesheet" href="https://cdn.datatables.net/2.1.2/css/dataTables.bootstrap5.min.css">
     <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet" />
@@ -62,7 +66,7 @@
     <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
     <script src="{{ url_for('static', filename='assets/demo/chart-area-demo.js') }}"></script>
     <script src="{{ url_for('static', filename='assets/demo/chart-bar-demo.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/datatables-simple-demo.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/DataTables.js') }}"></script>
 </body>
 
 </html>

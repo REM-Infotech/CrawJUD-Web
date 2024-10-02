@@ -11,5 +11,6 @@ exe = Blueprint("exe", __name__, template_folder=path_template)
 @login_required
 def executions():
     
+    title = "Execuções"
     page = "executions.html"
-    return render_template("index.html", page=page)   
+    return render_template("index.html", page=page, title=title)   

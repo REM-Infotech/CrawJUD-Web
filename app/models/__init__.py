@@ -7,32 +7,37 @@ from app.models.srv import Servers
 
 import pandas as pd
 from uuid import uuid4
+from dotenv import dotenv_values
 
 def init_database():
     app = current_app
     with app.app_context():
         
         db.create_all()
+        values = dotenv_values()
         
-        dbase = Users.query.filter(Users.login == "root").first()
+        loginsys = values.get("loginsys")
+        nomeusr = values.get("nomeusr")
+        emailusr = values.get("emailusr")
+        passwd  = values.get("passwd", str(uuid4()))
+        
+        dbase = Users.query.filter(Users.login == loginsys).first()
         if not dbase:
-            
-            senha = str(uuid4())
-            
+
             user = Users(
-                login="root",
-                nome_usuario="Root",
-                email="nicholas@robotz.dev",
-                license_key=str(uuid4()))
-            user.senhacrip = senha
+                login=loginsys,
+                nome_usuario=nomeusr,
+                email=emailusr)
+            user.senhacrip = passwd
             
             license_user = LicensesUsers(
                 name_client="Robotz Dev",
                 cpf_cnpj="55607848000175",
-                email_admin="nicholas@robotz.dev",
                 license_token=str(uuid4()),
             )
             license_user.users.append(user)
+            license_user.admins.append(user)
+            
             df = pd.read_excel("/home/robotz/CrawJUD-Web/export.xlsx")
             df.columns = df.columns.str.lower()
 
@@ -62,7 +67,7 @@ def init_database():
             db.session.add(license_user)
             db.session.commit()
             
-            print(f" * Root Pw: {senha}")
+            print(f" * Root Pw: {passwd}")
         
 def setServer(args):
     

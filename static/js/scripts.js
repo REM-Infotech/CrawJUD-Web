@@ -82,3 +82,4 @@ function showLoad(){
         $('#modalLoading').modal('show');
     }, 500)
 }
+

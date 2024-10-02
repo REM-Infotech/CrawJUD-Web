@@ -33,11 +33,7 @@ def create_app() -> tuple[Flask, int, bool]:
     db.init_app(app)
     mail.init_app(app)
     login_manager.init_app(app)
-    
-    
-        
-    
-    
+
     with app.app_context():
         from app.models import init_database
         from app import routes

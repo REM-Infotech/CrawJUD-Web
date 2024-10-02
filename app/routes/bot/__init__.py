@@ -50,6 +50,7 @@ def dashboard():
 @login_required
 def botlaunch(id: int, system: str, type: str):
 
+    title = "Robôs"
     bot_info = BotsCrawJUD.query.filter_by(id=id).first()
     display_name = bot_info.display_name
 
@@ -151,4 +152,4 @@ def botlaunch(id: int, system: str, type: str):
         flash("Erro ao iniciar robô", "error")
         
     return render_template("index.html", page=page, url=request.base_url,
-                           display_name=display_name, form=form)
+                           display_name=display_name, form=form, title=title)

@@ -40,13 +40,18 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="card-body bg-black">
-                            <div class="container overflow-auto">
-                                <ul id="messages" class="list-group list-group-flush"></ul>
+                        <div class="card-body bg-black  overflow-auto">
+                            <div class="container-fluid">
+                                <div class="overflow-y-scroll">
+                                    <ul id="messages" class="list-group list-group-flush"></ul>
+                                </div>
                             </div>
                         </div>
+                        <div class="card-footer small text-muted fw-semibold">
+                            <span id="status">Status: Em Execução | Total: </span>
+                        </div>
                     </div>
-
+                    
                 </div>
                 <div class="col-xl-6 col-md-6">
                     <div class="card mb-4 fixed-height-card" style="height: 600px;">
@@ -63,7 +68,9 @@
                             </div>
                         </div>
                         <div class="card-body"><canvas id="LogsBotChart" width="100%" height="50"></canvas></div>
-                        <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
+                        <div class="card-footer small text-muted fw-semibold">
+                            <span id="remaining">Restantes: -.- </span> | <span id="success">Sucessos: -.-</span> | <span id="errors">Erros: -.-</span>
+                        </div>
                     </div>
                 </div>
             </div>

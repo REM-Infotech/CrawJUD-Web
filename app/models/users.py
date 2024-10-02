@@ -1,11 +1,16 @@
-from app import login_manager
 from flask import request
 from flask_login import UserMixin
+
+from app import db
+from app import login_manager
+
 from uuid import uuid4
+from typing import Type
 from datetime import datetime
 import bcrypt
-from app import db
+
 import pytz
+from sqlalchemy.orm.relationships import RelationshipProperty
 salt = bcrypt.gensalt()
 
 
@@ -18,6 +23,10 @@ def load_user(user_id) -> int:
 
     return Users.query.get(int(user_id))
 
+admins = db.Table(
+    'admins', 
+    db.Column('license_user_id', db.Integer, db.ForeignKey('licenses_users.id'), primary_key=True),
+    db.Column('users_id', db.Integer, db.ForeignKey('users.id'), primary_key=True))
 
 licenseusr = db.Table(
     'licenseusr', 
@@ -37,7 +46,6 @@ licenses_users_credentials = db.Table(
     db.Column('credential_id', db.Integer, db.ForeignKey('credentials.id'), primary_key=True)
 )
 
-
 class Users(db.Model, UserMixin):
 
     __tablename__ = 'users'
@@ -53,7 +61,7 @@ class Users(db.Model, UserMixin):
     blob_doc = db.Column(db.LargeBinary(length=(2**32)-1))
 
     def __init__(self, login: str = None, nome_usuario: str = None,
-                 email: str = None, license_key: str = None) -> None:
+                 email: str = None, licenses: type[RelationshipProperty] = None) -> None:
 
         self.login = login
         self.nome_usuario = nome_usuario
@@ -77,11 +85,11 @@ class LicensesUsers(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name_client = db.Column(db.String(length=60), nullable=False, unique=True)
     cpf_cnpj = db.Column(db.String(length=30), nullable=False, unique=True)
-    email_admin = db.Column(db.String(length=50), nullable=False, unique=True)
     license_token = db.Column(db.String(length=512), nullable=False, unique=True)
     
     # Relacionamento de muitos para muitos com users
     users = db.relationship('Users', secondary=licenseusr, backref='licenses')
+    admins = db.relationship('Users', secondary=admins, backref='admin')
     
     # Relacionamento de muitos para muitos com Credentials
     credentials = db.relationship('Credentials', secondary=licenses_users_credentials, backref='licenses')
