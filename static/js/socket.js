@@ -105,10 +105,9 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     }
     function updateElements(data) {
-
-        console.log(data)
-        var total = parseInt(data.total) - 1;
-        var remaining = parseInt(data.remaining) - 1;
+        
+        var total = parseInt(data.total);
+        var remaining = parseInt(data.remaining);
         var success = parseInt(data.success);
         var errors = parseInt(data.errors);
         var status = data.status;
@@ -116,10 +115,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (status === "Finalizado") {
             checkStatus()
-        };
-
-        if (executed > total) {
-            executed -= 1
         };
 
         var CountErrors = document.querySelector('span[id="errors"]');

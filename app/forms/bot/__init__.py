@@ -34,4 +34,7 @@ class BotForm(FlaskForm):
         if kwargs.get("creds"):
             self.creds.choices = kwargs.get("creds")
 
-
+class SearchExec(FlaskForm):
+    
+    campo_busca = StringField("Buscar Execução")
+    submit = SubmitField("Buscar")
