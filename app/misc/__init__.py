@@ -36,7 +36,7 @@ def CredentialsGCS() -> Credentials:
     
     # Configure a autenticação para a conta de serviço do GCS
 
-def bucket(storageClient: Client, bucket_name: str = None) -> Bucket:
+def bucketGcs(storageClient: Client, bucket_name: str = None) -> Bucket:
     
     if not bucket_name:
         bucket_name = dotenv_values().get("bucket_name")
@@ -45,7 +45,7 @@ def bucket(storageClient: Client, bucket_name: str = None) -> Bucket:
     return bucket_obj
 
 def generate_signed_url(blob_name)  -> str:
-    blob = storageClient().Blob(blob_name, bucket)
+    blob = bucketGcs(storageClient()).blob((blob_name))
     url = blob.generate_signed_url(
         expiration=signed_url_lifetime,
         method='GET',
