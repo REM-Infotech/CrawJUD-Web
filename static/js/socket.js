@@ -127,8 +127,6 @@ document.addEventListener('DOMContentLoaded', function () {
         var textNode = document.createTextNode(progress.toFixed(2) + '%');
         
         if (status === "Finalizado") {
-            LogsBotChart.data.datasets[0].data[0] = remaining;
-            LogsBotChart.data.datasets[0].data[1] = errors;
             checkStatus();
 
         }else if (status !== "Finalizado"){
