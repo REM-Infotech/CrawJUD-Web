@@ -113,29 +113,35 @@ document.addEventListener('DOMContentLoaded', function () {
         var status = data.status;
         var executed = success + errors;
 
-        if (status === "Finalizado") {
-            checkStatus()
-        };
-
         var CountErrors = document.querySelector('span[id="errors"]');
         var Countremaining = document.querySelector('span[id="remaining"]');
         var CountSuccess = document.querySelector('span[id="success"]');
         var TextStatus = document.querySelector('span[id="status"]');
 
-        LogsBotChart.data.datasets[0].data = [remaining, success, errors]
-        CountErrors.innerHTML = `Erros: ${errors}`
-        Countremaining.innerHTML = `Restantes: ${remaining}`
-        CountSuccess.innerHTML = `Sucessos: ${success}`
-        TextStatus.innerHTML = `Status: ${status} | Total: ${total}`
+        
+        CountErrors.innerHTML = `Erros: ${errors}`;
+        Countremaining.innerHTML = `Restantes: ${remaining}`;
+        TextStatus.innerHTML = `Status: ${status} | Total: ${total}`;
 
         var progress = (executed / total) * 100;
         var textNode = document.createTextNode(progress.toFixed(2) + '%');
+        
+        if (status === "Finalizado") {
+            LogsBotChart.data.datasets[0].data[0] = remaining;
+            LogsBotChart.data.datasets[0].data[1] = errors;
+            checkStatus();
+
+        }else if (status !== "Finalizado"){
+            CountSuccess.innerHTML = `Sucessos: ${success}`;
+            LogsBotChart.data.datasets[0].data = [remaining, success, errors];
+        };
+        
 
         percent_progress.innerHTML = '';
         percent_progress.appendChild(textNode);
         percent_progress.style.width = progress + '%';
         LogsBotChart.update();
-    }
+    };
 })
 
 

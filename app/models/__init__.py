@@ -1,7 +1,7 @@
 from flask import current_app
 from app import db
 
-from app.models.users import Users, LicensesUsers, SuperUser
+from app.models.users import Users, LicensesUsers, SuperUser, admins
 from app.models.bots import BotsCrawJUD, Credentials, Executions
 from app.models.srv import Servers
 

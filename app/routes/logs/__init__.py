@@ -38,12 +38,13 @@ def obter_status_bot(pid: str) -> Type[Query]:
 
 def stopbot(user: str, pid: str, socket: str):
 
-    requests.post(url=f'{socket}/stop/{user}/{pid}', timeout=30)
+    requests.post(url=f'{socket}/stop/{user}/{pid}', timeout=300)
 
 @logsbot.route('/logs_bot/<sid>')
 @login_required
 def logs_bot(sid: str):
 
+    title = f"Execução {sid}"
     user_id = Users.query.filter(Users.login == session["login"]).first().id
     execution = db.session.query(Executions).join(Executions.user).filter(
         Users.id == user_id,  # Supondo que você também queira filtrar por um user_id específico
@@ -58,7 +59,8 @@ def logs_bot(sid: str):
         return redirect(url_for('exe.executions'))
 
     rows = execution.total_rows
-    return render_template("index.html", page='logs_bot.html', pid=sid, total_rows=rows, titlehtml=f"Execução - {sid}")
+    return render_template("index.html", page='logs_bot.html', pid=sid, 
+                           total_rows=rows, title=title)
 
 
 @logsbot.route('/socket_address/<pid>', methods=["GET"])

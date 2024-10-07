@@ -31,21 +31,23 @@ def executions():
             
             license_token = user.licenses[0].license_token
             
-            join_admins = executions.join(
-                Executions.licenses).join(LicensesUsers.admins).filter(Users.id == "user_id")
+            join_admins = executions.\
+                join(Executions.licenses).\
+                    join(LicensesUsers.admins).filter(Users.id == "user_id")
             
             admin_result = join_admins.first()
             
-            executions = executions.join(
-                Executions.licenses).filter(
-                LicensesUsers.license_token == license_token)
+            executions = executions.\
+                join(Executions.licenses).\
+                    filter(LicensesUsers.license_token == license_token)
   
             if not admin_result:
                 executions = executions.join(
-                    LicensesUsers.users).filter(Users.id == user_id)
-                
-            if pid:
-                executions = executions.filter(Executions.pid.contains(pid))
+                    LicensesUsers.users).\
+                        filter(Users.id == user_id)
+                        
+            executions = executions.filter(Executions.pid.contains(pid))
+            
         database = executions.all()
         
     except Exception as e:

@@ -50,10 +50,11 @@ def dashboard():
 @login_required
 def botlaunch(id: int, system: str, type: str):
 
-    title = "Robôs"
+    
     bot_info = BotsCrawJUD.query.filter_by(id=id).first()
     display_name = bot_info.display_name
-
+    title = display_name
+    
     states = [(state.state, state.state) for state in BotsCrawJUD.query.filter(
         BotsCrawJUD.type == type.upper(), BotsCrawJUD.system == system.upper()).all()]
 

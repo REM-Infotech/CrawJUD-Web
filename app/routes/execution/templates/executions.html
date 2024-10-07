@@ -66,7 +66,35 @@
                                 </tr>
                             </tfoot>
                             <tbody>
-                                {% include 'exectable.html'   %}
+                                {% if database %}
+                                {% for item in database %}
+                                <tr>
+                                    {% if item.status == "Falha ao iniciar" or item.status == "Finalizado"%}
+                                    <th>{{ item.pid }}</th>
+                                    {% else %}
+                                    <th><a href='{{ url_for("logsbot.logs_bot", sid=item.pid) }}'>{{ item.pid }}</a></th>
+                                    {% endif %}
+                                    <td></td>
+                                    <td></td>
+                                    <td>{{ item.arquivo_xlsx}}</td>
+                                    <td>{{ item.data_execucao}}</td>
+                                    <td>{{ item.status }}</td>
+                                    <td>{{ item.data_finalizacao}}</td>
+                                    {% if item.file_output == "Arguardando Arquivo" %}
+                                    <td>{{ item.file_output }}</td>
+                                    {% else %}
+                                    <td>
+                                        <a href="#" class="btn btn-sm btn-icon-split btn-success mb-3">
+                                            <span class="icon text-white-50">
+                                                <i class="fa-solid fa-file-csv"></i>
+                                            </span>
+                                            <span class="text">Arquivo</span>
+                                        </a>
+                                    </td>
+                                    {% endif %}
+                                </tr>
+                                {% endfor %}
+                                {% endif %}
                             </tbody>
                         </table>
                     </div>
