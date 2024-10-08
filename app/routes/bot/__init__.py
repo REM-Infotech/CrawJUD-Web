@@ -129,6 +129,7 @@ def botlaunch(id: int, system: str, type: str):
                                 files.update({credential.certficate: (credential.certficate, buff)})
                                 data.update({
                                     "login": credential.login,
+                                    "name_cert": credential.certficate,
                                     "token": credential.key,
                                     "login_method": credential.login_method
                                 })
