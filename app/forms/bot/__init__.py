@@ -29,10 +29,13 @@ class BotForm(FlaskForm):
 
         # Se tiver 'state' e 'creds' no kwargs, popular as escolhas
         if kwargs.get("state"):
-            self.state.choices = kwargs.get("state")
+            self.state.choices.extend(kwargs.get("state"))
+            
+        elif kwargs.get("client"):
+            self.client.choices.extend(kwargs.get("client"))   
         
         if kwargs.get("creds"):
-            self.creds.choices = kwargs.get("creds")
+            self.creds.choices.extend(kwargs.get("creds"))
 
 class SearchExec(FlaskForm):
     

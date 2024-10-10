@@ -8,7 +8,7 @@ from collections import Counter
 
 from app import db
 from app.forms.credentials import CredentialsForm
-from app.models import Credentials, BotsCrawJUD, LicensesUsers
+from app.models import Credentials, BotsCrawJUD, LicensesUsers, Users
 
 path_template = os.path.join(pathlib.Path(
     __file__).parent.resolve(), "templates")
@@ -16,11 +16,17 @@ cred = Blueprint("creds", __name__, template_folder=path_template)
 
 
 @cred.route("/credentials/dashboard", methods=["GET"])
+@login_required
 def credentials():
-
+    user = Users.query.filter(Users.login == session["login"]).first()
+    license_token = user.licenses[0].license_token
+    
+    database = db.session.query(LicensesUsers).\
+        filter(LicensesUsers.license_token == license_token).first().credentials
+    
     title = "Credenciais"
     page = "credentials.html"
-    return render_template("index.html", page=page, title=title)
+    return render_template("index.html", page=page, title=title, database=database)
 
 @cred.route("/credentials/cadastro", methods=["GET", "POST"])
 @login_required
@@ -44,8 +50,10 @@ def cadastro():
 
     if form.validate_on_submit():
         
-        if Credentials.query.filter(
-            Credentials.nome_credencial == form.nome_cred.data).first():
+        if Credentials.query.filter(Credentials.\
+            nome_credencial == form.\
+            nome_cred.data).first():
+            
             flash("Existem credenciais com este nome já cadastrada!", "error")
             return redirect(url_for("creds.cadastro"))
         
@@ -100,7 +108,7 @@ def cadastro():
                 break
         
         
-        
+        flash("Credencial salva com sucesso!", "success")
         return redirect(url_for("creds.credentials"))
 
     return render_template("index.html", page=page, form=form,

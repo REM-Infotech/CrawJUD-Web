@@ -40,10 +40,11 @@ FORM_CONFIGURATOR = {
 @login_required
 def dashboard():
 
+    title = "Robôs"
     page = "botboard.html"
     bots = BotsCrawJUD.query.all()
 
-    return render_template("index.html", page=page, bots=bots)
+    return render_template("index.html", page=page, bots=bots, title=title)
 
 
 @bot.route("/bot/<id>/<system>/<type>", methods=["GET", "POST"])
@@ -58,6 +59,9 @@ def botlaunch(id: int, system: str, type: str):
     states = [(state.state, state.state) for state in BotsCrawJUD.query.filter(
         BotsCrawJUD.type == type.upper(), BotsCrawJUD.system == system.upper()).all()]
 
+    clients = [(client.client, client.client) for client in BotsCrawJUD.query.filter(
+        BotsCrawJUD.type == type.upper(), BotsCrawJUD.system == system.upper()).all()] 
+    
     creds = LicensesUsers.query.filter(
         LicensesUsers.license_token == session["license_token"]).first()
 
@@ -76,7 +80,8 @@ def botlaunch(id: int, system: str, type: str):
     page = "botform.html"
     form = BotForm(dynamic_fields=form_config, **{
         "state": states,
-        "creds": credts
+        "creds": credts,
+        "clients": clients
     })
     temporarypath = current_app.config["TEMP_PATH"]
     if form.validate_on_submit():
@@ -140,6 +145,9 @@ def botlaunch(id: int, system: str, type: str):
 
                 if item == "state":
                     data.update({"state": value})
+                    
+                elif item == "client":
+                    data.update({"client": value})
                 
         servers = Servers.query.all()
         for server in servers:

@@ -74,8 +74,8 @@
                                     {% else %}
                                     <th><a href='{{ url_for("logsbot.logs_bot", sid=item.pid) }}'>{{ item.pid }}</a></th>
                                     {% endif %}
-                                    <td></td>
-                                    <td></td>
+                                    <td>{{ item.user[0].nome_usuario }}</td>
+                                    <td>{{ item.bot[0].display_name  }}</td>
                                     <td>{{ item.arquivo_xlsx}}</td>
                                     <td>{{ item.data_execucao}}</td>
                                     <td>{{ item.status }}</td>
