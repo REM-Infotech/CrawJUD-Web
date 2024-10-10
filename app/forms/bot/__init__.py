@@ -31,8 +31,8 @@ class BotForm(FlaskForm):
         if kwargs.get("state"):
             self.state.choices.extend(kwargs.get("state"))
             
-        elif kwargs.get("client"):
-            self.client.choices.extend(kwargs.get("client"))   
+        if kwargs.get("clients"):
+            self.client.choices.extend(kwargs.get("clients"))   
         
         if kwargs.get("creds"):
             self.creds.choices.extend(kwargs.get("creds"))

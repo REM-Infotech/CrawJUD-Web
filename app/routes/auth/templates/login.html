@@ -14,7 +14,7 @@
 
     <title>CrawJUD</title>
 
-    <link href="{{ url_for('static', filename='css/sb-admin-2.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
         integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
         crossorigin="anonymous"></script>
@@ -26,62 +26,33 @@
 
 </head>
 
-<body class="bg-gradient-primary">
+<body class="d-flex align-items-center py-4 bg-purple">
+    <main class="form-signin w-100 m-auto">
+        <form method="post">
 
-    <div class="container">
-        <!-- Outer Row -->
-        <div class="row justify-content-center">
+            {{ form.hidden_tag() }}
+            <img class="mb-4" src="{{ url_for('static', filename='img/crawjud2.png')  }}" alt="" width="80" height="80">
+            <h1 class="h3 mb-3 text-white fw-normal">CrawJUD 8.0</h1>
 
-            <div class="col-xl-10 col-lg-12 col-md-9">
-
-                <div class="card o-hidden border-0 shadow-lg my-5">
-                    <div class="card-body p-0">
-                        <!-- Nested Row within Card Body -->
-                        <div class="row ">
-                            <div class="col-lg-6 bg-black text-center p-5">
-                                <img class="rounded align-items-center"
-                                    src="{{ url_for('static', filename='img/crawjud.png')  }}" alt="" width="65%"
-                                    height="auto">
-                            </div>
-                            <div class="col-lg-6">
-                                <div class="p-5">
-                                    <div class="text-center">
-                                        <h4 class="text-gray-900 mb-4 text-decoration-underline">CrawJUD</h4>
-                                    </div>
-                                    <form method="post">
-
-                                        {{ form.hidden_tag() }}
-                                        <div class="form-floating mb-3">
-                                            {{ form.login(class="form-control form-control-user", id=form.login.id,
-                                            placeholder=form.login.label.text) }}
-                                            {{ form.login.label(for=form.login.id) }}
-                                        </div>
-                                        <div class="form-floating mb-3">
-                                            {{ form.password(class="form-control form-control-user",
-                                            id=form.password.id, placeholder=form.password.label.text) }}
-                                            {{ form.password.label(for=form.password.id) }}
-                                        </div>
-                                        <div class="form-check mb-3">
-                                            {{ form.remember_me(class="form-check-input", id=form.remember_me.id ) }}
-                                            {{ form.remember_me.label(class="form-check-label", for=form.remember_me.id)
-                                            }}
-                                        </div>
-                                        {{ form.submit(class="btn btn-primary btn-user btn-block", onclick="showLoad()") }}
-                                    </form>
-                                    <hr>
-                                    <div class="text-center">
-                                        <a class="small" href="forgot-password.html">Forgot Password?</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
+            <div class="form-floating">
+                {{ form.login(class="form-control", id=form.login.id, placeholder=form.login.label.text) }}
+                {{ form.login.label(for=form.login.id) }}
+            </div>
+            <div class="form-floating">
+                {{ form.password(class="form-control",
+                id=form.password.id, placeholder=form.password.label.text) }}
+                {{ form.password.label(for=form.password.id) }}
             </div>
 
-        </div>
-    </div>
+            <div class="form-check text-start my-3">
+                {{ form.remember_me(class="form-check-input", id=form.remember_me.id ) }}
+                {{ form.remember_me.label(class="form-check-label text-white", for=form.remember_me.id)
+                }}
+            </div>
+            {{ form.submit(class="btn btn-primary w-100 py-2", onclick="showLoad()") }}
+            <p class="mt-5 mb-3 text-white">© 2017–2024</p>
+        </form>
+    </main>
     {% with messages = get_flashed_messages() %}
     {% if messages %}
     {% include 'include/message.html' %}

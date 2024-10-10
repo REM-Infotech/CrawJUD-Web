@@ -52,6 +52,7 @@ def forgot_password():
 def logout():
     
     logout_user()
+    session.pop('location')
     flash("Logout efetuado com sucesso!", "success")
     return redirect(url_for("auth.login"))
 
