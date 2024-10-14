@@ -58,8 +58,8 @@ $(document).ready(function () {
     });
 
     // Limpar todas as opções do segundo select
-    $('#varas').empty();
     var allOptions = $('#varas').html();
+    $('#varas').empty();
 
     // Função para mostrar ou ocultar as opções do segundo select
     $('#state').on('change', function () {

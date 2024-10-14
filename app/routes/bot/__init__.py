@@ -23,7 +23,7 @@ FORM_CONFIGURATOR = {
         "file_auth": ["xlsx", "creds", "state"],
         "multipe_files": ["xlsx", "creds", "state", "otherfiles"],
         "only_file": ["xlsx", "state"],
-        "catchall": ["xlsx", "creds", "state", "varas"]
+        "pautas": ["data_inicio", "data_fim", "creds", "state", "varas"]
     },
     "ADMINISTRATIVO": {
         "file_auth": ["xlsx", "creds", "client"],
@@ -52,17 +52,16 @@ def dashboard():
 @login_required
 def botlaunch(id: int, system: str, type: str):
 
-    
     bot_info = BotsCrawJUD.query.filter_by(id=id).first()
     display_name = bot_info.display_name
     title = display_name
-    
+
     states = [(state.state, state.state) for state in BotsCrawJUD.query.filter(
         BotsCrawJUD.type == type.upper(), BotsCrawJUD.system == system.upper()).all()]
 
     clients = [(client.client, client.client) for client in BotsCrawJUD.query.filter(
-        BotsCrawJUD.type == type.upper(), BotsCrawJUD.system == system.upper()).all()] 
-    
+        BotsCrawJUD.type == type.upper(), BotsCrawJUD.system == system.upper()).all()]
+
     creds = LicensesUsers.query.filter(
         LicensesUsers.license_token == session["license_token"]).first()
 
@@ -71,20 +70,20 @@ def botlaunch(id: int, system: str, type: str):
         if credential.system == system.upper():
             credts.append((credential.nome_credencial,
                           credential.nome_credencial))
-            
+
     form_config = []
-    
+
     classbot = str(bot_info.classification)
     form_setup = str(bot_info.form_cfg)
-    
-    if any(type.upper() == tipobot for tipobot in ["PAUTA", "PROC_PARTE"]):
-        form_setup = "catchall"
-        
+
+    if type.upper() == "PAUTA" and system.upper() == "PJE":
+        form_setup = "pautas"
+
     form_config.extend(FORM_CONFIGURATOR[classbot][form_setup])
-    
+
     if system.upper() == "PROJUDI" and type.upper() == "PROTOCOLO" and bot_info.state == "AM":
         form_config.append("password")
-    
+
     page = "botform.html"
     form = BotForm(dynamic_fields=form_config, **{
         "state": states,
@@ -98,10 +97,10 @@ def botlaunch(id: int, system: str, type: str):
         data = {}
         pid = generate_pid()
         data.update({
-            "pid": pid, 
+            "pid": pid,
             "user": session["login"]
         })
-        
+
         headers = {'CONTENT_TYPE': request.environ['CONTENT_TYPE']}
         data_form = form.data.items()
         files = {}
@@ -109,18 +108,23 @@ def botlaunch(id: int, system: str, type: str):
             if isinstance(value, FileStorage):
 
                 data.update({"xlsx": secure_filename(value.filename)})
-                value.save(os.path.join(temporarypath, secure_filename(value.filename)))
-                buff = open(os.path.join(temporarypath,secure_filename(value.filename)), "rb")
-                files.update({ secure_filename(value.filename): (secure_filename(value.filename), buff, value.mimetype)})
-                
+                value.save(os.path.join(temporarypath,
+                           secure_filename(value.filename)))
+                buff = open(os.path.join(temporarypath,
+                            secure_filename(value.filename)), "rb")
+                files.update({secure_filename(value.filename): (
+                    secure_filename(value.filename), buff, value.mimetype)})
+
             if isinstance(value, list):
-                
+
                 for filev in value:
-                    filev.save(os.path.join(temporarypath, secure_filename(filev.filename)))
-                    buff = open(os.path.join(temporarypath,secure_filename(filev.filename)), "rb")
-                    files.update({ secure_filename(filev.filename): (secure_filename(filev.filename), buff, filev.mimetype)})
-                    
-                
+                    filev.save(os.path.join(temporarypath,
+                               secure_filename(filev.filename)))
+                    buff = open(os.path.join(temporarypath,
+                                secure_filename(filev.filename)), "rb")
+                    files.update({secure_filename(filev.filename): (
+                        secure_filename(filev.filename), buff, filev.mimetype)})
+
             if not isinstance(value, FileStorage):
 
                 if item == "creds":
@@ -132,15 +136,16 @@ def botlaunch(id: int, system: str, type: str):
                                     "password": credential.password,
                                     "login_method": credential.login_method
                                 })
-                                
-                                
+
                             if credential.login_method == "cert":
-                                certpath = os.path.join(temporarypath, credential.certficate)
-                                with open(certpath , "wb") as f:
+                                certpath = os.path.join(
+                                    temporarypath, credential.certficate)
+                                with open(certpath, "wb") as f:
                                     f.write(credential.certficate_blob)
-                                
+
                                 buff = open(os.path.join(certpath), "rb")
-                                files.update({credential.certficate: (credential.certficate, buff)})
+                                files.update({credential.certficate: (
+                                    credential.certficate, buff)})
                                 data.update({
                                     "login": credential.login,
                                     "name_cert": credential.certficate,
@@ -148,27 +153,29 @@ def botlaunch(id: int, system: str, type: str):
                                     "login_method": credential.login_method
                                 })
                             break
-                
+
                 if item == "password" and system.upper() == "PROJUDI" and type.upper() == "PROTOCOLO" and bot_info.state == "AM":
                     data.update({"token": value})
 
                 if item == "state":
                     data.update({"state": value})
-                    
+
                 elif item == "client":
                     data.update({"client": value})
-                
+
         servers = Servers.query.all()
         for server in servers:
             data.update({
                 "url_socket": server.address
             })
-            response = requests.post(f"https://{server.address}{request.path}", data=data, headers=headers, files=files)
+            response = requests.post(
+                f"https://{server.address}{request.path}", data=data, headers=headers, files=files)
             if response.status_code == 200:
-                flash(f"Execução iniciada dashcom sucesso! PID: {pid}", "success")
+                flash(f"Execução iniciada dashcom sucesso! PID: {
+                      pid}", "success")
                 return redirect(url_for("logsbot.logs_bot", sid=pid))
 
         flash("Erro ao iniciar robô", "error")
-        
+
     return render_template("index.html", page=page, url=request.base_url,
                            display_name=display_name, form=form, title=title)

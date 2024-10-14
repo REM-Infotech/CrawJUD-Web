@@ -25,16 +25,17 @@
                         {{ form.hidden_tag() }}
                         <div class="row g-2">
                             <div class="col-md-10">
-                                {{ form.campo_busca(class="form-control", id="campoBusca", placeholder="Buscar Execução")}}
+                                {{ form.campo_busca(class="form-control", id="campoBusca", placeholder="Buscar
+                                Execução")}}
                             </div>
                             <div class="col-md-2">
                                 <div class="mb-3 d-grid gap-2">
                                     {{ form.submit(class="btn btn-primary btn-md h-100") }}
                                 </div>
                             </div>
-                        </div>  
+                        </div>
                         {% endif %}
-                        
+
                     </form>
                     <hr>
                 </div>
@@ -72,10 +73,11 @@
                                     {% if item.status == "Falha ao iniciar" or item.status == "Finalizado"%}
                                     <th>{{ item.pid }}</th>
                                     {% else %}
-                                    <th><a href='{{ url_for("logsbot.logs_bot", sid=item.pid) }}'>{{ item.pid }}</a></th>
+                                    <th><a href='{{ url_for("logsbot.logs_bot", sid=item.pid) }}'>{{ item.pid }}</a>
+                                    </th>
                                     {% endif %}
                                     <td>{{ item.user[0].nome_usuario }}</td>
-                                    <td>{{ item.bot[0].display_name  }}</td>
+                                    <td>{{ item.bot[0].display_name }}</td>
                                     <td>{{ item.arquivo_xlsx}}</td>
                                     <td>{{ item.data_execucao}}</td>
                                     <td>{{ item.status }}</td>
@@ -84,7 +86,8 @@
                                     <td>{{ item.file_output }}</td>
                                     {% else %}
                                     <td>
-                                        <a href="#" class="btn btn-sm btn-icon-split btn-success mb-3">
+                                        <a href="{{ url_for('exe.download_file', filename=item.file_output) }}"
+                                            class="btn btn-sm btn-icon-split btn-success mb-3">
                                             <span class="icon text-white-50">
                                                 <i class="fa-solid fa-file-csv"></i>
                                             </span>
@@ -98,7 +101,7 @@
                             </tbody>
                         </table>
                     </div>
-                    
+
                 </div>
             </div>
 
