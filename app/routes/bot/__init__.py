@@ -23,6 +23,7 @@ FORM_CONFIGURATOR = {
         "file_auth": ["xlsx", "creds", "state"],
         "multipe_files": ["xlsx", "creds", "state", "otherfiles"],
         "only_file": ["xlsx", "state"],
+        "catchall": ["xlsx", "creds", "state", "varas"]
     },
     "ADMINISTRATIVO": {
         "file_auth": ["xlsx", "creds", "client"],
@@ -72,7 +73,14 @@ def botlaunch(id: int, system: str, type: str):
                           credential.nome_credencial))
             
     form_config = []
-    form_config.extend(FORM_CONFIGURATOR[bot_info.classification][bot_info.form_cfg])
+    
+    classbot = str(bot_info.classification)
+    form_setup = str(bot_info.form_cfg)
+    
+    if any(type.upper() == tipobot for tipobot in ["PAUTA", "PROC_PARTE"]):
+        form_setup = "catchall"
+        
+    form_config.extend(FORM_CONFIGURATOR[classbot][form_setup])
     
     if system.upper() == "PROJUDI" and type.upper() == "PROTOCOLO" and bot_info.state == "AM":
         form_config.append("password")
@@ -81,7 +89,8 @@ def botlaunch(id: int, system: str, type: str):
     form = BotForm(dynamic_fields=form_config, **{
         "state": states,
         "creds": credts,
-        "clients": clients
+        "clients": clients,
+        "system": system
     })
     temporarypath = current_app.config["TEMP_PATH"]
     if form.validate_on_submit():

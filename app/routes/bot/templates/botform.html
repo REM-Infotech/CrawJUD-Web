@@ -6,13 +6,13 @@
 				enctype="multipart/form-data">
 				<h4 class="card-header p-4">{{ display_name }}</h4>
 				{% if form %}
-                <div class="card-body bg-primary bg-opacity-75 p-4 p-sm-5">
+                <div class="card-body bg-warning bg-opacity-75 p-4 p-sm-5">
 					{{ form.hidden_tag() }}
 					<div class="row g-3 rounded justify-content-center p-3">
 						{% for field in form %}
 						<div class="col-md-10 mb-3 border border-secondary p-2 border-2 rounded bg-white">
 							{{ field.label(class="form-label") }}
-							{{ field(class="form-control", placeholder=field.label.text) }}
+							{{ field(class="form-control", id=field.id, **{"data-placeholder": field.label.text}) }}
 							
 						</div>
 						{% endfor %}

@@ -1,12 +1,14 @@
-var ModalMessage = document.getElementById('ModalMessage');
-if (ModalMessage != null) {
-    $(document).ready(function () {
-        $('#ModalMessage').modal('show');
-    });
-}
+
 
 
 window.addEventListener('DOMContentLoaded', event => {
+
+    var ModalMessage = document.getElementById('ModalMessage');
+    if (ModalMessage != null) {
+        $(document).ready(function () {
+            $('#ModalMessage').modal('show');
+        });
+    }
 
     // Toggle the side navigation
     const sidebarToggle = document.body.querySelector('#sidebarToggle');
@@ -25,7 +27,7 @@ window.addEventListener('DOMContentLoaded', event => {
 });
 
 // Função para filtrar os cards
-function filterCards(element) {
+void function filterCards(element) {
     // Pegar o valor digitado no campo de busca
     var input = element;
     var filter = input.value.toUpperCase();
@@ -46,40 +48,67 @@ function filterCards(element) {
     }
 }
 
-var selectors = document.getElementsByTagName("select");
+$(document).ready(function () {
 
-if (selectors.length > 0) {
-  for (let element of selectors) {  // Mudança aqui, para usar 'for...of' em vez de 'for...in'
-
-    $(document).ready(function () {
-      // Aqui podemos usar jQuery diretamente, pois estamos aplicando ao próprio elemento
-      $(element).select2({
+    $('select').select2({
         theme: "bootstrap-5",
-        width: $(element).data('width') ? $(element).data('width') : $(element).hasClass('w-100') ? '100%' : 'style',
-        placeholder: $(element).data('placeholder'),
-      });
+        width: $('select').data('width') ? $('select').data('width') : $('select').hasClass('w-100') ? '100%' : 'style',
+        placeholder: $('select').data('placeholder')
+        
     });
-  }
-}
+
+    // Limpar todas as opções do segundo select
+    $('#varas').empty();
+    var allOptions = $('#varas').html();
+
+    // Função para mostrar ou ocultar as opções do segundo select
+    $('#state').on('change', function () {
+
+        var selectedCategory = $(this).val(); // Obter a categoria selecionada
+
+        // Re-adicionar as opções correspondentes à categoria selecionada
+        $(allOptions).each(function () {
+            var optionCategory = $(this).data('juizado_estado');
+            if (optionCategory === selectedCategory) {
+        
+                $('#varas').append($(this)).trigger('change'); // Re-adicionar a opção
+            }
+        });
+
+        // Atualizar o Select2
+        $('#varas').val(null).trigger('change'); // Limpar a seleção atual
+
+        // Ocultar os itens não correspondentes no Select2
+        $('#varas').on('select2:open', function () {
+            $('.select2-results__option').each(function () {
+                var optionCategory = $(this).data('category');
+                if (optionCategory !== selectedCategory) {
+                    $(this).hide(); // Esconder as opções que não correspondem à categoria
+                }
+            });
+        });
+    });
+
+});
+
 
 function authMethodChange(element) {
 
     let div_cert = document.querySelector('div[id="cert"]');
     let div_pw = document.querySelector('div[id="pw"]');
 
-    if (element.value === "cert"){
+    if (element.value === "cert") {
         div_cert.style.display = "block";
         div_pw.style.display = "none";
 
-    } else if (element.value === "pw"){
+    } else if (element.value === "pw") {
         div_cert.style.display = "none";
         div_pw.style.display = "block";
     }
 }
 
-function showLoad(){
+void function showLoad() {
     setTimeout(() => {
         $('#modalLoading').modal('show');
     }, 500)
 }
-

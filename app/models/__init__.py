@@ -47,7 +47,7 @@ def init_database():
             
             super_user.users = user
             
-            df = pd.read_excel("/home/robotz/CrawJUD-Web/export.xlsx")
+            df = pd.read_excel("export.xlsx")
             df.columns = df.columns.str.lower()
 
             data = []
