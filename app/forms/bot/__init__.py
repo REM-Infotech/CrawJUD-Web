@@ -19,18 +19,26 @@ permited_file2 = FileAllowed(
 
 class BotForm(FlaskForm):
 
-    xlsx = FileField("Arquivo do robô", validators=[FileRequired(),
-    permited_file], render_kw={"accept": ".xlsx, .xls, .csv"})
+    xlsx = FileField("Arquivo do robô", validators=[
+                     permited_file], render_kw={"accept": ".xlsx, .xls, .csv"})
 
-    data_inicio = DateField("Data de Início", default=datetime.now(pytz.timezone('Etc/GMT+4')))
-    data_fim = DateField("Data Fim", default=datetime.now(pytz.timezone('Etc/GMT+4')))
+    parte_name = StringField("Nome da parte")
+    doc_parte = StringField("CPF/CNPJ da parte")
+    polo_parte = SelectField("Classificação (Autor/Réu)", choices=[
+        ("autor", "Autor"), ("reu", "Réu")])
     
-    otherfiles = MultipleFileField("Arquivo adicionais",
-    validators=[permited_file2], render_kw={"accept": ".pdf, .jpg, .jpeg"})
+    data_inicio = DateField(
+        "Data de Início", default=datetime.now(pytz.timezone('Etc/GMT+4')))
+    data_fim = DateField("Data Fim", default=datetime.now(
+        pytz.timezone('Etc/GMT+4')))
+
+    otherfiles = MultipleFileField(
+        "Arquivo adicionais", validators=[permited_file2], render_kw={"accept": ".pdf, .jpg, .jpeg"})
 
     creds = SelectField("Selecione a Credencial", choices=[])
     password = StringField("Senha token")
-    state = SelectField("Selecione o Estado", choices=[("Selecione", "Selecione")])
+    state = SelectField("Selecione o Estado", choices=[
+                        ("Selecione", "Selecione")])
     varas = SelectMultipleField("Selecione a Vara", choices=[])
     client = SelectField("Selecione o Cliente", choices=[])
     submit = SubmitField("Iniciar Execução")
@@ -45,7 +53,6 @@ class BotForm(FlaskForm):
                 if field_name not in dynamic_fields:
                     del self._fields[field_name]
 
-        
         if kwargs.get("system"):
             choices = []
             all_varas = varas().get(kwargs["system"].upper())
@@ -75,14 +82,14 @@ class SearchExec(FlaskForm):
 
 
 def varas() -> dict[str, dict[str, dict[str, dict[str, str]]]]:
-    
+
     file_p = pathlib.Path(__file__).parent.resolve()
     file_json = os.path.join(file_p, "varas.json")
-    
+
     dict_files = {}
-    
+
     with open(file_json, "rb") as f:
         obj = f.read()
         dict_files = json.loads(obj)
-        
+
     return dict_files

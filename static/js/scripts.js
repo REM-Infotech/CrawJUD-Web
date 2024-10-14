@@ -27,7 +27,7 @@ window.addEventListener('DOMContentLoaded', event => {
 });
 
 // Função para filtrar os cards
-void function filterCards(element) {
+function filterCards(element) {
     // Pegar o valor digitado no campo de busca
     var input = element;
     var filter = input.value.toUpperCase();
@@ -107,7 +107,7 @@ function authMethodChange(element) {
     }
 }
 
-void function showLoad() {
+function showLoad() {
     setTimeout(() => {
         $('#modalLoading').modal('show');
     }, 500)

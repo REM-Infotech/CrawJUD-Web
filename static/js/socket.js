@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         li.appendChild(document.createTextNode(msg));
                         ul.appendChild(li);
 
-                        var randomId = "id_" + pos + pid;
+                        var randomId = `id_${Math.random().toString(36).substring(2, 9)}`;
 
                         li.setAttribute("id", randomId);
                         document.getElementById(randomId).scrollIntoView({ behavior: "smooth", block: "end" });

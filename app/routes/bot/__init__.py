@@ -1,12 +1,16 @@
 from flask import (Blueprint, render_template, request, flash,
-                   url_for, redirect, session, current_app)
+                   url_for, redirect, session, current_app, jsonify)
 from flask_login import login_required
 from werkzeug.utils import secure_filename
 from werkzeug.datastructures import FileStorage
 
 import os
+import json
 import pathlib
 import requests
+from typing import Union
+from datetime import datetime
+from datetime import date
 
 from app.forms import BotForm
 from app.misc import generate_pid
@@ -23,7 +27,9 @@ FORM_CONFIGURATOR = {
         "file_auth": ["xlsx", "creds", "state"],
         "multipe_files": ["xlsx", "creds", "state", "otherfiles"],
         "only_file": ["xlsx", "state"],
-        "pautas": ["data_inicio", "data_fim", "creds", "state", "varas"]
+        "pautas": ["data_inicio", "data_fim", "creds", "state", "varas"],
+        "proc_parte": ["parte_name", "doc_parte", "data_inicio", "data_fim", 
+                       "polo_parte", "state", "varas", "creds"]
     },
     "ADMINISTRATIVO": {
         "file_auth": ["xlsx", "creds", "client"],
@@ -48,19 +54,21 @@ def dashboard():
     return render_template("index.html", page=page, bots=bots, title=title)
 
 
-@bot.route("/bot/<id>/<system>/<type>", methods=["GET", "POST"])
+@bot.route("/bot/<id>/<system>/<typebot>", methods=["GET", "POST"])
 @login_required
-def botlaunch(id: int, system: str, type: str):
+def botlaunch(id: int, system: str, typebot: str):
 
     bot_info = BotsCrawJUD.query.filter_by(id=id).first()
     display_name = bot_info.display_name
     title = display_name
 
     states = [(state.state, state.state) for state in BotsCrawJUD.query.filter(
-        BotsCrawJUD.type == type.upper(), BotsCrawJUD.system == system.upper()).all()]
+        BotsCrawJUD.type == typebot.
+        upper(), BotsCrawJUD.system == system.upper()).all()]
 
     clients = [(client.client, client.client) for client in BotsCrawJUD.query.filter(
-        BotsCrawJUD.type == type.upper(), BotsCrawJUD.system == system.upper()).all()]
+        BotsCrawJUD.type == typebot.
+        upper(), BotsCrawJUD.system == system.upper()).all()]
 
     creds = LicensesUsers.query.filter(
         LicensesUsers.license_token == session["license_token"]).first()
@@ -76,12 +84,17 @@ def botlaunch(id: int, system: str, type: str):
     classbot = str(bot_info.classification)
     form_setup = str(bot_info.form_cfg)
 
-    if type.upper() == "PAUTA" and system.upper() == "PJE":
+    if typebot.\
+            upper() == "PAUTA" and system.upper() == "PJE":
         form_setup = "pautas"
-
+        
+    elif typebot.lower() == "proc_parte":
+        form_setup = "proc_parte"
+    
     form_config.extend(FORM_CONFIGURATOR[classbot][form_setup])
 
-    if system.upper() == "PROJUDI" and type.upper() == "PROTOCOLO" and bot_info.state == "AM":
+    if system.upper() == "PROJUDI" and typebot.\
+            upper() == "PROTOCOLO" and bot_info.state == "AM":
         form_config.append("password")
 
     page = "botform.html"
@@ -102,7 +115,12 @@ def botlaunch(id: int, system: str, type: str):
         })
 
         headers = {'CONTENT_TYPE': request.environ['CONTENT_TYPE']}
-        data_form = form.data.items()
+        data_form: dict[
+            str, Union[
+                str, datetime,
+                FileStorage, list[FileStorage],
+                list[str]]] = form.data.items()
+
         files = {}
         for item, value in data_form:
             if isinstance(value, FileStorage):
@@ -117,13 +135,18 @@ def botlaunch(id: int, system: str, type: str):
 
             if isinstance(value, list):
 
+                if not isinstance(value[0], FileStorage):
+                    data.update({item: value})
+                    continue
+
                 for filev in value:
-                    filev.save(os.path.join(temporarypath,
-                               secure_filename(filev.filename)))
-                    buff = open(os.path.join(temporarypath,
-                                secure_filename(filev.filename)), "rb")
-                    files.update({secure_filename(filev.filename): (
-                        secure_filename(filev.filename), buff, filev.mimetype)})
+                    if isinstance(filev, FileStorage):
+                        filev.save(os.path.join(temporarypath,
+                                                secure_filename(filev.filename)))
+                        buff = open(os.path.join(temporarypath,
+                                    secure_filename(filev.filename)), "rb")
+                        files.update({secure_filename(filev.filename): (
+                            secure_filename(filev.filename), buff, filev.mimetype)})
 
             if not isinstance(value, FileStorage):
 
@@ -154,14 +177,14 @@ def botlaunch(id: int, system: str, type: str):
                                 })
                             break
 
-                if item == "password" and system.upper() == "PROJUDI" and type.upper() == "PROTOCOLO" and bot_info.state == "AM":
+                data.update({item: value})
+                if isinstance(value, date):
+                    data.update({item: value.strftime("%Y-%m-%d")})
+
+                if item == "password" and system.upper() == "PROJUDI" and typebot.\
+                        upper() == "PROTOCOLO" and bot_info.state == "AM":
+
                     data.update({"token": value})
-
-                if item == "state":
-                    data.update({"state": value})
-
-                elif item == "client":
-                    data.update({"client": value})
 
         servers = Servers.query.all()
         for server in servers:
@@ -169,10 +192,11 @@ def botlaunch(id: int, system: str, type: str):
                 "url_socket": server.address
             })
             response = requests.post(
-                f"https://{server.address}{request.path}", data=data, headers=headers, files=files)
+                f"https://{server.address}{request.path}", json=json.dumps(data),
+                headers=headers, files=files)
             if response.status_code == 200:
-                flash(f"Execução iniciada dashcom sucesso! PID: {
-                      pid}", "success")
+                message = f"Execução iniciada dashcom sucesso! PID: {pid}"
+                flash(message, "success")
                 return redirect(url_for("logsbot.logs_bot", sid=pid))
 
         flash("Erro ao iniciar robô", "error")
