@@ -33,7 +33,7 @@ def login():
         if not session.get("location"):
             session["location"] = url_for("dash.dashboard")
         
-        license_usr = usr.licenses[0]
+        license_usr = usr.licenseusr
         session.permanent = form.remember_me.data
         session["login"] = usr.login
         session["nome_usuario"] = usr.nome_usuario

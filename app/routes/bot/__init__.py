@@ -12,9 +12,10 @@ from typing import Union
 from datetime import datetime
 from datetime import date
 
+from app import db
 from app.forms import BotForm
 from app.misc import generate_pid
-from app.models import BotsCrawJUD, LicensesUsers, Servers
+from app.models import BotsCrawJUD, LicensesUsers, Servers, Credentials
 
 
 path_template = os.path.join(pathlib.Path(
@@ -70,11 +71,13 @@ def botlaunch(id: int, system: str, typebot: str):
         BotsCrawJUD.type == typebot.
         upper(), BotsCrawJUD.system == system.upper()).all()]
 
-    creds = LicensesUsers.query.filter(
-        LicensesUsers.license_token == session["license_token"]).first()
+    creds = db.session.query(Credentials).\
+        join(LicensesUsers).\
+        filter(LicensesUsers.license_token == session["license_token"]).\
+        all()
 
     credts: list[tuple[str, str]] = []
-    for credential in creds.credentials:
+    for credential in creds:
         if credential.system == system.upper():
             credts.append((credential.nome_credencial,
                           credential.nome_credencial))
@@ -151,7 +154,7 @@ def botlaunch(id: int, system: str, typebot: str):
             if not isinstance(value, FileStorage):
 
                 if item == "creds":
-                    for credential in creds.credentials:
+                    for credential in creds:
                         if credential.nome_credencial == value:
                             if credential.login_method == "pw":
                                 data.update({
@@ -191,9 +194,17 @@ def botlaunch(id: int, system: str, typebot: str):
             data.update({
                 "url_socket": server.address
             })
-            response = requests.post(
-                f"https://{server.address}{request.path}", json=json.dumps(data),
-                headers=headers, files=files)
+            
+            kwargs: dict[str, str] = {
+                "url": f"https://{server.address}{request.path}", 
+                "json":json.dumps(data),
+                "headers":headers}
+            
+            if files:
+                kwargs.pop("json")
+                kwargs.update({"files": files, "data": data})
+            
+            response = requests.post(**kwargs)
             if response.status_code == 200:
                 message = f"Execução iniciada dashcom sucesso! PID: {pid}"
                 flash(message, "success")

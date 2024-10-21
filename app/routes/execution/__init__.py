@@ -32,25 +32,17 @@ def executions():
         executions = db.session.query(Executions)
         if not chksupersu:
 
-            license_token = user.licenses[0].license_token
-
-            join_admins = executions.\
-                join(Executions.licenses).\
-                join(LicensesUsers.admins).filter(Users.id == "user_id")
-
-            admin_result = join_admins.first()
-
-            executions = executions.\
-                join(Executions.licenses).\
-                filter(LicensesUsers.license_token == license_token)
-
-            if not admin_result:
-                executions = executions.join(
-                    LicensesUsers.users).\
+            executions = executions.join(LicensesUsers).\
+                filter_by(license_token = user.licenseusr.license_token)
+                
+            chk_admin = db.session.query(LicensesUsers).\
+                join(LicensesUsers.admins).\
+                filter(Users.id == user_id).first()
+            
+            if not chk_admin:
+                executions = executions.join(Users).\
                     filter(Users.id == user_id)
-
-            executions = executions.filter(Executions.pid.contains(pid))
-
+                    
         database = executions.all()
 
     except Exception as e:

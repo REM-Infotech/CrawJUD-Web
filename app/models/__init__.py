@@ -1,9 +1,7 @@
 from flask import current_app
 from app import db
 
-from app.models.secondaries import(admins, execution_bots, 
-execution_licenses, execution_users, licenses_users_bots, licenseusr, 
-licenses_users_credentials)
+from app.models.secondaries import admins, execution_bots
 from app.models.users import Users, LicensesUsers, SuperUser
 from app.models.bots import BotsCrawJUD, Credentials, Executions
 from app.models.srv import Servers
@@ -44,7 +42,7 @@ def init_database():
                     license_token=str(uuid4()),
                 )
                 
-            license_user.users.append(user)
+            user.licenseusr = license_user
             license_user.admins.append(user)
             super_user = SuperUser()
             

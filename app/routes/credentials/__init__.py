@@ -1,9 +1,11 @@
 from flask import Blueprint, render_template, session, url_for, redirect, flash, current_app
 from flask_login import login_required
+from flask_wtf import FlaskForm
 from werkzeug.utils import secure_filename
 
 import os
 import pathlib
+from typing import Callable
 from collections import Counter
 
 from app import db
@@ -18,13 +20,11 @@ cred = Blueprint("creds", __name__, template_folder=path_template)
 @cred.route("/credentials/dashboard", methods=["GET"])
 @login_required
 def credentials():
-    user = Users.query.filter(Users.login == session["login"]).first()
-    license_token = user.licenses[0].license_token
 
-    database = db.session.query(LicensesUsers).\
-        filter(LicensesUsers.license_token ==
-               license_token).first().credentials
-
+    database = db.session.query(Credentials).\
+        join(LicensesUsers).\
+        filter_by(license_token = session["license_token"]).all()
+        
     title = "Credenciais"
     page = "credentials.html"
     return render_template("index.html", page=page, title=title, database=database)
@@ -59,7 +59,7 @@ def cadastro():
             flash("Existem credenciais com este nome já cadastrada!", "error")
             return redirect(url_for("creds.cadastro"))
 
-        def pw(form):
+        def pw(form) -> None:
 
             passwd = Credentials(
                 nome_credencial=form.nome_cred.data,
@@ -68,13 +68,14 @@ def cadastro():
                 login=form.login.data,
                 password=form.password.data
             )
-            db.session.add(passwd)
             licenseusr = LicensesUsers.query.filter(
                 LicensesUsers.license_token == session["license_token"]).first()
-            licenseusr.credentials.append(passwd)
+            
+            passwd.license_usr = licenseusr
+            db.session.add(passwd)
             db.session.commit()
 
-        def cert(form):
+        def cert(form) -> None:
 
             temporarypath = current_app.config["TEMP_PATH"]
             filecert = form.cert.data
@@ -95,10 +96,12 @@ def cadastro():
                 certficate=filecert.filename,
                 certficate_blob=certficate_blob
             )
-            db.session.add(passwd)
             licenseusr = LicensesUsers.query.filter(
                 LicensesUsers.license_token == session["license_token"]).first()
-            licenseusr.credentials.append(passwd)
+            
+            passwd.license_usr = licenseusr
+            
+            db.session.add(passwd)
             db.session.commit()
 
         local_defs = list(locals().items())
