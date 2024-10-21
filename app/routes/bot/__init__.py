@@ -155,7 +155,7 @@ def botlaunch(id: int, system: str, typebot: str):
                         if credential.nome_credencial == value:
                             if credential.login_method == "pw":
                                 data.update({
-                                    "login": credential.login,
+                                    "username": credential.login,
                                     "password": credential.password,
                                     "login_method": credential.login_method
                                 })
@@ -170,7 +170,7 @@ def botlaunch(id: int, system: str, typebot: str):
                                 files.update({credential.certficate: (
                                     credential.certficate, buff)})
                                 data.update({
-                                    "login": credential.login,
+                                    "username": credential.login,
                                     "name_cert": credential.certficate,
                                     "token": credential.key,
                                     "login_method": credential.login_method

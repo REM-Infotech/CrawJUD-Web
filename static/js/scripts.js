@@ -72,6 +72,8 @@ $(document).ready(function () {
             if (optionCategory === selectedCategory) {
         
                 $('#varas').append($(this)).trigger('change'); // Re-adicionar a opção
+            } else if (optionCategory !== selectedCategory){
+                $('#varas').empty();
             }
         });
 
