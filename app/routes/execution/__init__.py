@@ -43,6 +43,9 @@ def executions():
                 executions = executions.join(Users).\
                     filter(Users.id == user_id)
                     
+                    
+            executions = executions.filter(Executions.pid.contains(pid))
+                    
         database = executions.all()
 
     except Exception as e:

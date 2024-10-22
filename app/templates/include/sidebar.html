@@ -28,7 +28,6 @@
                     </div>
                     <span class="text">Robôs</span>
                 </a>
-
                 <a class="nav-link" href="{{ url_for('creds.credentials') }}">
                     <div class="sb-nav-link-icon">
                         <span class="icon text-white-50">
@@ -37,6 +36,27 @@
                     </div>
                     <span class="text">Credenciais</span>
                 </a>
+                {% if session.get("admin") %}
+                <a class="nav-link" href="#">
+                    <div class="sb-nav-link-icon">
+                        <span class="icon text-white-50">
+                            <i class="fa-solid fa-gear"></i>
+                        </span>
+                    </div>
+                    <span class="text">Configurações</span>
+                </a>
+                {% endif %}
+                {% if session.get("supersu") %}
+                <a class="nav-link" href="#">
+                    <div class="sb-nav-link-icon">
+                        <span class="icon text-white-50">
+                            <i class="fa-solid fa-user-gear"></i>
+                        </span>
+                    </div>
+                    <span class="text">Admin. Licenças</span>
+                </a>
+                {% endif %}
+
             </div>
         </div>
         <div class="sb-sidenav-footer">

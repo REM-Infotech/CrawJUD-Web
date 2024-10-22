@@ -67,6 +67,10 @@ document.addEventListener('DOMContentLoaded', function () {
                             li.style.color = '#42cf06';
                             li.style.fontWeight = "bold";
 
+                        } else if (typeLog === "info") {
+                            
+                            li.style.color = 'orange';
+                            li.style.fontWeight = "bold";
                         };
 
                         li.appendChild(document.createTextNode(msg));
