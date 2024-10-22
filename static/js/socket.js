@@ -67,12 +67,16 @@ document.addEventListener('DOMContentLoaded', function () {
                             li.style.color = '#42cf06';
                             li.style.fontWeight = "bold";
 
+                        } else if (typeLog === "info") {
+                            
+                            li.style.color = 'orange';
+                            li.style.fontWeight = "bold";
                         };
 
                         li.appendChild(document.createTextNode(msg));
                         ul.appendChild(li);
 
-                        var randomId = "id_" + pos + pid;
+                        var randomId = `id_${Math.random().toString(36).substring(2, 9)}`;
 
                         li.setAttribute("id", randomId);
                         document.getElementById(randomId).scrollIntoView({ behavior: "smooth", block: "end" });

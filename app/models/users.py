@@ -4,12 +4,13 @@ from flask_login import UserMixin
 from app import db
 from app import login_manager
 
+import pytz
 from uuid import uuid4
 from typing import Type
 from datetime import datetime
 import bcrypt
 
-import pytz
+
 from sqlalchemy.orm.relationships import RelationshipProperty
 salt = bcrypt.gensalt()
 
@@ -22,29 +23,6 @@ def load_user(user_id) -> int:
         link = request.url
 
     return Users.query.get(int(user_id))
-
-admins = db.Table(
-    'admins', 
-    db.Column('license_user_id', db.Integer, db.ForeignKey('licenses_users.id'), primary_key=True),
-    db.Column('users_id', db.Integer, db.ForeignKey('users.id'), primary_key=True))
-
-licenseusr = db.Table(
-    'licenseusr', 
-    db.Column('license_user_id', db.Integer, db.ForeignKey('licenses_users.id'), primary_key=True),
-    db.Column('users_id', db.Integer, db.ForeignKey('users.id'), primary_key=True))
-
-licenses_users_bots = db.Table(
-    'licenses_users_bots',
-    db.Column('licenses_user_id', db.Integer, db.ForeignKey('licenses_users.id'), primary_key=True),
-    db.Column('bot_id', db.Integer, db.ForeignKey('bots.id'), primary_key=True)
-)
-
-# Tabela de associação para LicensesUsers e Credentials
-licenses_users_credentials = db.Table(
-    'licenses_users_credentials',
-    db.Column('license_user_id', db.Integer, db.ForeignKey('licenses_users.id'), primary_key=True),
-    db.Column('credential_id', db.Integer, db.ForeignKey('credentials.id'), primary_key=True)
-)
 
 class SuperUser(db.Model):
     
@@ -67,8 +45,11 @@ class Users(db.Model, UserMixin):
     filename = db.Column(db.String(length=128))
     blob_doc = db.Column(db.LargeBinary(length=(2**32)-1))
     
+    licenseus_id = db.Column(db.Integer, db.ForeignKey('licenses_users.id'))
+    licenseusr = db.relationship('LicensesUsers', backref='user')
+    
     def __init__(self, login: str = None, nome_usuario: str = None,
-                 email: str = None, licenses: type[RelationshipProperty] = None) -> None:
+                 email: str = None) -> None:
 
         self.login = login
         self.nome_usuario = nome_usuario
@@ -95,14 +76,7 @@ class LicensesUsers(db.Model):
     license_token: str = db.Column(db.String(length=512), nullable=False, unique=True)
     
     # Relacionamento de muitos para muitos com users
-    users = db.relationship('Users', secondary=licenseusr, backref='licenses')
-    admins = db.relationship('Users', secondary=admins, backref='admin')
+    admins = db.relationship('Users', secondary='admins', backref='admin')
+    bots = db.relationship('BotsCrawJUD', secondary='execution_bots', 
+                           backref=db.backref('license', lazy=True))
     
-    # Relacionamento de muitos para muitos com Credentials
-    credentials = db.relationship('Credentials', secondary=licenses_users_credentials, backref='licenses')
-    executions = db.relationship('Executions', secondary='execution_licenses', back_populates='licenses')
-    bots = db.relationship('BotsCrawJUD', secondary=licenses_users_bots, backref=db.backref('licenses', lazy=True))
-    
-    
-
-

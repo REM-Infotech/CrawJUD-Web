@@ -1,7 +1,8 @@
 from flask import current_app
 from app import db
 
-from app.models.users import Users, LicensesUsers, SuperUser, admins
+from app.models.secondaries import admins, execution_bots
+from app.models.users import Users, LicensesUsers, SuperUser
 from app.models.bots import BotsCrawJUD, Credentials, Executions
 from app.models.srv import Servers
 
@@ -41,36 +42,28 @@ def init_database():
                     license_token=str(uuid4()),
                 )
                 
-            license_user.users.append(user)
+            user.licenseusr = license_user
             license_user.admins.append(user)
             super_user = SuperUser()
             
             super_user.users = user
             
-            df = pd.read_excel("/home/robotz/CrawJUD-Web/export.xlsx")
+            df = pd.read_excel("export.xlsx")
             df.columns = df.columns.str.lower()
 
             data = []
-            for _, row in df.iterrows():
-                data_append = {}
-                row = row.dropna()
-                data_info = row.to_dict()
-                for coluna in BotsCrawJUD.__table__.columns:
-                    item = data_info.get(coluna.name, None)
-                    if item:
-                        if coluna.name == "id":
-                            continue
-                        data_append.update({coluna.name: item})
-
-                    elif not item:
-
-                        if coluna.name == "id":
-                            continue
-                        data_append.update({coluna.name: "Sem Informação"})
-
-                appends = BotsCrawJUD(**data_append)
-                license_user.bots.append(appends)
-                data.append(appends)
+            for values in list(df.to_dict(orient="records")):
+                
+                key = list(values)[1]
+                value = values.get(key)
+                
+                chk_bot = BotsCrawJUD.query.filter_by(
+                            **{key: value}).first()
+                
+                if not chk_bot:
+                    appends = BotsCrawJUD(**values)
+                    license_user.bots.append(appends)
+                    data.append(appends)
             
             
             db.session.add(user)

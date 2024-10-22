@@ -33,8 +33,15 @@ def login():
         if not session.get("location"):
             session["location"] = url_for("dash.dashboard")
         
-        license_usr = usr.licenses[0]
+        license_usr = usr.licenseusr
         session.permanent = form.remember_me.data
+        
+        if usr.admin:
+            session["admin"] = "True"
+            
+        if usr.supersu:
+            session["supersu"] = "True"
+            
         session["login"] = usr.login
         session["nome_usuario"] = usr.nome_usuario
         session["license_token"] = license_usr.license_token
@@ -52,7 +59,9 @@ def forgot_password():
 def logout():
     
     logout_user()
-    session.pop('location')
+    if session.get("location"):
+        session.pop('location')
+        
     flash("Logout efetuado com sucesso!", "success")
     return redirect(url_for("auth.login"))
 
