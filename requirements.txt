@@ -21,3 +21,4 @@ deep-translator
 flask-cloudflared
 google-auth
 google-cloud-storage
+httpx

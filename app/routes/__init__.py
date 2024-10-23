@@ -2,7 +2,8 @@ from flask import current_app, redirect, url_for, send_from_directory, make_resp
 import os
 
 app = current_app
-    
+
+from app.routes import handler
 from app.routes.auth import auth
 from app.routes.dashboard import dash
 from app.routes.bot import bot

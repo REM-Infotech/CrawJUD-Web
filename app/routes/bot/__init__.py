@@ -7,16 +7,17 @@ from werkzeug.datastructures import FileStorage
 import os
 import json
 import pathlib
-import requests
+import httpx
 from typing import Union
 from datetime import datetime
 from datetime import date
+from contextlib import suppress
 
 from app import db
 from app.forms import BotForm
 from app.misc import generate_pid
 from app.models import BotsCrawJUD, LicensesUsers, Servers, Credentials
-
+from requests.exceptions import ConnectTimeout
 
 path_template = os.path.join(pathlib.Path(
     __file__).parent.resolve(), "templates")
@@ -133,6 +134,8 @@ def botlaunch(id: int, system: str, typebot: str):
                            secure_filename(value.filename)))
                 buff = open(os.path.join(temporarypath,
                             secure_filename(value.filename)), "rb")
+                
+                buff.seek(0)
                 files.update({secure_filename(value.filename): (
                     secure_filename(value.filename), buff, value.mimetype)})
 
@@ -196,20 +199,26 @@ def botlaunch(id: int, system: str, typebot: str):
             })
             
             kwargs: dict[str, str] = {
-                "url": f"https://{server.address}{request.path}", 
-                "json":json.dumps(data),
-                "headers":headers}
+                "url": f"http://{server.address}:8000{request.path}", 
+                "json":json.dumps(data)}
             
             if files:
                 kwargs.pop("json")
                 kwargs.update({"files": files, "data": data})
+            response = None
             
-            response = requests.post(**kwargs)
-            if response.status_code == 200:
-                message = f"Execução iniciada dashcom sucesso! PID: {pid}"
-                flash(message, "success")
-                return redirect(url_for("logsbot.logs_bot", sid=pid))
+            with suppress(httpx.ConnectTimeout):
+                response = httpx.post(**kwargs)
+                
+            if response:    
+                if response.status_code == 200:
+                    message = f"Execução iniciada com sucesso! PID: {pid}"
+                    flash(message, "success")
+                    return redirect(url_for("logsbot.logs_bot", sid=pid))
 
+                elif response.status_code == 500:
+                    pass
+            
         flash("Erro ao iniciar robô", "error")
 
     return render_template("index.html", page=page, url=request.base_url,
