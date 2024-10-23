@@ -27,7 +27,7 @@ def executions():
         user_id = user.id
 
         chksupersu = db.session.query(SuperUser).join(
-            Users).filter(Users.id == pid).first()
+            Users).filter(Users.id == user_id).first()
 
         executions = db.session.query(Executions)
         if not chksupersu:

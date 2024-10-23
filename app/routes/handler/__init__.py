@@ -1,4 +1,4 @@
-from app import app
+from flask import current_app as app
 from flask import render_template
 from deep_translator import GoogleTranslator
 from werkzeug.exceptions import HTTPException

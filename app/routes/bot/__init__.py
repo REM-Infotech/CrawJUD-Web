@@ -199,7 +199,7 @@ def botlaunch(id: int, system: str, typebot: str):
             })
             
             kwargs: dict[str, str] = {
-                "url": f"http://{server.address}:8000{request.path}", 
+                "url": f"https://{server.address}{request.path}", 
                 "json":json.dumps(data)}
             
             if files:
@@ -208,7 +208,7 @@ def botlaunch(id: int, system: str, typebot: str):
             response = None
             
             with suppress(httpx.ConnectTimeout):
-                response = httpx.post(**kwargs)
+                response = httpx.post(timeout=60, **kwargs)
                 
             if response:    
                 if response.status_code == 200:
