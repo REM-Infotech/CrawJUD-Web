@@ -1,23 +1,35 @@
-from flask import current_app, redirect, url_for, send_from_directory, make_response, abort
 import os
 
-app = current_app
+## Flask Imports
+from flask import abort
+from flask import url_for
+from flask import redirect
+from flask import current_app as app
+from flask import send_from_directory
+
 
 from app.routes import handler
-from app.routes.auth import auth
-from app.routes.dashboard import dash
 from app.routes.bot import bot
-from app.routes.execution import exe
-from app.routes.credentials import cred
+from app.routes.auth import auth
 from app.routes.logs import logsbot
+from app.routes.execution import exe
+from app.routes.dashboard import dash
+from app.routes.credentials import cred
+from app.routes.config import admin, supersu, usr
+
+## Register Blueprints
+
+listBlueprints = [
+    bot, auth, logsbot, 
+    exe, dash, cred, 
+    admin, supersu, usr
+    ]
 
 with app.app_context():
-    app.register_blueprint(auth)
-    app.register_blueprint(dash)
-    app.register_blueprint(bot)
-    app.register_blueprint(exe)
-    app.register_blueprint(cred)
-    app.register_blueprint(logsbot)
+    
+    for bp in listBlueprints:
+        app.register_blueprint(bp)
+    
 
 @app.route("/", methods = ["GET"])
 def index():
