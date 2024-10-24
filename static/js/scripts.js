@@ -63,7 +63,10 @@ $(document).ready(function () {
 
     // Função para mostrar ou ocultar as opções do segundo select
     $('#state').on('change', function () {
-
+        
+        setTimeout(() => {
+            $('#modalLoading').modal('show');
+        }, 250)
         var selectedCategory = $(this).val(); // Obter a categoria selecionada
 
         // Re-adicionar as opções correspondentes à categoria selecionada
@@ -89,6 +92,10 @@ $(document).ready(function () {
                 }
             });
         });
+        setTimeout(() => {
+            $('#modalLoading').modal('hide');
+        }, 1000)
+        console.log("AEIOU")
     });
 
 });
@@ -110,6 +117,7 @@ function authMethodChange(element) {
 }
 
 function showLoad() {
+    console.log("AEIOU");
     setTimeout(() => {
         $('#modalLoading').modal('show');
     }, 500)

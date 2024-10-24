@@ -207,7 +207,7 @@ def botlaunch(id: int, system: str, typebot: str):
                 kwargs.update({"files": files, "data": data})
             response = None
             
-            with suppress(httpx.ConnectTimeout):
+            with suppress(httpx.ConnectTimeout, httpx.ReadTimeout):
                 response = httpx.post(timeout=60, **kwargs)
                 
             if response:    
