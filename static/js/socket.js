@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', function () {
         },
     });
 
+    var Pages = 0;
     fetch(`/socket_address/${pid}`)
         .then(response => response.text())
         .then(socketAddress => {
@@ -35,8 +36,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
 
             socket.on('log_message', function (data) {
-
-                updateElements(data)
+                
                 var messagePid = data.pid;
                 var pos = parseInt(data.pos);
                 var typeLog = data.type;
@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     var msg = data.message;
 
-                    if (msg === null){
+                    if (msg === null) {
                         var msg = data.last_log;
                     }
 
@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             li.style.fontWeight = "bold";
 
                         } else if (typeLog === "info") {
-                            
+
                             li.style.color = 'orange';
                             li.style.fontWeight = "bold";
                         };
@@ -109,7 +109,8 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     }
     function updateElements(data) {
-        
+
+        var typeLog = String(data.type);
         var total = parseInt(data.total);
         var remaining = parseInt(data.remaining);
         var success = parseInt(data.success);
@@ -121,27 +122,53 @@ document.addEventListener('DOMContentLoaded', function () {
         var Countremaining = document.querySelector('span[id="remaining"]');
         var CountSuccess = document.querySelector('span[id="success"]');
         var TextStatus = document.querySelector('span[id="status"]');
+        var lastRemainign = parseInt(LogsBotChart.data.datasets[0].data[0])
+
+        if (typeLog === "info") {
+            Pages = Pages + 1;
+            console.log(typeLog);
+        }
+
+        if (remaining < 0) {
+            remaining = 0;
+        }
+
+        if (remaining === 0){
+            remaining = Pages;
+        };
 
         
+
         CountErrors.innerHTML = `Erros: ${errors}`;
         Countremaining.innerHTML = `Restantes: ${remaining}`;
         TextStatus.innerHTML = `Status: ${status} | Total: ${total}`;
-
+        
         var progress = (executed / total) * 100;
         var textNode = document.createTextNode(progress.toFixed(2) + '%');
-        
+
         if (status === "Finalizado") {
             checkStatus();
 
-        }else if (status !== "Finalizado"){
+        } else if (status !== "Finalizado") {
             CountSuccess.innerHTML = `Sucessos: ${success}`;
             LogsBotChart.data.datasets[0].data = [remaining, success, errors];
         };
-        
 
-        percent_progress.innerHTML = '';
-        percent_progress.appendChild(textNode);
-        percent_progress.style.width = progress + '%';
+        chartType = LogsBotChart.type
+
+        if (data.graphicMode !== chartType){
+            LogsBotChart.config.type = data.graphicMode;
+            LogsBotChart.data.datasets[0].data
+            LogsBotChart.data.labels[0] = "PÁGINAS"
+            Countremaining.innerHTML = `Páginas: ${remaining}`
+        };
+
+        if (parseInt(data.remaining) > 0){
+            percent_progress.innerHTML = '';
+            percent_progress.appendChild(textNode);
+            percent_progress.style.width = progress + '%';
+        };
+
         LogsBotChart.update();
     };
 })
