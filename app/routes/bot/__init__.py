@@ -1,5 +1,5 @@
-from flask import (Blueprint, render_template, request, flash,
-                   url_for, redirect, session, current_app, jsonify)
+from flask import (Blueprint, render_template, request, flash, send_file,
+                   url_for, redirect, session, current_app, make_response)
 from flask_login import login_required
 from werkzeug.utils import secure_filename
 from werkzeug.datastructures import FileStorage
@@ -16,6 +16,7 @@ from contextlib import suppress
 from app import db
 from app.forms import BotForm
 from app.misc import generate_pid
+from app.misc.MakeTemplate import MakeXlsx as make_xlsx
 from app.models import BotsCrawJUD, LicensesUsers, Servers, Credentials
 from requests.exceptions import ConnectTimeout
 
@@ -30,7 +31,7 @@ FORM_CONFIGURATOR = {
         "multipe_files": ["xlsx", "creds", "state", "otherfiles"],
         "only_file": ["xlsx", "state"],
         "pautas": ["data_inicio", "data_fim", "creds", "state", "varas"],
-        "proc_parte": ["parte_name", "doc_parte", "data_inicio", "data_fim", 
+        "proc_parte": ["parte_name", "doc_parte", "data_inicio", "data_fim",
                        "polo_parte", "state", "varas", "creds"]
     },
     "ADMINISTRATIVO": {
@@ -45,6 +46,21 @@ FORM_CONFIGURATOR = {
 }
 
 
+@bot.route("/get_model/<filename>", methods=["GET"])
+def get_model(filename):
+
+    try:
+        
+        path_arquivo, nome_arquivo = make_xlsx(filename)
+        response = make_response(send_file(f'{path_arquivo}', as_attachment=True))
+        response.headers["Content-Disposition"] = f"attachment; filename={nome_arquivo}"
+        return response
+    
+    except Exception:
+        flash("Não foi possível gerar arquivo modelo", "error")
+        return redirect(url_for('bot_page', opcao=filename))
+    
+    
 @bot.route("/bot/dashboard", methods=["GET"])
 @login_required
 def dashboard():
@@ -199,8 +215,8 @@ def botlaunch(id: int, system: str, typebot: str):
             })
             
             kwargs: dict[str, str] = {
-                "url": f"https://{server.address}{request.path}", 
-                "json":json.dumps(data)}
+                "url": f"https://{server.address}{request.path}",
+                "json": json.dumps(data)}
             
             if files:
                 kwargs.pop("json")
@@ -208,9 +224,9 @@ def botlaunch(id: int, system: str, typebot: str):
             response = None
             
             with suppress(httpx.ConnectTimeout, httpx.ReadTimeout):
-                response = httpx.post(timeout=60, **kwargs)
+                response = httpx.post(timeout=60, **kwargs, headers=headers)
                 
-            if response:    
+            if response:
                 if response.status_code == 200:
                     message = f"Execução iniciada com sucesso! PID: {pid}"
                     flash(message, "success")

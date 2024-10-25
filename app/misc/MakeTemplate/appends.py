@@ -23,7 +23,7 @@ class listas:
         
     def elaw_complement(self) -> list[str]:
         return [
-            "UNIDADE_CONSUMIDORA", "DIVISAO", "ACAO", "DATA_CITACAO", 
+            "UNIDADE_CONSUMIDORA", "DIVISAO", "ACAO", "DATA_CITACAO",
             "DESC_OBJETO", "OBJETO", "PROVIMENTO", "FATO_GERADOR", "FASE"
         ]
 
@@ -65,13 +65,13 @@ class listas:
 
     def tjdft_calculo(self) -> list[str]:
         
-        return ["REQUERENTE", "REQUERIDO", 
+        return ["REQUERENTE", "REQUERIDO",
                 "JUROS_PARTIR", "DATA_INCIDENCIA", "JUROS_PERCENT",
-                "VALOR_CALCULO", "DATA_CALCULO", 
-                "MULTA_PERCENTUAL", "MULTA_DATA", 
-                "MULTA_VALOR", "PERCENT_MULTA_475J", 
+                "VALOR_CALCULO", "DATA_CALCULO",
+                "MULTA_PERCENTUAL", "MULTA_DATA",
+                "MULTA_VALOR", "PERCENT_MULTA_475J",
                 "HONORARIO_SUCUMB_PERCENT", "HONORARIO_SUCUMB_DATA",
                 "HONORARIO_SUCUMB_VALOR", "HONORARIO_SUCUMB_PARTIR",
-                "HONORARIO_CUMPRIMENTO_PERCENT", "HONORARIO_CUMPRIMENTO_DATA", 
+                "HONORARIO_CUMPRIMENTO_PERCENT", "HONORARIO_CUMPRIMENTO_DATA",
                 "HONORARIO_CUMPRIMENTO_VALOR", "HONORARIO_CUMPRIMENTO_PARTIR",
                 "CUSTAS_DATA", "CUSTAS_VALOR"]

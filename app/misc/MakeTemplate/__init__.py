@@ -57,7 +57,7 @@ class MakeXlsx:
 
         # Escrever os cabeçalhos na primeira linha da planilha e aplicar estilo
         for pos, coluna in enumerate(cabecalhos):
-            item = sheet.cell(row=1, column=pos+1, value=coluna.upper())
+            item = sheet.cell(row=1, column=pos + 1, value=coluna.upper())
             item.font = bold_font
             item.fill = my_fill
 
@@ -69,7 +69,7 @@ class MakeXlsx:
                 try:  # Necessary to avoid error on empty cells
                     if len(str(cell.value)) > max_length:
                         max_length = len(str(cell.value))
-                except:
+                except Exception:
                     pass
             adjusted_width = (max_length + 2) * 1.2
             sheet.column_dimensions[column].width = adjusted_width
