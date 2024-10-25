@@ -44,7 +44,7 @@ class MakeXlsx:
             list_to_append.extend(itens_append)
         
         elif not itens_append:
-            itens_append = self.listas(self.model_name.split("_"))
+            itens_append = self.listas(self.model_name.split("_")[0])
             if itens_append:
                 list_to_append.extend(itens_append)
 
