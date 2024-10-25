@@ -10,6 +10,7 @@ import pandas as pd
 from uuid import uuid4
 from dotenv import dotenv_values
 
+
 def init_database():
     app = current_app
     with app.app_context():
@@ -19,7 +20,7 @@ def init_database():
         loginsys = values.get("loginsys")
         nomeusr = values.get("nomeusr")
         emailusr = values.get("emailusr")
-        passwd  = values.get("passwd", str(uuid4()))
+        passwd = values.get("passwd", str(uuid4()))
         
         dbase = Users.query.filter(Users.login == loginsys).first()
         if not dbase:
@@ -31,7 +32,7 @@ def init_database():
             user.senhacrip = passwd
             
             license_user = LicensesUsers.query.filter(
-                LicensesUsers.name_client=="Robotz Dev"
+                LicensesUsers.name_client == "Robotz Dev"
             ).first()
             
             if not license_user:
@@ -61,7 +62,11 @@ def init_database():
                             **{key: value}).first()
                 
                 if not chk_bot:
-                    appends = BotsCrawJUD(**values)
+                    appends = BotsCrawJUD()
+                    
+                    for key, var in values.items():
+                        appends.__dict__.update({key: var})
+                        
                     license_user.bots.append(appends)
                     data.append(appends)
             
@@ -72,7 +77,53 @@ def init_database():
             db.session.commit()
             
             print(f" * Root Pw: {passwd}")
-        
-def setServer(args):
     
-    pass
+    
+    license_user = LicensesUsers.query.filter(
+                LicensesUsers.name_client == "Fonseca Melo Viana"
+    ).first()
+    
+    if not license_user:
+        license_user = LicensesUsers(
+            name_client="Fonseca Melo Viana",
+            cpf_cnpj="11594617000107",
+            license_token=str(uuid4()))
+    
+        df = pd.read_excel("export.xlsx")
+        df.columns = df.columns.str.lower()
+        data = []
+        db.session.add(license_user)
+        for values in list(df.to_dict(orient="records")):
+            
+            key = list(values)[1]
+            value = values.get(key)
+            
+            chk_bot = BotsCrawJUD.query.filter_by(
+                        **{key: value}).first()
+            
+            if chk_bot not in license_user.bots:
+                license_user.bots.append(chk_bot)
+
+        df = pd.read_excel("export2.xlsx")
+        df.columns = df.columns.str.lower()
+        to_add_usr = []
+        for value in list(df.to_dict(orient="records")):
+
+            chk_usr = Users.query.filter_by(**{"login": value.get("login")}).first()
+            if not chk_usr:
+                add_usr = Users()
+                for key, var in value.items():
+                    if key == admins and var:
+                        license_user.admins.append(user)
+                        
+                    add_usr.__dict__.update({key: var})
+                
+                add_usr.licenseusr = license_user
+                to_add_usr.append(add_usr)
+            elif chk_usr:
+                chk_usr.licenseusr = license_user
+                
+        if len(to_add_usr) > 0:
+            db.session.add_all(to_add_usr)
+            
+        db.session.commit()

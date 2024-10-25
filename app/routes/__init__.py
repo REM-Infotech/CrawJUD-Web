@@ -20,25 +20,23 @@ from app.routes.execution import exe
 from app.routes.dashboard import dash
 from app.routes.credentials import cred
 from app.routes.config import admin, supersu, usr
-
+from app.models import Users
 ## Register Blueprints
 
 listBlueprints = [
-    bot, auth, logsbot, 
-    exe, dash, cred, 
-    admin, supersu, usr
-    ]
+    bot, auth, logsbot,
+    exe, dash, cred,
+    admin, supersu, usr]
 
 with app.app_context():
     
     for bp in listBlueprints:
         app.register_blueprint(bp)
     
-from app.models import Users
 
-@app.route("/", methods = ["GET"])
+
+@app.route("/", methods=["GET"])
 def index():
-    
     return redirect(url_for("auth.login")), 302
 
 
@@ -54,8 +52,9 @@ def serve_img():
     except Exception as e:
         print(e)
         abort(500, description=f"Erro interno do servidor: {str(e)}")
-        
-@app.route('/img/<user>.png', methods = ["GET"])
+
+
+@app.route('/img/<user>.png', methods=["GET"])
 @login_required
 def serve_profile(user: str):
 
@@ -75,10 +74,10 @@ def serve_profile(user: str):
                 image_data = reponse_img.content
             
             
-            image_data = bytes(image_data) 
+            image_data = bytes(image_data)
             filename = "".join(
-                re.sub(r'[<>:"/\\|?*]', '_', 
-                       f"{datetime.datetime.now()}_{filename}" ))
+                re.sub(r'[<>:"/\\|?*]', '_',
+                       f"{datetime.datetime.now()}_{filename}"))
             
             original_path = os.path.join(
                 app.config['IMAGE_TEMP_PATH'], filename)

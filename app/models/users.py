@@ -11,7 +11,6 @@ from datetime import datetime
 import bcrypt
 
 
-from sqlalchemy.orm.relationships import RelationshipProperty
 salt = bcrypt.gensalt()
 
 
@@ -24,12 +23,14 @@ def load_user(user_id) -> int:
 
     return Users.query.get(int(user_id))
 
+
 class SuperUser(db.Model):
     
     __tablename__ = "superuser"
     id: int = db.Column(db.Integer, primary_key=True)
     users_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     users = db.relationship('Users', backref=db.backref('supersu', lazy=True))
+
 
 class Users(db.Model, UserMixin):
 
@@ -43,7 +44,7 @@ class Users(db.Model, UserMixin):
     verification_code = db.Column(db.String(length=45), unique=True)
     login_id = db.Column(db.String(length=64), nullable=False, default=str(uuid4()))
     filename = db.Column(db.String(length=128))
-    blob_doc = db.Column(db.LargeBinary(length=(2**32)-1))
+    blob_doc = db.Column(db.LargeBinary(length=(2**32) - 1))
     
     licenseus_id = db.Column(db.Integer, db.ForeignKey('licenses_users.id'))
     licenseusr = db.relationship('LicensesUsers', backref='user')
@@ -67,6 +68,7 @@ class Users(db.Model, UserMixin):
     def check_password(self, senha_texto_claro: str) -> bool:
         return bcrypt.checkpw(senha_texto_claro.encode("utf-8"), self.password.encode("utf-8"))
 
+
 class LicensesUsers(db.Model):
     
     __tablename__ = 'licenses_users'
@@ -77,6 +79,5 @@ class LicensesUsers(db.Model):
     
     # Relacionamento de muitos para muitos com users
     admins = db.relationship('Users', secondary='admins', backref='admin')
-    bots = db.relationship('BotsCrawJUD', secondary='execution_bots', 
+    bots = db.relationship('BotsCrawJUD', secondary='execution_bots',
                            backref=db.backref('license', lazy=True))
-    
