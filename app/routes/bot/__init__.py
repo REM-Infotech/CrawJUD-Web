@@ -1,4 +1,4 @@
-from flask import (Blueprint, render_template, request, flash, send_file,
+from flask import (Blueprint, render_template, request, flash, send_file, abort,
                    url_for, redirect, session, current_app, make_response)
 from flask_login import login_required
 from werkzeug.utils import secure_filename
@@ -46,19 +46,19 @@ FORM_CONFIGURATOR = {
 }
 
 
-@bot.route("/get_model/<filename>", methods=["GET"])
-def get_model(filename):
+@bot.route("/get_model/<id>/<system>/<typebot>/<filename>", methods=["GET"])
+def get_model(id: int, system: str, typebot: str, filename: str):
 
     try:
         
-        path_arquivo, nome_arquivo = make_xlsx(filename)
+        path_arquivo, nome_arquivo = make_xlsx(filename, filename).make_output()
         response = make_response(send_file(f'{path_arquivo}', as_attachment=True))
         response.headers["Content-Disposition"] = f"attachment; filename={nome_arquivo}"
         return response
     
-    except Exception:
-        flash("Não foi possível gerar arquivo modelo", "error")
-        return redirect(url_for('bot_page', opcao=filename))
+    except Exception as e:
+        abort(500, description=f"Erro interno. {str(e)}")
+        return redirect(url_for('bot.botlaunch', id=id, system=system, typebot=typebot))
     
     
 @bot.route("/bot/dashboard", methods=["GET"])
@@ -237,5 +237,5 @@ def botlaunch(id: int, system: str, typebot: str):
             
         flash("Erro ao iniciar robô", "error")
 
-    return render_template("index.html", page=page, url=request.base_url,
-                           display_name=display_name, form=form, title=title)
+    return render_template("index.html", page=page, url=request.base_url, model_name=f"{system}_{typebot}",
+                           display_name=display_name, form=form, title=title, id=id, system=system, typebot=typebot)

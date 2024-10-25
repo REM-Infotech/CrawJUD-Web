@@ -45,12 +45,12 @@ def inject_user_cookies():
     if current_user.is_authenticated:
         admin_cookie = request.cookies.get('roles_admin')
         if admin_cookie:
-            if json.loads(admin_cookie).get("login_id") != session["login_id"]:
+            if json.loads(admin_cookie).get("login_id") != session["_id"]:
                 admin_cookie = None
         
             supersu_cookie = request.cookies.get('roles_supersu')
             if supersu_cookie:
-                if json.loads(supersu_cookie).get("login_id") != session["login_id"]:
+                if json.loads(supersu_cookie).get("login_id") != session["_id"]:
                     supersu_cookie = None
         
     return dict(admin_cookie=admin_cookie, supersu_cookie=supersu_cookie, current_user=current_user)

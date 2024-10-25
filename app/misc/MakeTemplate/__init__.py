@@ -10,19 +10,18 @@ from app.misc.MakeTemplate.appends import listas
 
 class MakeXlsx:
 
-    def __init__(self, type_bot: str, system: str, display_name: str):
+    def __init__(self, model_name: str, display_name: str):
         """
         
         #### type: Tipo da planilha (sucesso, erro)
         #### system: o sistema que está sendo executado a automação Ex.: PROJUDI, ESAJ, ELAW, ETC.
             
         """
-        self.system = system.lower()
-        self.type_bot = type_bot.lower()
+        self.model_name = model_name
         self.displayname = display_name
         self.listas = listas()
     
-    def make_output(self, path_template: str):
+    def make_output(self):
 
         temp_dir = os.path.join(os.getcwd(), "Temp")
         os.makedirs(temp_dir, exist_ok=True)
@@ -40,12 +39,12 @@ class MakeXlsx:
         cabecalhos = ["NUMERO_PROCESSO"]
         list_to_append = []
         
-        itens_append = self.listas(f"{self.system}_{self.system}")
+        itens_append = self.listas(self.model_name)
         if itens_append:
             list_to_append.extend(itens_append)
         
         elif not itens_append:
-            itens_append = self.listas(self.system)
+            itens_append = self.listas(self.model_name.split("_"))
             if itens_append:
                 list_to_append.extend(itens_append)
 

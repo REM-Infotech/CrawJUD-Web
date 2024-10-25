@@ -27,7 +27,8 @@
 				</div>
 				<div class="card-footer d-grid gap-2">
 					{{ form.submit(class="btn btn btn-outline-success btn-login fw-semibold", onclick="showLoad()") }}
-					<a class="btn btn-outline-primary fw-semibold" href="#">Gerar Modelo</a>
+					{% set url_model = url_for('bot.get_model', id=id, system=system, typebot=typebot, filename=model_name) %}
+					<a class="btn btn-outline-primary fw-semibold" href="{{ url_model }}">Gerar Modelo</a>
 				</div>  
                 {% endif %}
 			</form>
