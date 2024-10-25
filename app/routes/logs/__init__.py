@@ -15,6 +15,7 @@ path_template = os.path.join(pathlib.Path(
     __file__).parent.resolve(), "templates")
 logsbot = Blueprint("logsbot", __name__, template_folder=path_template)
 
+
 def obter_endereco_socket(user: str, pid: str) -> str:
 
     user_id = Users.query.filter(Users.login == session["login"]).first().id
@@ -25,7 +26,7 @@ def obter_endereco_socket(user: str, pid: str) -> str:
     
     url = f"{execution.url_socket}"
     
-    if not "https://" in url:
+    if "https://" not in url:
         url = "https://" + url
     
     return url
@@ -34,6 +35,7 @@ def obter_endereco_socket(user: str, pid: str) -> str:
 def stopbot(user: str, pid: str, socket: str):
 
     requests.post(url=f'{socket}/stop/{user}/{pid}', timeout=300)
+
 
 @logsbot.route('/logs_bot/<sid>')
 @login_required
@@ -48,13 +50,13 @@ def logs_bot(sid: str):
     
     if execution is None:
 
-        return redirect(url_for('exe.executions'))
+        return redirect(f"{url_for('exe.executions')}?pid={sid}")
 
     if execution.status == "Finalizado":
-        return redirect(url_for('exe.executions'))
+        return redirect(f"{url_for('exe.executions')}?pid={sid}")
 
     rows = execution.total_rows
-    return render_template("index.html", page='logs_bot.html', pid=sid, 
+    return render_template("index.html", page='logs_bot.html', pid=sid,
                            total_rows=rows, title=title)
 
 
@@ -76,6 +78,7 @@ def stop_bot(pid: str):
     flash("Execução encerrada", "success")
     return redirect(url_for("exe.executions"))
 
+
 @logsbot.route('/status/<pid>', methods=["GET"])
 @login_required
 def status(pid):
@@ -96,4 +99,3 @@ def status(pid):
         return jsonify(response_data), 200
     
     return jsonify(response_data), 500
-

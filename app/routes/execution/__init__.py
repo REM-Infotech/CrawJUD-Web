@@ -20,9 +20,11 @@ def executions():
 
     try:
         form = SearchExec()
-        pid = ""
+        pid = request.args.get("pid", "")
+        
         if form.validate_on_submit():
             pid = form.campo_busca.data
+            
         user = Users.query.filter(Users.login == session["login"]).first()
         user_id = user.id
 
@@ -33,7 +35,7 @@ def executions():
         if not chksupersu:
 
             executions = executions.join(LicensesUsers).\
-                filter_by(license_token = user.licenseusr.license_token)
+                filter_by(license_token=user.licenseusr.license_token)
                 
             chk_admin = db.session.query(LicensesUsers).\
                 join(LicensesUsers.admins).\
@@ -44,7 +46,7 @@ def executions():
                     filter(Users.id == user_id)
                     
                     
-        executions = executions.filter(Executions.pid.contains(pid))            
+        executions = executions.filter(Executions.pid.contains(pid))
         database = executions.all()
 
     except Exception as e:
