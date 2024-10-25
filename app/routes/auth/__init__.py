@@ -1,8 +1,9 @@
-from flask import (Blueprint, render_template, redirect,
+from flask import (Blueprint, render_template, redirect, make_response,
                    url_for, flash, session, request)
 from flask_login import login_user, logout_user
 import os
 import pathlib
+import json
 
 from app.forms.auth.login import LoginForm
 from app.models.users import Users
@@ -10,6 +11,7 @@ from app.models.users import Users
 path_template = os.path.join(pathlib.Path(__file__).parent.resolve(), "templates")
 auth = Blueprint("auth", __name__, template_folder=path_template)
 
+usr = None
 
 
 @auth.before_request
@@ -36,21 +38,26 @@ def login():
         if not session.get("location"):
             session["location"] = url_for("dash.dashboard")
         
-        license_usr = usr.licenseusr
-        session.permanent = form.remember_me.data
+        login_user(usr, remember=form.remember_me.data)
+        resp = make_response(redirect(session["location"]))
+        
         
         if usr.admin:
-            session["admin"] = "True"
+            is_admin = json.dumps({"login_id": session["_id"]})
+            resp.set_cookie("roles_admin", is_admin, max_age=60 * 60 * 24, httponly=True, secure=True, samesite='Lax')
             
         if usr.supersu:
-            session["supersu"] = "True"
-            
+            is_supersu = json.dumps({"login_id": session["_id"]})
+            resp.set_cookie("roles_supersu", is_supersu, max_age=60 * 60 * 24, httponly=True, secure=True, samesite='Lax')
+
+        license_usr = usr.licenseusr
+        session.permanent = form.remember_me.data
         session["login"] = usr.login
         session["nome_usuario"] = usr.nome_usuario
         session["license_token"] = license_usr.license_token
-        login_user(usr, remember=form.remember_me.data)
+        
         flash("Login efetuado com sucesso!", "success")
-        return redirect(session["location"])
+        return resp
     
     return render_template("login.html", form=form)
 
@@ -64,8 +71,10 @@ def forgot_password():
 def logout():
     
     logout_user()
-    if session.get("location"):
-        session.pop('location')
+    iter_session = list(session.keys())
+    for key in iter_session:
+        if "_" not in key:
+            session.pop(key)
         
     flash("Logout efetuado com sucesso!", "success")
     return redirect(url_for("auth.login"))

@@ -4,15 +4,20 @@ $(document).ready(function () {
     var url_Profile = $("#urlProfile").text()
     const src_profiles = [$("#NavProfilePIC"), $("#ProfilePIC")];
 
-    $.get(url_Profile).done(
-        function () {
-            SetProfile(url_Profile, src_profiles);
+    if (url_Profile){
+        $.get(url_Profile).done(
+            function () {
+                SetProfile(url_Profile, src_profiles);
+    
+            }).fail(function () {
+                // Captura o erro, como o 500
+                var url_Profile = "https://cdn-icons-png.freepik.com/512/8556/8556706.png";
+                SetProfile(url_Profile, src_profiles);
+            });
 
-        }).fail(function () {
-            // Captura o erro, como o 500
-            var url_Profile = "https://cdn-icons-png.freepik.com/512/8556/8556706.png";
-            SetProfile(url_Profile, src_profiles);
-        });
+    };
+
+    
 });
 
 function SetProfile(url, arrSrc) {
@@ -72,53 +77,61 @@ function filterCards(element) {
 
 $(document).ready(function () {
 
-    $('select').select2({
-        theme: "bootstrap-5",
-        width: $('select').data('width') ? $('select').data('width') : $('select').hasClass('w-100') ? '100%' : 'style',
-        placeholder: $('select').data('placeholder')
+    var seletors = $('select');
+    if (seletors.length > 0) {
+        $('select').select2({
+            theme: "bootstrap-5",
+            width: $('select').data('width') ? $('select').data('width') : $('select').hasClass('w-100') ? '100%' : 'style',
+            placeholder: $('select').data('placeholder')
 
-    });
-
-    // Limpar todas as opções do segundo select
-    var allOptions = $('#varas').html();
-    $('#varas').empty();
-
-    // Função para mostrar ou ocultar as opções do segundo select
-    $('#state').on('change', function () {
-
-        setTimeout(() => {
-            $('#modalLoading').modal('show');
-        }, 250)
-        var selectedCategory = $(this).val(); // Obter a categoria selecionada
-
-        // Re-adicionar as opções correspondentes à categoria selecionada
-        $(allOptions).each(function () {
-            var optionCategory = $(this).data('juizado_estado');
-            if (optionCategory === selectedCategory) {
-
-                $('#varas').append($(this)).trigger('change'); // Re-adicionar a opção
-            } else if (optionCategory !== selectedCategory) {
-                $('#varas').empty();
-            }
         });
 
-        // Atualizar o Select2
-        $('#varas').val(null).trigger('change'); // Limpar a seleção atual
+        // Limpar todas as opções do segundo select
+        var allOptions = $('#varas').html();
+        $('#varas').empty();
 
-        // Ocultar os itens não correspondentes no Select2
-        $('#varas').on('select2:open', function () {
-            $('.select2-results__option').each(function () {
-                var optionCategory = $(this).data('category');
-                if (optionCategory !== selectedCategory) {
-                    $(this).hide(); // Esconder as opções que não correspondem à categoria
+        // Função para mostrar ou ocultar as opções do segundo select
+        $('#state').on('change', function () {
+
+            setTimeout(() => {
+                $('#modalLoading').modal('show');
+            }, 250)
+            var selectedCategory = $(this).val(); // Obter a categoria selecionada
+
+            // Re-adicionar as opções correspondentes à categoria selecionada
+            $(allOptions).each(function () {
+                var optionCategory = $(this).data('juizado_estado');
+                if (optionCategory === selectedCategory) {
+
+                    $('#varas').append($(this)).trigger('change'); // Re-adicionar a opção
+                } else if (optionCategory !== selectedCategory) {
+                    $('#varas').empty();
                 }
             });
+
+            // Atualizar o Select2
+            $('#varas').val(null).trigger('change'); // Limpar a seleção atual
+
+            // Ocultar os itens não correspondentes no Select2
+            $('#varas').on('select2:open', function () {
+                $('.select2-results__option').each(function () {
+                    var optionCategory = $(this).data('category');
+                    if (optionCategory !== selectedCategory) {
+                        $(this).hide(); // Esconder as opções que não correspondem à categoria
+                    }
+                });
+            });
+            setTimeout(() => {
+                $('#modalLoading').modal('hide');
+            }, 1000)
+            console.log("AEIOU")
         });
-        setTimeout(() => {
-            $('#modalLoading').modal('hide');
-        }, 1000)
-        console.log("AEIOU")
-    });
+
+    }
+
+
+
+
 
 });
 

@@ -1,16 +1,19 @@
 import os
 import re
+import json
 import httpx
 import datetime
 
 ## Flask Imports
 import flask
+from flask import session
 from flask import abort
 from flask import url_for
 from flask import redirect
 from flask import current_app as app
 from flask import send_from_directory
-from flask_login import login_required
+from flask import request
+from flask_login import login_required, current_user
 
 from app.routes import handler
 from app.routes.bot import bot
@@ -32,7 +35,25 @@ with app.app_context():
     
     for bp in listBlueprints:
         app.register_blueprint(bp)
+
+
+@app.context_processor
+def inject_user_cookies():
     
+    admin_cookie, supersu_cookie = None, None
+    
+    if current_user.is_authenticated:
+        admin_cookie = request.cookies.get('roles_admin')
+        if admin_cookie:
+            if json.loads(admin_cookie).get("login_id") != session["login_id"]:
+                admin_cookie = None
+        
+            supersu_cookie = request.cookies.get('roles_supersu')
+            if supersu_cookie:
+                if json.loads(supersu_cookie).get("login_id") != session["login_id"]:
+                    supersu_cookie = None
+        
+    return dict(admin_cookie=admin_cookie, supersu_cookie=supersu_cookie, current_user=current_user)
 
 
 @app.route("/", methods=["GET"])

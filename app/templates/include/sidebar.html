@@ -36,7 +36,7 @@
                     </div>
                     <span class="text">Credenciais</span>
                 </a>
-                {% if session.get("admin") %}
+                {% if current_user.is_authenticated and admin_cookie %}
                 <a class="nav-link" href="{{ url_for('admin.config') }}">
                     <div class="sb-nav-link-icon">
                         <span class="icon text-white-50">
@@ -46,7 +46,8 @@
                     <span class="text">Configurações</span>
                 </a>
                 {% endif %}
-                {% if session.get("supersu") %}
+
+                {% if current_user.is_authenticated and supersu_cookie %}
                 <a class="nav-link" href="{{ url_for('supersu.config') }}">
                     <div class="sb-nav-link-icon">
                         <span class="icon text-white-50">

@@ -88,42 +88,44 @@ def init_database():
             name_client="Fonseca Melo Viana",
             cpf_cnpj="11594617000107",
             license_token=str(uuid4()))
-    
-        df = pd.read_excel("export.xlsx")
-        df.columns = df.columns.str.lower()
-        data = []
-        db.session.add(license_user)
-        for values in list(df.to_dict(orient="records")):
-            
-            key = list(values)[1]
-            value = values.get(key)
-            
-            chk_bot = BotsCrawJUD.query.filter_by(
-                        **{key: value}).first()
-            
-            if chk_bot not in license_user.bots:
-                license_user.bots.append(chk_bot)
 
-        df = pd.read_excel("export2.xlsx")
-        df.columns = df.columns.str.lower()
-        to_add_usr = []
-        for value in list(df.to_dict(orient="records")):
-
-            chk_usr = Users.query.filter_by(**{"login": value.get("login")}).first()
-            if not chk_usr:
-                add_usr = Users()
-                for key, var in value.items():
-                    if key == admins and var:
-                        license_user.admins.append(user)
-                        
-                    add_usr.__dict__.update({key: var})
-                
-                add_usr.licenseusr = license_user
-                to_add_usr.append(add_usr)
-            elif chk_usr:
-                chk_usr.licenseusr = license_user
-                
-        if len(to_add_usr) > 0:
-            db.session.add_all(to_add_usr)
+        with db.session.no_autoflush:
             
-        db.session.commit()
+            df = pd.read_excel("export.xlsx")
+            df.columns = df.columns.str.lower()
+            data = []
+            db.session.add(license_user)
+            for values in list(df.to_dict(orient="records")):
+                
+                key = list(values)[1]
+                value = values.get(key)
+                
+                chk_bot = BotsCrawJUD.query.filter_by(
+                            **{key: value}).first()
+                
+                if chk_bot not in license_user.bots:
+                    license_user.bots.append(chk_bot)
+
+            df = pd.read_excel("export2.xlsx")
+            df.columns = df.columns.str.lower()
+            to_add_usr = []
+            for value in list(df.to_dict(orient="records")):
+
+                chk_usr = Users.query.filter_by(**{"login": value.get("login")}).first()
+                if not chk_usr:
+                    add_usr = Users()
+                    for key, var in value.items():
+                        if key == admins and var:
+                            license_user.admins.append(user)
+                            
+                        add_usr.__dict__.update({key: var})
+                    
+                    add_usr.licenseusr = license_user
+                    to_add_usr.append(add_usr)
+                elif chk_usr:
+                    chk_usr.licenseusr = license_user
+                    
+            if len(to_add_usr) > 0:
+                db.session.add_all(to_add_usr)
+                
+            db.session.commit()
