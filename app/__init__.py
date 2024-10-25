@@ -23,6 +23,7 @@ login_manager.login_view = 'auth.login'
 login_manager.login_message = "Faça login para acessar essa página."
 login_manager.login_message_category = "info"
 
+
 def create_app() -> tuple[Flask, int, bool]:
 
     src_path = os.path.join(os.getcwd(), "static")
@@ -39,12 +40,11 @@ def create_app() -> tuple[Flask, int, bool]:
         from app import routes
         init_database()
         tlsm.init_app(app, content_security_policy=csp(),
-                session_cookie_http_only=True,
-                session_cookie_samesite='Lax',
-                strict_transport_security=True,
-                strict_transport_security_max_age=age,
-                x_content_type_options= True,
-                x_xss_protection=True)
+                      session_cookie_http_only=True,
+                      session_cookie_samesite='Lax',
+                      strict_transport_security_max_age=age,
+                      x_content_type_options=True,
+                      x_xss_protection=True)
     
     values = dotenv_values()
     
@@ -55,5 +55,3 @@ def create_app() -> tuple[Flask, int, bool]:
     
     
     return (app, port, debug)
-
-

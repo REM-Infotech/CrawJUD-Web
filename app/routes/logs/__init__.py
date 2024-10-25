@@ -31,11 +31,6 @@ def obter_endereco_socket(user: str, pid: str) -> str:
     return url
 
 
-def obter_status_bot(pid: str) -> Type[Query]:
-
-    return 'ExecutionsTable.query.filter_by(pid=pid, status="Finalizado").first()'
-
-
 def stopbot(user: str, pid: str, socket: str):
 
     requests.post(url=f'{socket}/stop/{user}/{pid}', timeout=300)
@@ -101,3 +96,4 @@ def status(pid):
         return jsonify(response_data), 200
     
     return jsonify(response_data), 500
+

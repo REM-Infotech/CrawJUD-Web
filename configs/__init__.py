@@ -43,6 +43,7 @@ def csp() -> dict[str]:
         'https://github.com',
         'https://domain.cliente.com',
         'https://avatars.githubusercontent.com',
+        "https://cdn-icons-png.freepik.com"
         
     ],
     'connect-src': [

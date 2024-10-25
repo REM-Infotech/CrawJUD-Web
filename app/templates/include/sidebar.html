@@ -37,7 +37,7 @@
                     <span class="text">Credenciais</span>
                 </a>
                 {% if session.get("admin") %}
-                <a class="nav-link" href="#">
+                <a class="nav-link" href="{{ url_for('admin.config') }}">
                     <div class="sb-nav-link-icon">
                         <span class="icon text-white-50">
                             <i class="fa-solid fa-gear"></i>
@@ -47,7 +47,7 @@
                 </a>
                 {% endif %}
                 {% if session.get("supersu") %}
-                <a class="nav-link" href="#">
+                <a class="nav-link" href="{{ url_for('supersu.config') }}">
                     <div class="sb-nav-link-icon">
                         <span class="icon text-white-50">
                             <i class="fa-solid fa-user-gear"></i>
@@ -63,14 +63,15 @@
             <div class="dropdown">
                 <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
                     data-bs-toggle="dropdown" aria-expanded="false">
-                    <img src="https://github.com/robotz213.png" alt="" width="32" height="32"
-                        class="rounded-circle me-2">
+                    <img id="ProfilePIC" src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/0.16.1/images/loader-large.gif" 
+                    alt="" width="32" height="32" class="rounded-circle me-2">
+                    {% set usr = session.get("login") %}
+                    {% set img_src = url_for('serve_profile', user=usr) %}
+                    <span id="urlProfile" style="display: none;">{{ img_src }}</span>
                     <strong>{{ session["nome_usuario"] }}</strong>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
-                    <li><a class="dropdown-item" href="#">New project...</a></li>
-                    <li><a class="dropdown-item" href="#">Settings</a></li>
-                    <li><a class="dropdown-item" href="#">Profile</a></li>
+                    <li><a class="dropdown-item" href="{{ url_for('usr.profile_config') }}">Profile</a></li>
                     <li>
                         <hr class="dropdown-divider">
                     </li>

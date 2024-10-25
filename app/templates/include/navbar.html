@@ -1,7 +1,8 @@
 <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
     <!-- Navbar Brand-->
     <a class="navbar-brand ps-3" href="#" id="sidebarToggle">
-        <img class="fs-4" src="{{ url_for('static', filename = 'img/favicon.ico') }}" alt="Logo" width="30" height="30" class="d-inline-block align-text-top">
+        <img class="fs-4" src="{{ url_for('static', filename = 'img/favicon.ico') }}" alt="Logo" width="30" height="30"
+            class="d-inline-block align-text-top">
         CrawJUD
         <i class="fas fa-bars"></i>
     </a>
@@ -10,8 +11,7 @@
         <div class="input-group">
             <input class="form-control" type="text" placeholder="Search for..." aria-label="Search for..."
                 aria-describedby="btnNavbarSearch" />
-            <button class="btn btn-primary" id="btnNavbarSearch" type="button"><i
-                    class="fas fa-search"></i></button>
+            <button class="btn btn-primary" id="btnNavbarSearch" type="button"><i class="fas fa-search"></i></button>
         </div>
     </form>
     <!-- Navbar-->
@@ -19,14 +19,16 @@
         <li class="nav-item dropdown">
             <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
                 data-bs-toggle="dropdown" aria-expanded="false">
-                <img src="https://github.com/robotz213.png" alt="" width="32" height="32" class="rounded-circle me-2">
+                <img id="NavProfilePIC" src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/0.16.1/images/loader-large.gif" 
+                alt="" width="32" height="32" class="rounded-circle me-2">
+                {% set usr = session.get("login") %}
+                {% set img_src = url_for('serve_profile', user=usr) %}
+                <span id="urlProfile" style="display: none;">{{ img_src }}</span>
                 <strong>{{ session["nome_usuario"] }}</strong>
             </a>
-            
+
             <ul class="dropdown-menu dropdown-menu-end mt-2" aria-labelledby="navbarDropdown">
-                <li><a class="dropdown-item" href="#">New project...</a></li>
-                <li><a class="dropdown-item" href="#">Settings</a></li>
-                <li><a class="dropdown-item" href="#">Profile</a></li>
+                <li><a class="dropdown-item" href="{{ url_for('usr.profile_config') }}">Profile</a></li>
                 <li>
                     <hr class="dropdown-divider">
                 </li>

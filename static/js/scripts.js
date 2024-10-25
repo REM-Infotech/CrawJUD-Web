@@ -1,4 +1,26 @@
 
+$(document).ready(function () {
+
+    var url_Profile = $("#urlProfile").text()
+    const src_profiles = [$("#NavProfilePIC"), $("#ProfilePIC")];
+
+    $.get(url_Profile).done(
+        function () {
+            SetProfile(url_Profile, src_profiles);
+
+        }).fail(function () {
+            // Captura o erro, como o 500
+            var url_Profile = "https://cdn-icons-png.freepik.com/512/8556/8556706.png";
+            SetProfile(url_Profile, src_profiles);
+        });
+});
+
+function SetProfile(url, arrSrc) {
+    for (srcSetter of arrSrc) {
+        srcSetter.attr("src", url);
+    }
+
+}
 
 
 window.addEventListener('DOMContentLoaded', event => {
@@ -54,7 +76,7 @@ $(document).ready(function () {
         theme: "bootstrap-5",
         width: $('select').data('width') ? $('select').data('width') : $('select').hasClass('w-100') ? '100%' : 'style',
         placeholder: $('select').data('placeholder')
-        
+
     });
 
     // Limpar todas as opções do segundo select
@@ -63,7 +85,7 @@ $(document).ready(function () {
 
     // Função para mostrar ou ocultar as opções do segundo select
     $('#state').on('change', function () {
-        
+
         setTimeout(() => {
             $('#modalLoading').modal('show');
         }, 250)
@@ -73,9 +95,9 @@ $(document).ready(function () {
         $(allOptions).each(function () {
             var optionCategory = $(this).data('juizado_estado');
             if (optionCategory === selectedCategory) {
-        
+
                 $('#varas').append($(this)).trigger('change'); // Re-adicionar a opção
-            } else if (optionCategory !== selectedCategory){
+            } else if (optionCategory !== selectedCategory) {
                 $('#varas').empty();
             }
         });
@@ -122,3 +144,6 @@ function showLoad() {
         $('#modalLoading').modal('show');
     }, 500)
 }
+
+
+

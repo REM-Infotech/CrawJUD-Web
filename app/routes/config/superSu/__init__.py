@@ -14,7 +14,7 @@ def config():
         return render_template("index.html")
     
     except Exception as e:
-        abort(500)
+        abort(500, description=f"Erro interno do servidor: {str(e)}")
 
 @supersu.route('/cadastro/usuario', methods=["GET", "POST"])
 @login_required
@@ -24,7 +24,7 @@ def cadastro_user():
         return render_template("index.html")
     
     except Exception as e:
-        abort(500)
+        abort(500, description=f"Erro interno do servidor: {str(e)}")
 
 @supersu.route('/editar/usuario', methods=["GET", "POST"])
 @login_required
@@ -34,5 +34,5 @@ def edit_usuario():
         return render_template("index.html")
     
     except Exception as e:
-        abort(500)
+        abort(500, description=f"Erro interno do servidor: {str(e)}")
 
