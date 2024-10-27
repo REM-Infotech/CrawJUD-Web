@@ -124,7 +124,6 @@ $(document).ready(function () {
             setTimeout(() => {
                 $('#modalLoading').modal('hide');
             }, 1000)
-            console.log("AEIOU")
         });
 
     }
@@ -152,7 +151,6 @@ function authMethodChange(element) {
 }
 
 function showLoad() {
-    console.log("AEIOU");
     setTimeout(() => {
         $('#modalLoading').modal('show');
     }, 500)

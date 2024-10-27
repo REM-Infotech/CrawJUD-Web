@@ -15,7 +15,6 @@ from flask import send_from_directory
 from flask import request
 from flask_login import login_required, current_user
 
-from app.routes import handler
 from app.routes.bot import bot
 from app.routes.auth import auth
 from app.routes.logs import logsbot

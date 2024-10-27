@@ -6,7 +6,6 @@ from app import login_manager
 
 import pytz
 from uuid import uuid4
-from typing import Type
 from datetime import datetime
 import bcrypt
 

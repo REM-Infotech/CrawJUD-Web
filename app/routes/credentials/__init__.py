@@ -1,16 +1,14 @@
 from flask import Blueprint, render_template, session, url_for, redirect, flash, current_app
 from flask_login import login_required
-from flask_wtf import FlaskForm
 from werkzeug.utils import secure_filename
 
 import os
 import pathlib
-from typing import Callable
 from collections import Counter
 
 from app import db
 from app.forms.credentials import CredentialsForm
-from app.models import Credentials, BotsCrawJUD, LicensesUsers, Users
+from app.models import Credentials, BotsCrawJUD, LicensesUsers
 
 path_template = os.path.join(pathlib.Path(
     __file__).parent.resolve(), "templates")
@@ -23,7 +21,7 @@ def credentials():
 
     database = db.session.query(Credentials).\
         join(LicensesUsers).\
-        filter_by(license_token = session["license_token"]).all()
+        filter_by(license_token=session["license_token"]).all()
         
     title = "Credenciais"
     page = "credentials.html"

@@ -10,8 +10,12 @@ import pandas as pd
 from uuid import uuid4
 from dotenv import dotenv_values
 
+__all__ = [admins, execution_bots, Users, LicensesUsers, SuperUser,
+           BotsCrawJUD, Credentials, Executions, Servers]
+
 
 def init_database():
+    
     app = current_app
     with app.app_context():
         

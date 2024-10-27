@@ -9,7 +9,7 @@ from flask_wtf import FlaskForm
 
 from wtforms import (
     StringField, SubmitField, SelectField, SelectMultipleField, DateField)
-from flask_wtf.file import FileField, FileRequired, FileAllowed, MultipleFileField
+from flask_wtf.file import FileField, FileAllowed, MultipleFileField
 
 permited_file = FileAllowed(
     ['xlsx', 'xls', "csv"], 'Apenas arquivos |".xlsx"/".xls"/".csv"| são permitidos!')

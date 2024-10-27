@@ -37,7 +37,10 @@ def create_app() -> tuple[Flask, int, bool]:
 
     with app.app_context():
         from app.models import init_database
-        from app import routes
+        import app.routes
+        
+        
+        
         init_database()
         tlsm.init_app(app, content_security_policy=csp(),
                       session_cookie_http_only=True,

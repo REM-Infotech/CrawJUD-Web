@@ -1,11 +1,9 @@
 from flask import Blueprint, url_for, redirect, render_template, flash, jsonify, session
 from flask_login import login_required
-from flask_sqlalchemy.query import Query
 
 import os
 import pathlib
 import requests
-from typing import Type
 
 from app import db
 from app.misc import generate_signed_url

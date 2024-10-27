@@ -16,7 +16,7 @@ def generate_pid() -> str:
         digits = random.sample(string.digits, 6)
 
         # Intercalar letras e dígitos
-        pid = ''.join([letters[i//2] if i % 2 == 0 else digits[i//2]
+        pid = ''.join([letters[i // 2] if i % 2 == 0 else digits[i // 2]
                       for i in range(6)])
 
         # Verificar se a string gerada não contém sequências do tipo "AABB"

@@ -18,7 +18,6 @@ from app.forms import BotForm
 from app.misc import generate_pid
 from app.misc.MakeTemplate import MakeXlsx as make_xlsx
 from app.models import BotsCrawJUD, LicensesUsers, Servers, Credentials
-from requests.exceptions import ConnectTimeout
 
 path_template = os.path.join(pathlib.Path(
     __file__).parent.resolve(), "templates")

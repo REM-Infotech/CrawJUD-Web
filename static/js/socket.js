@@ -154,10 +154,12 @@ document.addEventListener('DOMContentLoaded', function () {
             LogsBotChart.data.datasets[0].data = [remaining, success, errors];
         };
 
-        chartType = LogsBotChart.type
+        var chartType = LogsBotChart.config.type;
+        var grafMode = data.graphicMode;
 
-        if (data.graphicMode !== chartType){
-            LogsBotChart.config.type = data.graphicMode;
+        if (grafMode !== undefined && grafMode !== chartType){
+
+            LogsBotChart.config.type = grafMode;
             LogsBotChart.data.datasets[0].data
             LogsBotChart.data.labels[0] = "PÁGINAS"
             Countremaining.innerHTML = `Páginas: ${remaining}`
