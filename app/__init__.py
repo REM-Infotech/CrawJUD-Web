@@ -22,6 +22,7 @@ login_manager = LoginManager()
 login_manager.login_view = 'auth.login'
 login_manager.login_message = "Faça login para acessar essa página."
 login_manager.login_message_category = "info"
+routing = None
 
 
 def create_app() -> tuple[Flask, int, bool]:
@@ -37,9 +38,10 @@ def create_app() -> tuple[Flask, int, bool]:
 
     with app.app_context():
         from app.models import init_database
-        import app.routes
+        from app import routes
         
-        
+        global routing
+        routing = routes
         
         init_database()
         tlsm.init_app(app, content_security_policy=csp(),
@@ -58,3 +60,6 @@ def create_app() -> tuple[Flask, int, bool]:
     
     
     return (app, port, debug)
+
+
+__all__ = [routing]

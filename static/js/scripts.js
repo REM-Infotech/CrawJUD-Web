@@ -1,31 +1,31 @@
 
-$(document).ready(function () {
+// $(document).ready(function () {
 
-    var url_Profile = $("#urlProfile").text()
-    const src_profiles = [$("#NavProfilePIC"), $("#ProfilePIC")];
+//     var url_Profile = $("#urlProfile").text()
+//     const src_profiles = [$("#NavProfilePIC"), $("#ProfilePIC")];
 
-    if (url_Profile){
-        $.get(url_Profile).done(
-            function () {
-                SetProfile(url_Profile, src_profiles);
+//     if (url_Profile){
+//         $.get(url_Profile).done(
+//             function () {
+//                 SetProfile(url_Profile, src_profiles);
     
-            }).fail(function () {
-                // Captura o erro, como o 500
-                var url_Profile = "https://cdn-icons-png.freepik.com/512/8556/8556706.png";
-                SetProfile(url_Profile, src_profiles);
-            });
+//             }).fail(function () {
+//                 // Captura o erro, como o 500
+//                 var url_Profile = "https://cdn-icons-png.freepik.com/512/8556/8556706.png";
+//                 SetProfile(url_Profile, src_profiles);
+//             });
 
-    };
+//     };
 
     
-});
+// });
 
-function SetProfile(url, arrSrc) {
-    for (srcSetter of arrSrc) {
-        srcSetter.attr("src", url);
-    }
+// function SetProfile(url, arrSrc) {
+//     for (srcSetter of arrSrc) {
+//         srcSetter.attr("src", url);
+//     }
 
-}
+// }
 
 
 window.addEventListener('DOMContentLoaded', event => {
