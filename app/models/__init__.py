@@ -121,7 +121,12 @@ def init_database():
                     for key, var in value.items():
                         if key == admins and var:
                             license_user.admins.append(user)
-                            
+                            continue
+                        
+                        elif key == "password":
+                            add_usr.senhacrip = var
+                            continue
+                         
                         add_usr.__dict__.update({key: var})
                     
                     add_usr.licenseusr = license_user
