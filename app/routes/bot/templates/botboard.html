@@ -24,7 +24,8 @@
                                 <div class="card-body bg-secondary bg-opacity-10">
                                     <h5 class="card-text">{{ bot.text }}</h5>
                                 </div>
-                                {% set urlbot = url_for('bot.botlaunch', id=bot.id, system=bot.system.lower(), typebot=bot.type.lower()) %}
+                                {% set urlbot = url_for('bot.botlaunch', id=bot.id, system=bot.system.lower(),
+                                typebot=bot.type.lower(), _scheme="https")%}
                                 <div
                                     class="card-footer d-flex align-items-center justify-content-between bg-secondary bg-opacity-25">
                                     <a href="{{ urlbot }}" class="btn btn-success fw-semibold">Acessar Robô</a>
