@@ -3,10 +3,12 @@ from flask_login import login_required
 
 import os
 import json
+import locale
 import pathlib
-import calendar
-
 import pandas as pd
+
+from datetime import datetime
+from collections import Counter
 from deep_translator import GoogleTranslator
 
 from app import db
@@ -33,6 +35,9 @@ def dashboard():
 @login_required
 def perMonth():
     
+    # Define a localidade para português do Brasil
+    locale.setlocale(locale.LC_TIME, 'pt_BR.UTF-8')
+    
     admin_cookie = request.cookies.get('roles_admin')
     supersu_cookie = request.cookies.get('roles_supersu')
     
@@ -49,29 +54,27 @@ def perMonth():
             join(Users).\
             filter(Users.login == session["login"]).all()
     
-    # Converte o query result para uma lista de dicionários
-    data = [{'bot_name': execut.bot.display_name, 'execution_date': execut.data_execucao}
-            for execut in query_result]
-    
-    # Cria o DataFrame a partir da lista de dicionários
-    df = pd.DataFrame(data)
+    # Extrai o mês de cada data de execução em português
+    meses = []
+    current_year = datetime.now().year
+    for execut in query_result:
+        execution_date = execut.data_execucao
+        if execution_date and execution_date.year == current_year:
+            # Converte para o nome do mês em português
+            mes_nome = execution_date.date().strftime("%B").lower()
+            meses.append(mes_nome)
 
-    # Transformando a coluna para datetime
-    df['execution_date'] = pd.to_datetime(df['execution_date'])
-    df['month'] = df['execution_date'].dt.to_period('M')
+    # Conta as ocorrências de cada mês
+    execucoes_por_mes = Counter(meses)
 
-    # Contagem de execuções por mês
-    execucoes_por_mes = df.groupby('month').size()
-    execucoes_por_mes = execucoes_por_mes.reset_index(name='count')
+    # Lista completa de meses em português para garantir que todos os meses estejam representados
+    all_months = ["janeiro", "fevereiro", "março", "abril", "maio", "junho",
+                  "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"]
 
-    execucoes_por_mes['month'] = execucoes_por_mes['month'].apply(
-    lambda x: calendar.month_name[int(x)] if isinstance(x, (int, str)) and str(x).isdigit() else x)
-    execucoes_por_mes['month'].apply(lambda x: translator.translate(x))
-    
-    # Convertendo para JSON
+    # Garante que todos os meses estejam na contagem, mesmo que com valor 0
     chart_data = {
-        "labels": execucoes_por_mes['month'].astype(str).tolist(),  # Converte os períodos para string
-        "data": execucoes_por_mes['count'].tolist()  # Quantidade de execuções
+        "labels": all_months,
+        "values": [execucoes_por_mes.get(month, 0) for month in all_months]  # Preenche com 0 se o mês estiver ausente
     }
 
     # Retorna para o template
@@ -79,7 +82,6 @@ def perMonth():
 
 
 @dash.route("/MostExecuted", methods=["GET"])
-@login_required
 @login_required
 def MostExecuted():
     
@@ -114,7 +116,7 @@ def MostExecuted():
     # Preparando dados para o Chart.js
     chart_data = {
         "labels": execucoes_por_bot['bot_name'].tolist(),
-        "data": execucoes_por_bot['count'].tolist()
+        "values": execucoes_por_bot['count'].tolist()
     }
 
     # Retorna para o template

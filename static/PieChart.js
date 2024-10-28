@@ -33,7 +33,7 @@ $(document).ready(function () {
     {
 
       MostExecuted.data.labels = data.labels;
-      MostExecuted.data.datasets[0].data = data.data;
+      MostExecuted.data.datasets[0].data = data.values;
       MostExecuted.update();
 
     }
