@@ -7,12 +7,13 @@ path_template = os.path.join(pathlib.Path(__file__).parent.resolve(), "templates
 admin = Blueprint("admin", __name__, template_folder=path_template)
 
 
-@admin.route('/configurações', methods=["GET"])
+@admin.route('/users', methods=["GET"])
 @login_required
-def config():
+def users():
     
     try:
-        return render_template("index.html")
+        page = "users.html"
+        return render_template("index.html", page=page)
     
     except Exception as e:
         abort(500, description=f"Erro interno do servidor: {str(e)}")
@@ -23,7 +24,8 @@ def config():
 def cadastro_user():
     
     try:
-        return render_template("index.html")
+        page = "FormUsr.html"
+        return render_template("index.html", page=page)
     
     except Exception as e:
         abort(500, description=f"Erro interno do servidor: {str(e)}")

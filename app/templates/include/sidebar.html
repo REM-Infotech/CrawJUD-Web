@@ -37,13 +37,13 @@
                     <span class="text">Credenciais</span>
                 </a>
                 {% if current_user.is_authenticated and admin_cookie %}
-                <a class="nav-link" href="{{ url_for('admin.config') }}">
+                <a class="nav-link" href="{{ url_for('admin.users') }}">
                     <div class="sb-nav-link-icon">
                         <span class="icon text-white-50">
                             <i class="fa-solid fa-gear"></i>
                         </span>
                     </div>
-                    <span class="text">Configurações</span>
+                    <span class="text">Config. Usuários</span>
                 </a>
                 {% endif %}
 
