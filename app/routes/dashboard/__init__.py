@@ -61,6 +61,11 @@ def perMonth():
     # Define a localidade para português do Brasil
     locale.setlocale(locale.LC_TIME, 'pt_BR.UTF-8')
     
+    chart_data = {
+        "labels": [],
+        "values": []  # Preenche com 0 se o mês estiver ausente
+    }
+    
     admin_cookie = request.cookies.get('roles_admin')
     supersu_cookie = request.cookies.get('roles_supersu')
     
@@ -78,27 +83,29 @@ def perMonth():
             filter(Users.login == session["login"]).all()
     
     # Extrai o mês de cada data de execução em português
-    meses = []
-    current_year = datetime.now().year
-    for execut in query_result:
-        execution_date = execut.data_execucao
-        if execution_date and execution_date.year == current_year:
-            # Converte para o nome do mês em português
-            mes_nome = execution_date.date().strftime("%B").lower()
-            meses.append(mes_nome)
+    if query_result:
+        
+        meses = []
+        current_year = datetime.now().year
+        for execut in query_result:
+            execution_date = execut.data_execucao
+            if execution_date and execution_date.year == current_year:
+                # Converte para o nome do mês em português
+                mes_nome = execution_date.date().strftime("%B").lower()
+                meses.append(mes_nome)
 
-    # Conta as ocorrências de cada mês
-    execucoes_por_mes = Counter(meses)
+        # Conta as ocorrências de cada mês
+        execucoes_por_mes = Counter(meses)
 
-    # Lista completa de meses em português para garantir que todos os meses estejam representados
-    all_months = ["janeiro", "fevereiro", "março", "abril", "maio", "junho",
-                  "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"]
+        # Lista completa de meses em português para garantir que todos os meses estejam representados
+        all_months = ["janeiro", "fevereiro", "março", "abril", "maio", "junho",
+                      "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"]
 
-    # Garante que todos os meses estejam na contagem, mesmo que com valor 0
-    chart_data = {
-        "labels": all_months,
-        "values": [execucoes_por_mes.get(month, 0) for month in all_months]  # Preenche com 0 se o mês estiver ausente
-    }
+        # Garante que todos os meses estejam na contagem, mesmo que com valor 0
+        chart_data = {
+            "labels": all_months,
+            "values": [execucoes_por_mes.get(month, 0) for month in all_months]  # Preenche com 0 se o mês estiver ausente
+        }
 
     # Retorna para o template
     return jsonify(chart_data)
@@ -111,6 +118,10 @@ def MostExecuted():
     # Executa a query para obter todos os registros
     admin_cookie = request.cookies.get('roles_admin')
     supersu_cookie = request.cookies.get('roles_supersu')
+    
+    chart_data = {
+        "labels": [],
+        "values": []}
     
     if supersu_cookie and json.loads(supersu_cookie).get("login_id") == session["_id"]:
         query_result = Executions.query.all()
@@ -125,22 +136,23 @@ def MostExecuted():
             join(Users).\
             filter(Users.login == session["login"]).all()
     
-    # Converte o query result para uma lista de dicionários
-    data = [{'bot_name': execut.bot.display_name}
-            for execut in query_result]
-    
-    # Cria o DataFrame a partir da lista de dicionários
-    df = pd.DataFrame(data)
-    
-    # Agrupando pelo nome do bot e contando as execuções totais
-    execucoes_por_bot = df['bot_name'].value_counts().reset_index()
-    execucoes_por_bot.columns = ['bot_name', 'count']
+    if query_result:
+        # Converte o query result para uma lista de dicionários
+        data = [{'bot_name': execut.bot.display_name}
+                for execut in query_result]
+        
+        # Cria o DataFrame a partir da lista de dicionários
+        df = pd.DataFrame(data)
+        
+        # Agrupando pelo nome do bot e contando as execuções totais
+        execucoes_por_bot = df['bot_name'].value_counts().reset_index()
+        execucoes_por_bot.columns = ['bot_name', 'count']
 
-    # Preparando dados para o Chart.js
-    chart_data = {
-        "labels": execucoes_por_bot['bot_name'].tolist(),
-        "values": execucoes_por_bot['count'].tolist()
-    }
+        # Preparando dados para o Chart.js
+        chart_data = {
+            "labels": execucoes_por_bot['bot_name'].tolist(),
+            "values": execucoes_por_bot['count'].tolist()
+        }
 
     # Retorna para o template
     return jsonify(chart_data)

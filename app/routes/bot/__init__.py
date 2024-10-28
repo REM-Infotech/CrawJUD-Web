@@ -240,7 +240,8 @@ def botlaunch(id: int, system: str, typebot: str):
                 
             flash("Erro ao iniciar robô", "error")
 
-        return render_template("index.html", page=page, url=request.base_url,
+        url = request.base_url.replace("http://", "https://")
+        return render_template("index.html", page=page, url=url,
                                model_name=f"{system}_{typebot}", display_name=display_name,
                                form=form, title=title, id=id, system=system, typebot=typebot)
 
