@@ -14,3 +14,15 @@ window.addEventListener('DOMContentLoaded', event => {
         });
     };
 });
+
+$(document).ready(function() {
+
+    $('#DashDataTable').DataTable({  
+        columnDefs: [
+            {
+                targets: [4, 6],
+                render: DataTable.render.datetime('D/MMM/YYYY', "pt")
+            }
+        ]
+    });
+});

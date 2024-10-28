@@ -12,7 +12,7 @@ from collections import Counter
 from deep_translator import GoogleTranslator
 
 from app import db
-from app.models import Users, LicensesUsers, Executions
+from app.models import Users, LicensesUsers, Executions, SuperUser
 
 translator = GoogleTranslator(source="en", target="pt")
 
@@ -28,7 +28,30 @@ def dashboard():
     
     title = "Dashboard"
     page = "dashboard.html"
-    return render_template("index.html", page=page, title=title)
+    
+    user = Users.query.filter(Users.login == session["login"]).first()
+    user_id = user.id
+
+    chksupersu = db.session.query(SuperUser).join(
+        Users).filter(Users.id == user_id).first()
+
+    executions = db.session.query(Executions)
+    if not chksupersu:
+
+        executions = executions.join(LicensesUsers).\
+            filter_by(license_token=user.licenseusr.license_token)
+            
+        chk_admin = db.session.query(LicensesUsers).\
+            join(LicensesUsers.admins).\
+            filter(Users.id == user_id).first()
+        
+        if not chk_admin:
+            executions = executions.join(Users).\
+                filter(Users.id == user_id)
+                
+    database = executions.all()
+    
+    return render_template("index.html", page=page, title=title, database=database)
 
 
 @dash.route("/PerMonth", methods=["GET"])

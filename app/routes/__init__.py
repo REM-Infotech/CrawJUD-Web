@@ -87,7 +87,7 @@ def serve_profile(user: str):
             
             if not image_data:
                 
-                url_image = "https://cdn-icons-png.freepik.com/512/13924/13924070.png"
+                url_image = "https://cdn-icons-png.flaticon.com/512/3135/3135768.png"
                 reponse_img = httpx.get(url_image)
                 
                 filename = os.path.basename(url_image)
