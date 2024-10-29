@@ -68,11 +68,14 @@
         {% include 'include/message.html' %}
         {% endif %}
         {% endwith %}
-
+        
     </div>
     {% include 'include/loading.html' %}
     <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
     <script src="{{ url_for('static', filename='js/DataTables.js') }}"></script>
+    {% if form %}
+    <script src="{{ url_for('static', filename='js/PreventForm.js') }}"></script>
+    {% endif %}
 </body>
 
 </html>

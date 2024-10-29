@@ -17,10 +17,19 @@ window.addEventListener('DOMContentLoaded', event => {
 
 $(document).ready(function() {
 
-    $('#DashDataTable').DataTable({  
+    var location_url = $(location).attr('href');
+    console.log(location_url);
+
+    if (location_url.toLowerCase().includes("dashboard") || location_url.toLowerCase().includes("executions")){
+        var targets = [4, 6];
+    } else if(location_url.toLowerCase().includes("users")){
+        var targets = [4];
+    };
+
+    $('#FormatedDataTable').DataTable({  
         columnDefs: [
             {
-                targets: [4, 6],
+                targets: targets,
                 render: DataTable.render.datetime('D/MMM/YYYY', "pt")
             }
         ]
