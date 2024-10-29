@@ -25,4 +25,5 @@ class UserForm(FlaskForm):
             self.tipo_user.choices.extend([tipoUsr])
             self.licenses.choices.extend(licenses)
             
-        
+        elif tipoUsr is None:
+            del self.licenses
