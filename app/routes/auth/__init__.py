@@ -71,10 +71,19 @@ def forgot_password():
 def logout():
     
     logout_user()
+    
+    flash("Logout efetuado com sucesso!", "success")
+    resp = redirect(url_for("auth.login"))
+    
+    cookies_ = list(request.cookies.keys())
+    for cookie in cookies_:
+        
+        if cookie != "session":
+            resp.set_cookie(cookie, "", max_age=0)
+        
     iter_session = list(session.keys())
     for key in iter_session:
         if "_" not in key:
             session.pop(key)
-        
-    flash("Logout efetuado com sucesso!", "success")
-    return redirect(url_for("auth.login"))
+    
+    return resp
