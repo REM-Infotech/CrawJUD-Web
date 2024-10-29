@@ -49,13 +49,15 @@
                 {% endif %}
                 <div class="col-md-12">
                     <div class="table-responsive mb-3">
-                        <table class="table table-striped" id="DataTable">
+                        <table class="table table-striped" id="FormatedDataTable">
                             <thead>
                                 <tr role="row">
                                     <th>#</th>
-                                    <th>Nome Credencial</th>
-                                    <th>Portal</th>
-                                    <th>Metodo Login</th>
+                                    <th>Login</th>
+                                    <th>Nome Usuário</th>
+                                    <th>E-mail</th>
+                                    <th>Último Login</th>
+                                    <th>ID Login</th>
                                     <th data-sortable="false">Ações</th>
                                 </tr>
                             </thead>
@@ -64,29 +66,26 @@
                                 {% for item in database %}
                                 <tr>
                                     <td>{{ item.id }}</td>
-                                    <td>{{ item.nome_credencial }}</td>
-                                    <td>{{ item.system }}</td>
-                                    {% if item.login_method == "pw" %}
-                                    <td>Usuário/Senha</td>
-                                    {% elif item.login_method == "cert" %}
-                                    <td>Certificado A1</td>
-                                    {% endif %}
+                                    <td>{{ item.login }}</td>
+                                    <td>{{ item.nome_usuario }}</td>
+                                    <td>{{ item.email }}</td>
+                                    <td>{{ item.login_time.strftime("%Y-%m-%d") }}</td>
+                                    <td>{{ item.login_id }}</td>
                                     <td>
-                                        <a href="{{ url_for('creds.editar', id= item.id) }}"
+                                        <a href="{{ url_for('admin.edit_usuario', id=item.id) }}"
                                             class="btn btn-icon-split btn-warning btn-sm mb-2">
                                             <span class="icon text-white-50">
                                                 <i class="fa-solid fa-pen"></i>
                                             </span>
-                                            <span class="text">Editar</span>
+                                            <span class="text">Editar Usuário</span>
                                         </a>
-                                        <button type="button" id="DeleteEpiButton" class="btn btn-icon-split btn-danger btn-sm mb-2"
-                                            hx-post="{{ url_for('creds.deletar', id= item.id) }}" 
+                                        <button type="button" id="DeleteUser" class="btn btn-icon-split btn-danger btn-sm mb-2"
+                                            hx-post="{{ url_for('admin.delete_usuario', id=item.id) }}" 
                                             hx-trigger="click" hx-target="#results">
-                                            
                                             <span class="icon text-white-50">
                                                 <i class="fa-solid fa-trash"></i>
                                             </span>
-                                            <span class="text">Deletar</span>
+                                            <span class="text">Deletar Usuário</span>
                                         </button>
                                     </td>
                                 </tr>
@@ -96,9 +95,11 @@
                             <tfoot>
                                 <tr>
                                     <th>#</th>
-                                    <th>Nome Credencial</th>
-                                    <th>Portal</th>
-                                    <th>Metodo Login</th>
+                                    <th>Login</th>
+                                    <th>Nome Usuário</th>
+                                    <th>E-mail</th>
+                                    <th>Último Login</th>
+                                    <th>ID Login</th>
                                     <th>Ações</th>
                                 </tr>
                             </tfoot>

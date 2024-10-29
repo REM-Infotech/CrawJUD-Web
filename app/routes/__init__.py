@@ -4,6 +4,11 @@ import json
 import httpx
 import datetime
 
+
+from flask import render_template
+from deep_translator import GoogleTranslator
+from werkzeug.exceptions import HTTPException
+
 ## Flask Imports
 import flask
 from flask import session
@@ -29,6 +34,8 @@ listBlueprints = [
     bot, auth, logsbot,
     exe, dash, cred,
     admin, supersu, usr]
+
+tradutor = GoogleTranslator(source="en", target="pt")
 
 with app.app_context():
     
@@ -113,3 +120,15 @@ def serve_profile(user: str):
 
     except Exception as e:
         abort(500, description=f"Erro interno do servidor: {str(e)}")
+
+
+
+
+@app.errorhandler(HTTPException)
+def handle_http_exception(error):
+    
+    name = tradutor.translate(error.name)
+    desc = tradutor.translate(error.description)
+
+    return render_template("handler/index.html", name=name,
+                           desc=desc, code=error.code), error.code
