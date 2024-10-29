@@ -3,7 +3,7 @@
         <div class="card-header mb-3">
             <h1 class="mb-3">{{ title }}</h1>
             <hr>
-            <a href="{{ url_for('creds.cadastro') }}" class="btn btn-icon-split btn-success mb-3">
+            <a href="{{ url_for('admin.cadastro_user') }}" class="btn btn-icon-split btn-success mb-3">
                 <span class="icon text-white-50">
                     <i class="fa-solid fa-plus"></i>
                 </span>
@@ -45,8 +45,8 @@
                         </div>
                     </form>
                 </div>
-                {% endif %}
                 <hr>
+                {% endif %}
                 <div class="col-md-12">
                     <div class="table-responsive mb-3">
                         <table class="table table-striped" id="DataTable">
