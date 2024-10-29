@@ -9,7 +9,9 @@
             <div class="modal-body">
                 {% with messages = get_flashed_messages() %}
                 {% if messages %}
-                <p>{{ messages[0] }}</p>
+                {% for msg in messages %}
+                <p>{{ msg }}</p>
+                {% endfor %}
                 {% endif %}
                 {% endwith %}
             </div>
