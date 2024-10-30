@@ -2,9 +2,13 @@
 Chart.defaults.global.defaultFontFamily = '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
 Chart.defaults.global.defaultFontColor = '#292b2c';
 
-document.addEventListener('DOMContentLoaded', function () {
+$("#executions").ready(function () {
 
-    var pid = document.documentElement.dataset.pid;
+
+    var Pages = 0;
+    
+    var pid = $("#pid").val();
+    var socketAddress = $("#socket_bot").val();
 
     var ul = document.getElementById('messages'); // Elemento <ul> onde as mensagens de log são exibidas
     var percent_progress = document.getElementById('progress_info');
@@ -18,72 +22,67 @@ document.addEventListener('DOMContentLoaded', function () {
                 data: [0.1, 0.1, 0.1],
                 backgroundColor: ['#0096C7', '#42cf06', "#FF0000"],
             }],
-
         },
     });
 
-    var Pages = 0;
-    fetch(`/socket_address/${pid}`)
-        .then(response => response.text())
-        .then(socketAddress => {
+    var socket = io.connect(socketAddress + '/log');
 
-            var socket = io.connect(socketAddress + '/log');
-            socket.on('connect', function () {
-                socket.emit('join', { 'pid': pid });
-            });
-            socket.on('disconnect', function () {
-                socket.emit('leave', { 'pid': pid });
-            });
 
-            socket.on('log_message', function (data) {
-                
-                var messagePid = data.pid;
-                var pos = parseInt(data.pos);
-                var typeLog = data.type;
+    socket.on('connect', function () {
+        socket.emit('join', { 'pid': pid });
+    });
+    socket.on('disconnect', function () {
+        socket.emit('leave', { 'pid': pid });
+    });
 
-                updateElements(data)
+    socket.on('log_message', function (data) {
 
-                if (messagePid === pid) {
+        var messagePid = data.pid;
+        var pos = parseInt(data.pos);
+        var typeLog = data.type;
 
-                    var msg = data.message;
+        updateElements(data)
 
-                    if (msg === null) {
-                        var msg = data.last_log;
-                    }
+        if (messagePid === pid) {
 
-                    if (msg != null) {
-                        var li = document.createElement('li');
+            var msg = data.message;
 
-                        li.style.fontWeight = "bold";
-                        li.style.color = '#d3e3f5';
+            if (msg === null) {
+                var msg = data.last_log;
+            }
 
-                        if (typeLog === "error") {
+            if (msg != null) {
+                var li = document.createElement('li');
 
-                            li.style.fontWeight = "bold";
-                            li.style.color = 'RED';
+                li.style.fontWeight = "bold";
+                li.style.color = '#d3e3f5';
 
-                        } else if (typeLog === "success") {
+                if (typeLog === "error") {
 
-                            li.style.color = '#42cf06';
-                            li.style.fontWeight = "bold";
+                    li.style.fontWeight = "bold";
+                    li.style.color = 'RED';
 
-                        } else if (typeLog === "info") {
+                } else if (typeLog === "success") {
 
-                            li.style.color = 'orange';
-                            li.style.fontWeight = "bold";
-                        };
+                    li.style.color = '#42cf06';
+                    li.style.fontWeight = "bold";
 
-                        li.appendChild(document.createTextNode(msg));
-                        ul.appendChild(li);
+                } else if (typeLog === "info") {
 
-                        var randomId = `id_${Math.random().toString(36).substring(2, 9)}`;
+                    li.style.color = 'orange';
+                    li.style.fontWeight = "bold";
+                };
 
-                        li.setAttribute("id", randomId);
-                        document.getElementById(randomId).scrollIntoView({ behavior: "smooth", block: "end" });
-                    };
-                }
-            });
-        });
+                li.appendChild(document.createTextNode(msg));
+                ul.appendChild(li);
+
+                var randomId = `id_${Math.random().toString(36).substring(2, 9)}`;
+
+                li.setAttribute("id", randomId);
+                document.getElementById(randomId).scrollIntoView({ behavior: "smooth", block: "end" });
+            };
+        }
+    });
     // Função para extrair o número da posição da mensagem de log
     function checkStatus() {
         fetch(`/status/${pid}`)
@@ -133,16 +132,16 @@ document.addEventListener('DOMContentLoaded', function () {
             remaining = 0;
         }
 
-        if (remaining === 0){
+        if (remaining === 0) {
             remaining = Pages;
         };
 
-        
+
 
         CountErrors.innerHTML = `Erros: ${errors}`;
         Countremaining.innerHTML = `Restantes: ${remaining}`;
         TextStatus.innerHTML = `Status: ${status} | Total: ${total}`;
-        
+
         var progress = (executed / total) * 100;
         var textNode = document.createTextNode(progress.toFixed(2) + '%');
 
@@ -157,7 +156,7 @@ document.addEventListener('DOMContentLoaded', function () {
         var chartType = LogsBotChart.config.type;
         var grafMode = data.graphicMode;
 
-        if (grafMode !== undefined && grafMode !== chartType){
+        if (grafMode !== undefined && grafMode !== chartType) {
 
             LogsBotChart.config.type = grafMode;
             LogsBotChart.data.datasets[0].data
@@ -165,7 +164,7 @@ document.addEventListener('DOMContentLoaded', function () {
             Countremaining.innerHTML = `Páginas: ${remaining}`
         };
 
-        if (parseInt(data.remaining) > 0){
+        if (parseInt(data.remaining) > 0) {
             percent_progress.innerHTML = '';
             percent_progress.appendChild(textNode);
             percent_progress.style.width = progress + '%';

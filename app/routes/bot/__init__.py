@@ -233,7 +233,7 @@ def botlaunch(id: int, system: str, typebot: str):
                     if response.status_code == 200:
                         message = f"Execução iniciada com sucesso! PID: {pid}"
                         flash(message, "success")
-                        return redirect(url_for("logsbot.logs_bot", sid=pid))
+                        return redirect(url_for("logsbot.logs_bot", pid=pid))
 
                     elif response.status_code == 500:
                         pass

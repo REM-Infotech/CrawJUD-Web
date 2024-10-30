@@ -1,11 +1,27 @@
+from flask import current_app as app
 import json
 import random
 import string
 from dotenv import dotenv_values
 from google.oauth2.service_account import Credentials
 from google.cloud.storage import Client, Bucket
-
+from itsdangerous import URLSafeTimedSerializer
 signed_url_lifetime = 300
+
+
+# Função para criptografar os dados do cookie
+def encrypt_cookie(data):
+    serializer = URLSafeTimedSerializer(app.secret_key)
+    return serializer.dumps(data)
+
+
+# Função para descriptografar os dados do cookie
+def decrypt_cookie(encrypted_data):
+    serializer = URLSafeTimedSerializer(app.secret_key)
+    try:
+        return serializer.loads(encrypted_data)
+    except Exception:
+        return None  # Em caso de falha na descriptografia ou expiração
 
 
 def generate_pid() -> str:

@@ -45,8 +45,10 @@ def create_app() -> tuple[Flask, int, bool]:
         
         init_database()
         tlsm.init_app(app, content_security_policy=csp(),
+                      force_https_permanent=True,
+                      force_https=True,
                       session_cookie_http_only=True,
-                      session_cookie_samesite='Lax',
+                      session_cookie_samesite='Strict',
                       strict_transport_security_max_age=age,
                       x_content_type_options=True,
                       x_xss_protection=True)
