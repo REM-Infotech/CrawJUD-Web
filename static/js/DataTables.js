@@ -18,7 +18,6 @@ window.addEventListener('DOMContentLoaded', event => {
 $(document).ready(function() {
 
     var location_url = $(location).attr('href');
-    console.log(location_url);
 
     if (location_url.toLowerCase().includes("dashboard") || location_url.toLowerCase().includes("executions")){
         var targets = [4, 6];

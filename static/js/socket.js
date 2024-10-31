@@ -6,9 +6,9 @@ $("#executions").ready(function () {
 
 
     var Pages = 0;
-    
-    var pid = $("#pid").val();
-    var socketAddress = $("#socket_bot").val();
+
+    var pid = $("#pid").text();
+    var socketAddress = $("#socket_bot").text();
 
     var ul = document.getElementById('messages'); // Elemento <ul> onde as mensagens de log são exibidas
     var percent_progress = document.getElementById('progress_info');
