@@ -120,10 +120,8 @@ def status(pid):
     user_id = Users.query.filter(Users.login == session["login"]).first().id
     execution = (
         db.session.query(Executions)
-        .join(Executions.user)
+        .join(Users, Users.id == user_id)
         .filter(
-            Users.id
-            == user_id,  # Supondo que você também queira filtrar por um user_id específico
             Executions.pid == pid,
         )
         .first()

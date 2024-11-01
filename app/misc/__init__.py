@@ -6,6 +6,7 @@ from dotenv import dotenv_values
 from google.oauth2.service_account import Credentials
 from google.cloud.storage import Client, Bucket
 from itsdangerous import URLSafeTimedSerializer
+
 signed_url_lifetime = 300
 
 
@@ -32,8 +33,9 @@ def generate_pid() -> str:
         digits = random.sample(string.digits, 6)
 
         # Intercalar letras e dígitos
-        pid = ''.join([letters[i // 2] if i % 2 == 0 else digits[i // 2]
-                      for i in range(6)])
+        pid = "".join(
+            [letters[i // 2] if i % 2 == 0 else digits[i // 2] for i in range(6)]
+        )
 
         # Verificar se a string gerada não contém sequências do tipo "AABB"
         if not any(pid[i] == pid[i + 1] for i in range(len(pid) - 1)):
@@ -52,8 +54,9 @@ def storageClient() -> Client:
 def CredentialsGCS() -> Credentials:
 
     credentials_dict = json.loads(dotenv_values().get("credentials_dict"))
-    return Credentials.from_service_account_info(
-        credentials_dict).with_scopes(['https://www.googleapis.com/auth/cloud-platform'])
+    return Credentials.from_service_account_info(credentials_dict).with_scopes(
+        ["https://www.googleapis.com/auth/cloud-platform"]
+    )
 
     # Configure a autenticação para a conta de serviço do GCS
 
@@ -72,8 +75,8 @@ def generate_signed_url(blob_name: str) -> str:
     blob = bucketGcs(storageClient()).blob((blob_name))
     url = blob.generate_signed_url(
         expiration=signed_url_lifetime,
-        method='GET',
-        version='v4',
+        method="GET",
+        version="v4",
         credentials=CredentialsGCS(),
     )
     return url
