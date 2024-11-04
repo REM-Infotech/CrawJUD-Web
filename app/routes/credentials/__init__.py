@@ -1,4 +1,12 @@
-from flask import Blueprint, render_template, session, url_for, redirect, flash, current_app
+from flask import (
+    Blueprint,
+    render_template,
+    session,
+    url_for,
+    redirect,
+    flash,
+    current_app,
+)
 from flask_login import login_required
 from werkzeug.utils import secure_filename
 
@@ -10,8 +18,7 @@ from app import db
 from app.forms.credentials import CredentialsForm
 from app.models import Credentials, BotsCrawJUD, LicensesUsers
 
-path_template = os.path.join(pathlib.Path(
-    __file__).parent.resolve(), "templates")
+path_template = os.path.join(pathlib.Path(__file__).parent.resolve(), "templates")
 cred = Blueprint("creds", __name__, template_folder=path_template)
 
 
@@ -19,10 +26,13 @@ cred = Blueprint("creds", __name__, template_folder=path_template)
 @login_required
 def credentials():
 
-    database = db.session.query(Credentials).\
-        join(LicensesUsers).\
-        filter_by(license_token=session["license_token"]).all()
-        
+    database = (
+        db.session.query(Credentials)
+        .join(LicensesUsers)
+        .filter_by(license_token=session["license_token"])
+        .all()
+    )
+
     title = "Credenciais"
     page = "credentials.html"
     return render_template("index.html", page=page, title=title, database=database)
@@ -39,20 +49,18 @@ def cadastro():
 
     system = [(syst, syst) for syst in count_system]
 
-    form = CredentialsForm(**{
-        "system": system
-    })
+    form = CredentialsForm(**{"system": system})
 
     func = "Cadastro"
     title = "Credenciais"
 
-    action_url = url_for('creds.cadastro')
+    action_url = url_for("creds.cadastro")
 
     if form.validate_on_submit():
 
-        if Credentials.query.filter(Credentials.
-                                    nome_credencial == form.
-                                    nome_cred.data).first():
+        if Credentials.query.filter(
+            Credentials.nome_credencial == form.nome_cred.data
+        ).first():
 
             flash("Existem credenciais com este nome já cadastrada!", "error")
             return redirect(url_for("creds.cadastro"))
@@ -64,11 +72,12 @@ def cadastro():
                 system=form.system.data,
                 login_method=form.auth_method.data,
                 login=form.login.data,
-                password=form.password.data
+                password=form.password.data,
             )
             licenseusr = LicensesUsers.query.filter(
-                LicensesUsers.license_token == session["license_token"]).first()
-            
+                LicensesUsers.license_token == session["license_token"]
+            ).first()
+
             passwd.license_usr = licenseusr
             db.session.add(passwd)
             db.session.commit()
@@ -78,8 +87,7 @@ def cadastro():
             temporarypath = current_app.config["TEMP_PATH"]
             filecert = form.cert.data
 
-            cer_path = os.path.join(
-                temporarypath, secure_filename(filecert.filename))
+            cer_path = os.path.join(temporarypath, secure_filename(filecert.filename))
             filecert.save(cer_path)
 
             with open(cer_path, "rb") as f:
@@ -92,13 +100,14 @@ def cadastro():
                 login=form.doc_cert.data,
                 key=form.key.data,
                 certficate=filecert.filename,
-                certficate_blob=certficate_blob
+                certficate_blob=certficate_blob,
             )
             licenseusr = LicensesUsers.query.filter(
-                LicensesUsers.license_token == session["license_token"]).first()
-            
+                LicensesUsers.license_token == session["license_token"]
+            ).first()
+
             passwd.license_usr = licenseusr
-            
+
             db.session.add(passwd)
             db.session.commit()
 
@@ -112,8 +121,14 @@ def cadastro():
         flash("Credencial salva com sucesso!", "success")
         return redirect(url_for("creds.credentials"))
 
-    return render_template("index.html", page=page, form=form,
-                           title=title, func=func, action_url=action_url)
+    return render_template(
+        "index.html",
+        page=page,
+        form=form,
+        title=title,
+        func=func,
+        action_url=action_url,
+    )
 
 
 @cred.route("/credentials/editar/<id>", methods=["GET", "POST"])
@@ -127,30 +142,33 @@ def editar(id: int = None):
 
     system = [(syst, syst) for syst in count_system]
 
-    form = CredentialsForm(**{
-        "system": system
-    })
+    form = CredentialsForm(**{"system": system})
 
     func = "Cadastro"
     title = "Credenciais"
 
-    action_url = url_for('creds.cadastro')
+    action_url = url_for("creds.cadastro")
 
     if form.validate_on_submit():
 
         flash("Credencial salva com sucesso!", "success")
         return redirect(url_for("creds.credentials"))
 
-    return render_template("index.html", page=page, form=form,
-                           title=title, func=func, action_url=action_url)
+    return render_template(
+        "index.html",
+        page=page,
+        form=form,
+        title=title,
+        func=func,
+        action_url=action_url,
+    )
 
 
 @cred.route("/credentials/deletar/<id>", methods=["GET", "POST"])
 @login_required
 def deletar(id: int = None):
 
-    to_delete = Credentials.query.\
-        filter(Credentials.id == id).first()
+    to_delete = Credentials.query.filter(Credentials.id == id).first()
 
     db.session.delete(to_delete)
     db.session.commit()

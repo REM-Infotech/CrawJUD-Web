@@ -37,7 +37,7 @@
                         {% if item.status == "Falha ao iniciar" or item.status == "Finalizado"%}
                         <th>{{ item.pid }}</th>
                         {% else %}
-                        <th><a href='{{ url_for("logsbot.logs_bot", sid=item.pid) }}'>{{ item.pid }}</a>
+                        <th><a href='{{ url_for("logsbot.logs_bot", pid=item.pid) }}'>{{ item.pid }}</a>
                         </th>
                         {% endif %}
                         <td>{{ item.user.nome_usuario }}</td>

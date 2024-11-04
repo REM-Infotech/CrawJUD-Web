@@ -7,34 +7,34 @@ path_template = os.path.join(pathlib.Path(__file__).parent.resolve(), "templates
 supersu = Blueprint("supersu", __name__, template_folder=path_template)
 
 
-@supersu.route('/configurações', methods=["GET"])
+@supersu.route("/configurações", methods=["GET"])
 @login_required
 def config():
-    
+
     try:
         return render_template("index.html")
-    
+
     except Exception as e:
         abort(500, description=f"Erro interno do servidor: {str(e)}")
 
 
-@supersu.route('/cadastro/usuario', methods=["GET", "POST"])
+@supersu.route("/cadastro/usuario", methods=["GET", "POST"])
 @login_required
 def cadastro_user():
-    
+
     try:
         return render_template("index.html")
-    
+
     except Exception as e:
         abort(500, description=f"Erro interno do servidor: {str(e)}")
 
 
-@supersu.route('/editar/usuario', methods=["GET", "POST"])
+@supersu.route("/editar/usuario", methods=["GET", "POST"])
 @login_required
 def edit_usuario():
-    
+
     try:
         return render_template("index.html")
-    
+
     except Exception as e:
         abort(500, description=f"Erro interno do servidor: {str(e)}")

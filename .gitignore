@@ -8,7 +8,7 @@ __pycache__/
 *$py.class
 .vscode
 Temp/
-
+/*.json
 .xlsx
 # C extensions
 *.so
