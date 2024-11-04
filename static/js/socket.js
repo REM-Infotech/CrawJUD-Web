@@ -25,7 +25,7 @@ $("#executions").ready(function () {
         },
     });
 
-    var socket = io.connect(socketAddress + '/log');
+    var socket = io.connect(socketAddress + '/log', { transports: ['websocket'] });
 
 
     socket.on('connect', function () {

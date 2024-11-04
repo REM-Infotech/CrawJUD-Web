@@ -107,7 +107,7 @@ def logs_bot(pid: str):
 def stop_bot(pid: str):
 
     socket = request.cookies.get("socket_bot")
-    stopbot(session["login"], pid, socket)
+    stopbot(session["login"], pid, f"https://{socket}")
     flash("Execução encerrada", "success")
     return redirect(url_for("exe.executions"))
 
