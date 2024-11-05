@@ -1,30 +1,28 @@
-## Tipo de mudança
+## Type of change
 
-- [ ] Bugfix (alteração ininterrupta que corrige um problema)
-- [ ] Feat (alteração ininterrupta que adiciona funcionalidade)
-- [ ] Chore (atualizações de documentação, pacotes ou testes, nada que afete diretamente o usuário final)
-- [ ] Release (nova versão do aplicativo - somente para produção)
-- [ ] Refatorar (Refatoramento de código)
-- [ ] Documentation (alterações na documentação)
+- [ ] Bug fix (non-breaking change which fixes an issue)
+- [ ] New feature (non-breaking change which adds functionality)
+- [ ] Chore (documentation, packages, or tests updates, nothing that affect the final user directly)
+- [ ] Release (new version of the application - only for production)
 
-## Descrição
+## Description
 
 ...
 
-## Tarefas
+## Tasks
 
-- [id da tarefa](link da tarefa) ou N/A
+- [task-id](task-link) or N/A
 
-## Checklist (mínimo das duas primeiras linhas)
+## Checklist (Mínimo as duas primeiras linhas)
 
-- [ ] Minhas alterações têm menos ou igual a 400 linhas
-- [ ] Realizei uma auto-revisão do meu próprio código
-- [ ] Os testes existentes e o linter passam localmente com minhas alterações
-- [ ] Comentei meu código em áreas difíceis de entender (se aplicável)
-- [ ] Criei testes para minha correção ou recurso (se aplicável)
+- [ ] My changes have less than or equal 400 lines
+- [ ] I have performed a self-review of my own code
+- [ ] The existing tests and linter pass locally with my changes
+- [ ] I have commented my code in hard-to-understand areas (if applicable)
+- [ ] I have created tests for my fix or feature (if applicable)
 
-## Dependências
+## Dependencies
 
-Esta solicitação pull depende dos seguintes outros:
+This pull request has a dependency on the following others:
 
-- link para dependência PR ou N/A
+- link-to-depency PR or N/A
