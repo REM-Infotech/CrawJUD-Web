@@ -34,6 +34,23 @@ $("#executions").ready(function () {
     socket.on('disconnect', function () {
         socket.emit('leave', { 'pid': pid });
     });
+    socket.on("statusbot", function () {
+
+        let progress = 100;
+        var percent_progress = document.getElementById('progress_info');
+        var textNode = document.createTextNode(progress.toFixed(2) + '%');
+
+        percent_progress.appendChild(textNode);
+        percent_progress.style.width = progress + '%';
+
+        $('#progress_info').addClass('bg-success');  // Adiciona a classe
+        $('#progress_info').removeClass('bg-info'); // Remove a classe
+        $('#progress_info').toggleClass('bg-success'); // Alterna a classe
+
+        checkStatus();
+
+
+    });
 
     socket.on('log_message', function (data) {
 
@@ -145,10 +162,7 @@ $("#executions").ready(function () {
         var progress = (executed / total) * 100;
         var textNode = document.createTextNode(progress.toFixed(2) + '%');
 
-        if (status === "Finalizado") {
-            checkStatus();
-
-        } else if (status !== "Finalizado") {
+        if (status !== "Finalizado") {
             CountSuccess.innerHTML = `Sucessos: ${success}`;
             LogsBotChart.data.datasets[0].data = [remaining, success, errors];
         };
