@@ -40,6 +40,7 @@ $("#executions").ready(function () {
         var percent_progress = document.getElementById('progress_info');
         var textNode = document.createTextNode(progress.toFixed(2) + '%');
 
+        percent_progress.innerHTML = '';
         percent_progress.appendChild(textNode);
         percent_progress.style.width = progress + '%';
 
