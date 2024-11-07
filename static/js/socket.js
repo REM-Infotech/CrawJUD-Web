@@ -41,16 +41,13 @@ $("#executions").ready(function () {
         var textNode = document.createTextNode(progress.toFixed(2) + '%');
 
         percent_progress.innerHTML = '';
-        percent_progress.appendChild(textNode);
+        $('#progress_info').removeClass('bg-info');
+
+        percent_progress.replaceChild(textNode);
         percent_progress.style.width = progress + '%';
 
-        $('#progress_info').addClass('bg-success');  // Adiciona a classe
-        $('#progress_info').removeClass('bg-info'); // Remove a classe
-        $('#progress_info').toggleClass('bg-success'); // Alterna a classe
-
+        $('#progress_info').addClass('bg-success');
         checkStatus();
-
-
     });
 
     socket.on('log_message', function (data) {
