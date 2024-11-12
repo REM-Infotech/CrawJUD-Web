@@ -25,7 +25,13 @@ $("#executions").ready(function () {
         },
     });
 
-    var socket = io.connect(socketAddress + '/log', { transports: ['websocket'] });
+    var socket = io.connect(socketAddress + '/log', {
+        transports: ['websocket'], reconnection: true, // habilitar reconexão automática
+        reconnectionAttempts: Infinity, // número ilimitado de tentativas de reconexão
+        reconnectionDelay: 1000, // 1 segundo entre as tentativas
+        reconnectionDelayMax: 5000, // até 5 segundos entre tentativas
+        timeout: 10000 // 10 segundos de timeout para uma conexão inicial
+    });
 
 
     socket.on('connect', function () {
