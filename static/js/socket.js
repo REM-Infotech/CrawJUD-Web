@@ -46,18 +46,14 @@ $("#executions").ready(function () {
         var percent_progress = document.getElementById('progress_info');
         var textNode = document.createTextNode(progress.toFixed(2) + '%');
 
-        if (percent_progress.innerText != "100%") {
-            percent_progress.innerHTML = '';
-            percent_progress.appendChild(textNode);
-            percent_progress.style.width = progress + '%';
+        percent_progress.innerHTML = '';
+        $('#progress_info').removeClass('bg-info');
 
-            $('#progress_info').addClass('bg-success');  // Adiciona a classe
-            $('#progress_info').removeClass('bg-info'); // Remove a classe
-            $('#progress_info').toggleClass('bg-success'); // Alterna a classe
+        percent_progress.replaceChild(textNode);
+        percent_progress.style.width = progress + '%';
 
-            checkStatus();
-        }
-
+        $('#progress_info').addClass('bg-success');
+        checkStatus();
     });
 
     socket.on('log_message', function (data) {
