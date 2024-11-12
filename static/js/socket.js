@@ -25,7 +25,13 @@ $("#executions").ready(function () {
         },
     });
 
-    var socket = io.connect(socketAddress + '/log', { transports: ['websocket'] });
+    var socket = io.connect(socketAddress + '/log', {
+        transports: ['websocket'], reconnection: true, // habilitar reconexão automática
+        reconnectionAttempts: Infinity, // número ilimitado de tentativas de reconexão
+        reconnectionDelay: 1000, // 1 segundo entre as tentativas
+        reconnectionDelayMax: 5000, // até 5 segundos entre tentativas
+        timeout: 10000 // 10 segundos de timeout para uma conexão inicial
+    });
 
 
     socket.on('connect', function () {
@@ -40,16 +46,17 @@ $("#executions").ready(function () {
         var percent_progress = document.getElementById('progress_info');
         var textNode = document.createTextNode(progress.toFixed(2) + '%');
 
-        percent_progress.innerHTML = '';
-        percent_progress.appendChild(textNode);
-        percent_progress.style.width = progress + '%';
+        if (percent_progress.innerText != "100%") {
+            percent_progress.innerHTML = '';
+            percent_progress.appendChild(textNode);
+            percent_progress.style.width = progress + '%';
 
-        $('#progress_info').addClass('bg-success');  // Adiciona a classe
-        $('#progress_info').removeClass('bg-info'); // Remove a classe
-        $('#progress_info').toggleClass('bg-success'); // Alterna a classe
+            $('#progress_info').addClass('bg-success');  // Adiciona a classe
+            $('#progress_info').removeClass('bg-info'); // Remove a classe
+            $('#progress_info').toggleClass('bg-success'); // Alterna a classe
 
-        checkStatus();
-
+            checkStatus();
+        }
 
     });
 
