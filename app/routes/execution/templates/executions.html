@@ -79,9 +79,9 @@
                                     <td>{{ item.user.nome_usuario }}</td>
                                     <td>{{ item.bot.display_name }}</td>
                                     <td>{{ item.arquivo_xlsx}}</td>
-                                    <td>{{ item.data_execucao.strftime("%Y-%m-%d")}}</td>
+                                    <td>{{ item.data_execucao.strftime("%d/%m/%Y %H:%M")}}</td>
                                     <td>{{ item.status }}</td>
-                                    <td>{{ item.data_finalizacao.strftime("%Y-%m-%d")}}</td>
+                                    <td>{{ item.data_finalizacao.strftime("%d/%m/%Y %H:%M")}}</td>
                                     {% if item.file_output == "Arguardando Arquivo" %}
                                     <td>{{ item.file_output }}</td>
                                     {% else %}
