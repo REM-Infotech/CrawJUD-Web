@@ -2,7 +2,7 @@
 Chart.defaults.global.defaultFontFamily = '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
 Chart.defaults.global.defaultFontColor = '#292b2c';
 
-$("#executions").ready(function () {
+$(document).ready(function () {
 
 
     var Pages = 0;
@@ -25,39 +25,16 @@ $("#executions").ready(function () {
         },
     });
 
-    var socket = io.connect(socketAddress + '/log', {
-        transports: ['websocket'], reconnection: true, // habilitar reconexão automática
-        reconnectionAttempts: Infinity, // número ilimitado de tentativas de reconexão
-        reconnectionDelay: 1000, // 1 segundo entre as tentativas
-        reconnectionDelayMax: 5000, // até 5 segundos entre tentativas
-        timeout: 10000 // 10 segundos de timeout para uma conexão inicial
-    });
+    var socket = io.connect(socketAddress + '/log');
 
 
     socket.on('connect', function () {
         socket.emit('join', { 'pid': pid });
     });
-    socket.on('disconnect', function () {
-        socket.emit('leave', { 'pid': pid });
-    });
-    socket.on("statusbot", function () {
-
-        let progress = 100;
-        var percent_progress = document.getElementById('progress_info');
-        var textNode = document.createTextNode(progress.toFixed(2) + '%');
-
-        percent_progress.innerHTML = '';
-        $('#progress_info').removeClass('bg-info');
-
-        percent_progress.replaceChild(textNode);
-        percent_progress.style.width = progress + '%';
-
-        $('#progress_info').addClass('bg-success');
-        checkStatus();
-    });
 
     socket.on('log_message', function (data) {
 
+        console.log(data);
         var messagePid = data.pid;
         var pos = parseInt(data.pos);
         var typeLog = data.type;
@@ -190,6 +167,33 @@ $("#executions").ready(function () {
 
         LogsBotChart.update();
     };
+
+    socket.on("statusbot", function () {
+
+        let progress = 100;
+        var percent_progress = document.getElementById('progress_info');
+        var textNode = document.createTextNode(progress.toFixed(2) + '%');
+
+        percent_progress.innerHTML = '';
+        $('#progress_info').removeClass('bg-info');
+
+        percent_progress.replaceChild(textNode);
+        percent_progress.style.width = progress + '%';
+
+        $('#progress_info').addClass('bg-success');
+        checkStatus();
+    });
+
+    socket.on("connect_error", (err) => {
+        // the reason of the error, for example "xhr poll error"
+        console.log(err.message);
+
+        // some additional description, for example the status code of the initial HTTP response
+        console.log(err.description);
+
+        // some additional context, for example the XMLHttpRequest object
+        console.log(err.context);
+    });
 })
 
 
