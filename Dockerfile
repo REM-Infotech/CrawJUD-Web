@@ -8,10 +8,13 @@ RUN apt-get update && \
 ENV LANG pt_BR.UTF-8
 ENV LC_ALL pt_BR.UTF-8
 
+RUN pip install pipx
+
+RUN pipx install poetry
 
 COPY . /webcrawjud
 WORKDIR /webcrawjud
 
-RUN pip install -r requirements.txt
+RUN poetry install
 
-CMD python main.py
+CMD poetry run python main.py
