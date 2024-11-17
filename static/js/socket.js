@@ -4,7 +4,6 @@ Chart.defaults.global.defaultFontColor = '#292b2c';
 
 $(document).ready(function () {
 
-
     var Pages = 0;
 
     var pid = $("#pid").text();
@@ -27,6 +26,26 @@ $(document).ready(function () {
 
     var socket = io.connect(socketAddress + '/log');
 
+    $("#stop_execut").on("click", () => {
+
+        socket.emit("terminate_bot", { "pid": pid });
+
+        let msg = "Parando execução"
+        var li = document.createElement('li');
+
+        li.style.fontWeight = "bold";
+        li.style.color = 'orange';
+
+        li.appendChild(document.createTextNode(msg));
+        ul.appendChild(li);
+
+        var randomId = `id_${Math.random().toString(36).substring(2, 9)}`;
+
+        li.setAttribute("id", randomId);
+        document.getElementById(randomId).scrollIntoView({ behavior: "smooth", block: "end" });
+
+
+    });
 
     socket.on('connect', function () {
         socket.emit('join', { 'pid': pid });
@@ -39,11 +58,12 @@ $(document).ready(function () {
         var pos = parseInt(data.pos);
         var typeLog = data.type;
 
-        updateElements(data)
+        updateElements(data);
 
         if (messagePid === pid) {
 
             var msg = data.message;
+
 
             if (msg === null) {
                 var msg = data.last_log;
@@ -79,6 +99,26 @@ $(document).ready(function () {
                 li.setAttribute("id", randomId);
                 document.getElementById(randomId).scrollIntoView({ behavior: "smooth", block: "end" });
             };
+
+            if (msg.toLowerCase().includes("fim da execução")) {
+                console.log("parado!!");
+
+                var progress = 100;
+                var percent_progress = document.getElementById('progress_info');
+                var textNode = document.createTextNode(progress.toFixed(2) + '%');
+
+                $('#progress_info').removeClass('bg-info');
+
+                percent_progress.innerHTML = '';
+                percent_progress.appendChild(textNode);
+                percent_progress.style.width = progress + '%';
+
+                $('#progress_info').addClass('bg-success');
+                checkStatus();
+            }
+
+
+
         }
     });
     // Função para extrair o número da posição da mensagem de log
@@ -143,13 +183,15 @@ $(document).ready(function () {
         var progress = (executed / total) * 100;
         var textNode = document.createTextNode(progress.toFixed(2) + '%');
 
+        var chartType = LogsBotChart.config.type;
+        var grafMode = data.graphicMode;
+
         if (status !== "Finalizado") {
             CountSuccess.innerHTML = `Sucessos: ${success}`;
             LogsBotChart.data.datasets[0].data = [remaining, success, errors];
         };
 
-        var chartType = LogsBotChart.config.type;
-        var grafMode = data.graphicMode;
+
 
         if (grafMode !== undefined && grafMode !== chartType) {
 
@@ -167,22 +209,6 @@ $(document).ready(function () {
 
         LogsBotChart.update();
     };
-
-    socket.on("statusbot", function () {
-
-        let progress = 100;
-        var percent_progress = document.getElementById('progress_info');
-        var textNode = document.createTextNode(progress.toFixed(2) + '%');
-
-        percent_progress.innerHTML = '';
-        $('#progress_info').removeClass('bg-info');
-
-        percent_progress.replaceChild(textNode);
-        percent_progress.style.width = progress + '%';
-
-        $('#progress_info').addClass('bg-success');
-        checkStatus();
-    });
 
     socket.on("connect_error", (err) => {
         // the reason of the error, for example "xhr poll error"

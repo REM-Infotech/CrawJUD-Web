@@ -1,3 +1,10 @@
+import os
+import json
+import pathlib
+from time import sleep
+import httpx as requests
+
+
 from flask import (
     Blueprint,
     url_for,
@@ -11,11 +18,6 @@ from flask import (
 )
 
 from flask_login import login_required
-
-import os
-import json
-import pathlib
-import requests
 
 from app import db
 from app.misc import generate_signed_url
@@ -108,6 +110,18 @@ def stop_bot(pid: str):
 
     socket = request.cookies.get("socket_bot")
     stopbot(session["login"], pid, f"https://{socket}")
+
+    isStopped = True
+
+    while isStopped:
+
+        execut = db.session.query(Executions).filter(Executions.pid == pid).first()
+
+        if str(execut.status).lower() == "finalizado":
+            isStopped = False
+
+        sleep(2)
+
     flash("Execução encerrada", "success")
     return redirect(url_for("exe.executions"))
 

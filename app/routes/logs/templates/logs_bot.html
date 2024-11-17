@@ -14,8 +14,7 @@
                                 Documento</a>
                         </div>
                         <div class="col-md-6">
-                            <button type="button" class="btn btn-warning" data-bs-toggle="modal"
-                                data-bs-target="#confirmaencerramento">
+                            <button type="button" class="btn btn-warning" id="stop_execut">
                                 Encerrar Execução
                             </button>
                         </div>
@@ -51,7 +50,7 @@
                             <span id="status">Status: Em Execução | Total: </span>
                         </div>
                     </div>
-                    
+
                 </div>
                 <div class="col-xl-6 col-md-6">
                     <div class="card mb-4 fixed-height-card" style="height: 600px;">
@@ -69,7 +68,8 @@
                         </div>
                         <div class="card-body"><canvas id="LogsBotChart" width="100%" height="50"></canvas></div>
                         <div class="card-footer small text-muted fw-semibold">
-                            <span id="remaining">Restantes: -.- </span> | <span id="success">Sucessos: -.-</span> | <span id="errors">Erros: -.-</span>
+                            <span id="remaining">Restantes: -.- </span> | <span id="success">Sucessos: -.- </span> |
+                            <span id="errors">Erros: -.- </span>
                         </div>
                     </div>
                 </div>
@@ -90,7 +90,7 @@
 </div>
 
 
-<div class="modal fade" id="confirmaencerramento" tabindex="-1" aria-labelledby="confirmaencerramentoLabel"
+<!-- <div class="modal fade" id="confirmaencerramento" tabindex="-1" aria-labelledby="confirmaencerramentoLabel"
     aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -107,7 +107,7 @@
             </div>
         </div>
     </div>
-</div>
+</div> -->
 <script src="{{ url_for('static', filename='js/socket.js') }}"></script>
 
 <span style="display: none;" id="pid">{{ pid }}</span>
