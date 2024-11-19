@@ -1,20 +1,23 @@
 FROM python:3
 
-RUN apt-get update && \
-    apt-get install -y locales && \
+# Atualizar pacotes e configurar locales
+RUN apt-get update && apt-get install -y locales && \
     sed -i -e 's/# pt_BR.UTF-8 UTF-8/pt_BR.UTF-8 UTF-8/' /etc/locale.gen && \
-    dpkg-reconfigure --frontend=noninteractive locales
+    dpkg-reconfigure --frontend=noninteractive locales && \
+    apt-get clean
 
-ENV LANG pt_BR.UTF-8
-ENV LC_ALL pt_BR.UTF-8
+ENV LANG=pt_BR.UTF-8
+ENV LC_ALL=pt_BR.UTF-8
 
-RUN pip install pipx
+# Instalar Poetry
+RUN pip install --no-cache-dir poetry
 
-RUN pipx install poetry
-
-COPY . /webcrawjud
+# Criar diretório de trabalho e copiar arquivos
 WORKDIR /webcrawjud
+COPY . /webcrawjud
 
-RUN poetry install
+# Instalar dependências
+RUN poetry config virtualenvs.create false && poetry install --no-root
 
-CMD poetry run python main.py
+# Comando padrão
+CMD ["poetry", "run", "python", "main.py"]
