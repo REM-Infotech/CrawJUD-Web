@@ -1,13 +1,16 @@
-from flask import current_app
-from app import db
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
 
 from app.models.secondaries import admins, execution_bots
 from app.models.users import Users, LicensesUsers, SuperUser
 from app.models.bots import BotsCrawJUD, Credentials, Executions
 from app.models.srv import Servers
 
+
+import os
 import pandas as pd
 from uuid import uuid4
+from pathlib import Path
 from dotenv import dotenv_values
 
 __all__ = [
@@ -23,11 +26,9 @@ __all__ = [
 ]
 
 
-def init_database():
+def init_database(app: Flask, db: SQLAlchemy) -> str:
 
-    app = current_app
-    with app.app_context():
-
+    try:
         values = dotenv_values()
         db.create_all()
         loginsys = values.get("loginsys")
@@ -59,7 +60,9 @@ def init_database():
 
             super_user.users = user
 
-            df = pd.read_excel(r"C:\Users\nicholas.silva\Desktop\export.xlsx")
+            df = pd.read_excel(
+                os.path.join(Path(__file__).parent.resolve(), "export.xlsx")
+            )
             df.columns = df.columns.str.lower()
 
             data = []
@@ -84,4 +87,7 @@ def init_database():
             db.session.add(license_user)
             db.session.commit()
 
-            print(f" * Root Pw: {passwd}")
+            return f" * Root Pw: {passwd}"
+
+    except Exception as e:
+        raise e

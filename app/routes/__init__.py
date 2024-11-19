@@ -10,35 +10,16 @@ from deep_translator import GoogleTranslator
 from werkzeug.exceptions import HTTPException
 
 # Flask Imports
-import flask
+from flask import request
 from flask import session
 from flask import abort
 from flask import url_for
 from flask import redirect
 from flask import current_app as app
 from flask import send_from_directory
-from flask import request
+from flask import make_response
+
 from flask_login import login_required, current_user
-
-from app.routes.bot import bot
-from app.routes.auth import auth
-from app.routes.logs import logsbot
-from app.routes.execution import exe
-from app.routes.dashboard import dash
-from app.routes.credentials import cred
-from app.routes.config import admin, supersu, usr
-from app.models import Users
-
-# Register Blueprints
-
-listBlueprints = [bot, auth, logsbot, exe, dash, cred, admin, supersu, usr]
-
-tradutor = GoogleTranslator(source="en", target="pt")
-
-with app.app_context():
-
-    for bp in listBlueprints:
-        app.register_blueprint(bp)
 
 
 @app.context_processor
@@ -90,6 +71,8 @@ def serve_profile(user: str):
     try:
         with app.app_context():
 
+            from app.models import Users
+
             user = Users.query.filter(Users.login == user).first()
             image_data = user.blob_doc
             filename = user.filename
@@ -112,7 +95,7 @@ def serve_profile(user: str):
             with open(original_path, "wb") as file:
                 file.write(image_data)
 
-            response = flask.make_response(
+            response = make_response(
                 send_from_directory(app.config["IMAGE_TEMP_PATH"], filename)
             )
             response.headers["Content-Type"] = "image/png"
@@ -126,6 +109,7 @@ def serve_profile(user: str):
 @app.errorhandler(HTTPException)
 def handle_http_exception(error):
 
+    tradutor = GoogleTranslator(source="en", target="pt")
     name = tradutor.translate(error.name)
     desc = tradutor.translate(error.description)
 

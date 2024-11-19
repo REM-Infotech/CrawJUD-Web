@@ -169,3 +169,11 @@ def status(pid):
         return jsonify(response_data), 200
 
     return jsonify(response_data), 500
+
+
+@logsbot.route("/url_server/<pid>", methods=["GET"])
+@login_required
+def url_server(pid):
+
+    execution = db.session.query(Executions).filter(Executions.pid == pid).first()
+    return jsonify({"url_server": execution.url_socket})
