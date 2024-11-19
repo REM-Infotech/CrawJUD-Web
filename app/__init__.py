@@ -7,8 +7,9 @@ from flask_talisman import Talisman
 
 # Python Imports
 import os
-from dotenv import dotenv_values
+from pathlib import Path
 from datetime import timedelta
+from importlib import import_module
 
 
 # APP Imports
@@ -22,47 +23,81 @@ login_manager = LoginManager()
 login_manager.login_view = "auth.login"
 login_manager.login_message = "Faça login para acessar essa página."
 login_manager.login_message_category = "info"
-routing = None
 
 
-def create_app() -> tuple[Flask, int, bool]:
+class AppFactory:
 
-    src_path = os.path.join(os.getcwd(), "static")
-    app = Flask(__name__, static_folder=src_path)
+    def init_extensions(self, app: Flask):
 
-    app.config.from_object(default_config)
-    age = timedelta(days=31).max.seconds
-    db.init_app(app)
-    mail.init_app(app)
-    login_manager.init_app(app)
+        db.init_app(app)
+        mail.init_app(app)
+        login_manager.init_app(app)
 
-    with app.app_context():
+        with app.app_context():
+
+            self.init_database(app, db)
+
+            tlsm.init_app(
+                app,
+                content_security_policy=csp(),
+                force_https_permanent=True,
+                force_https=True,
+                session_cookie_http_only=True,
+                session_cookie_samesite="Lax",
+                strict_transport_security_max_age=timedelta(days=31).max.seconds,
+                x_content_type_options=True,
+                x_xss_protection=True,
+            )
+            import_module("app.routes", __package__)
+
+    def create_app(self) -> Flask:
+        """
+        Construtor do app Flask
+
+        """
+        src_path = os.path.join(os.getcwd(), "static")
+        app = Flask(__name__, static_folder=src_path)
+
+        app.config.from_object(default_config)
+        self.init_extensions(app)
+        self.init_blueprints(app)
+
+        """ Initialize logs module """
+
+        from app.logs.setup import initialize_logging
+
+        app.logger = initialize_logging()
+
+        return app
+
+    def init_blueprints(self, app: Flask):
+        """
+        Registro de blueprints
+
+        :param Flask app: Aplicativo Flask
+
+        """
+        from app.routes.bot import bot
+        from app.routes.auth import auth
+        from app.routes.logs import logsbot
+        from app.routes.execution import exe
+        from app.routes.dashboard import dash
+        from app.routes.credentials import cred
+        from app.routes.config import admin, supersu, usr
+
+        listBlueprints = [bot, auth, logsbot, exe, dash, cred, admin, supersu, usr]
+
+        for bp in listBlueprints:
+            app.register_blueprint(bp)
+
+    def init_database(self, app: Flask, db: SQLAlchemy):
+
         from app.models import init_database
-        from app import routes
 
-        global routing
-        routing = routes
+        if not Path("is_init.txt").exists():
 
-        init_database()
-        tlsm.init_app(
-            app,
-            content_security_policy=csp(),
-            force_https_permanent=True,
-            force_https=True,
-            session_cookie_http_only=True,
-            session_cookie_samesite="Lax",
-            strict_transport_security_max_age=age,
-            x_content_type_options=True,
-            x_xss_protection=True,
-        )
-
-    values = dotenv_values()
-
-    # Cloudflare Tunnel Configs
-    port = int(values.get("PORT", 5000))
-    debug = values.get("DEBUG", "False").lower() in ("true", "1", "t", "y", "yes")
-
-    return (app, port, debug)
+            with open("is_init.txt", "w") as f:
+                f.write(f"{init_database(app, db)}")
 
 
-__all__ = [routing]
+create_app = AppFactory().create_app

@@ -32,6 +32,9 @@ psycopg2 = "^2.9.10"
 flask-cloudflared = "^0.0.14"
 gevent = "^24.10.3"
 gevent-websocket = "^0.10.1"
+pygithub = "^2.5.0"
+eventlet = "^0.38.0"
+clear = "^2.0.0"
 
 
 [build-system]

@@ -264,6 +264,7 @@ def botlaunch(id: int, system: str, typebot: str):
                         system.upper() == "PROJUDI",
                         typebot.upper() == "PROTOCOLO",
                         bot_info.state == "AM",
+                        item == "password",
                     ]
 
                     if all(chks):
