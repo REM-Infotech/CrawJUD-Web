@@ -2,16 +2,8 @@ import json
 import os
 import pathlib
 
-from flask import (
-    Blueprint,
-    flash,
-    make_response,
-    redirect,
-    render_template,
-    request,
-    session,
-    url_for,
-)
+from flask import (Blueprint, flash, make_response, redirect, render_template,
+                   request, session, url_for)
 from flask_login import login_user, logout_user
 
 from app.forms.auth.login import LoginForm

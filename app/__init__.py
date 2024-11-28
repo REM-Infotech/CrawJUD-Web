@@ -12,7 +12,6 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_talisman import Talisman
 
 from app import default_config
-
 # APP Imports
 from configs import csp
 

@@ -6,13 +6,8 @@ from datetime import datetime
 import pytz
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileAllowed, FileField, MultipleFileField
-from wtforms import (
-    DateField,
-    SelectField,
-    SelectMultipleField,
-    StringField,
-    SubmitField,
-)
+from wtforms import (DateField, SelectField, SelectMultipleField, StringField,
+                     SubmitField)
 
 permited_file = FileAllowed(
     ["xlsx", "xls", "csv"], 'Apenas arquivos |".xlsx"/".xls"/".csv"| são permitidos!'
