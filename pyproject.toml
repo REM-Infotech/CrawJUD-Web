@@ -35,6 +35,7 @@ gevent-websocket = "^0.10.1"
 pygithub = "^2.5.0"
 eventlet = "^0.38.0"
 clear = "^2.0.0"
+pre-commit = "^4.0.1"
 
 
 [build-system]
