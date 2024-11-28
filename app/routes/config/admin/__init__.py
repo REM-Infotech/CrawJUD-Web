@@ -1,8 +1,7 @@
 import os
 import pathlib
 
-from flask import (Blueprint, abort, flash, redirect, render_template, session,
-                   url_for)
+from flask import Blueprint, abort, flash, redirect, render_template, session, url_for
 from flask_login import login_required
 
 from app import db
