@@ -1,8 +1,9 @@
 from clear import clear
-from app import create_app
+from dotenv import dotenv_values as values
 from eventlet import listen
 from eventlet.wsgi import server
-from dotenv import dotenv_values as values
+
+from app import create_app
 
 if __name__ == "__main__":
 
@@ -18,18 +19,19 @@ if __name__ == "__main__":
 
         clear()
 
-        print("=======================================================\n")
-        print("Executando servidor Flask")
-        print(f" * Versão: {version}")
-        print(" * Porta: 8000")
-        print("\n=======================================================")
+        print(
+            """
+=======================================================
+
+            Executando servidor Flask
+            * Porta: 8000
+
+=======================================================
+"""
+        )
 
         server(listen(("localhost", port)), app, log=app.logger)
 
     elif debug:
-        print("=======================================================\n")
-        print("Executando servidor Flask")
-        print(" * Porta: 8000")
-        print("\n=======================================================")
 
         app.run(port=int(port), debug=debug)
