@@ -85,6 +85,8 @@ target/
 
 # Jupyter Notebook
 .ipynb_checkpoints
+*.conf
+docker-compose.yml
 
 # IPython
 profile_default/
