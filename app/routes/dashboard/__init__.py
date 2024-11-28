@@ -1,18 +1,17 @@
-from flask import Blueprint, render_template, request, session, jsonify
-from flask_login import login_required
-
-import os
 import json
 import locale
+import os
 import pathlib
-import pandas as pd
-
-from datetime import datetime
 from collections import Counter
+from datetime import datetime
+
+import pandas as pd
 from deep_translator import GoogleTranslator
+from flask import Blueprint, jsonify, render_template, request, session
+from flask_login import login_required
 
 from app import db
-from app.models import Users, LicensesUsers, Executions, SuperUser
+from app.models import Executions, LicensesUsers, SuperUser, Users
 
 translator = GoogleTranslator(source="en", target="pt")
 

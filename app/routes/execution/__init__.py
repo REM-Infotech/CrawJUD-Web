@@ -1,13 +1,13 @@
-from flask import Blueprint, render_template, session, request, redirect
-from flask_login import login_required
-
 import os
 import pathlib
 
+from flask import Blueprint, redirect, render_template, request, session
+from flask_login import login_required
+
 from app import db
 from app.forms import SearchExec
-from app.models import Executions, Users, LicensesUsers, SuperUser
 from app.misc import generate_signed_url
+from app.models import Executions, LicensesUsers, SuperUser, Users
 
 path_template = os.path.join(pathlib.Path(__file__).parent.resolve(), "templates")
 exe = Blueprint("exe", __name__, template_folder=path_template)

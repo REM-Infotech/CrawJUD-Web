@@ -1,9 +1,9 @@
-from dotenv import load_dotenv, dotenv_values
-from uuid import uuid4
-import platform
 import os
-
+import platform
 from datetime import timedelta
+from uuid import uuid4
+
+from dotenv import dotenv_values, load_dotenv
 
 load_dotenv()
 values = dotenv_values()

@@ -1,20 +1,20 @@
 # Flask imports
+# Python Imports
+import os
+from datetime import timedelta
+from importlib import import_module
+from pathlib import Path
+
 from flask import Flask
-from flask_mail import Mail
 from flask_login import LoginManager
+from flask_mail import Mail
 from flask_sqlalchemy import SQLAlchemy
 from flask_talisman import Talisman
 
-# Python Imports
-import os
-from pathlib import Path
-from datetime import timedelta
-from importlib import import_module
-
+from app import default_config
 
 # APP Imports
 from configs import csp
-from app import default_config
 
 db = SQLAlchemy()
 tlsm = Talisman()
@@ -77,13 +77,13 @@ class AppFactory:
         :param Flask app: Aplicativo Flask
 
         """
-        from app.routes.bot import bot
         from app.routes.auth import auth
-        from app.routes.logs import logsbot
-        from app.routes.execution import exe
-        from app.routes.dashboard import dash
-        from app.routes.credentials import cred
+        from app.routes.bot import bot
         from app.routes.config import admin, supersu, usr
+        from app.routes.credentials import cred
+        from app.routes.dashboard import dash
+        from app.routes.execution import exe
+        from app.routes.logs import logsbot
 
         listBlueprints = [bot, auth, logsbot, exe, dash, cred, admin, supersu, usr]
 

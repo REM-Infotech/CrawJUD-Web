@@ -1,20 +1,18 @@
-import os
 import json
-import pytz
+import os
 import pathlib
 from datetime import datetime
 
+import pytz
 from flask_wtf import FlaskForm
-
-
+from flask_wtf.file import FileAllowed, FileField, MultipleFileField
 from wtforms import (
-    StringField,
-    SubmitField,
+    DateField,
     SelectField,
     SelectMultipleField,
-    DateField,
+    StringField,
+    SubmitField,
 )
-from flask_wtf.file import FileField, FileAllowed, MultipleFileField
 
 permited_file = FileAllowed(
     ["xlsx", "xls", "csv"], 'Apenas arquivos |".xlsx"/".xls"/".csv"| são permitidos!'

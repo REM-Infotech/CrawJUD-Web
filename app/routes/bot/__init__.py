@@ -1,34 +1,33 @@
+import json
+import os
+import pathlib
+from contextlib import suppress
+from datetime import date, datetime
+from typing import Union
+
+import httpx
 from flask import (
     Blueprint,
+    abort,
+    current_app,
+    flash,
+    make_response,
+    redirect,
     render_template,
     request,
-    flash,
     send_file,
-    abort,
-    url_for,
-    redirect,
     session,
-    current_app,
-    make_response,
+    url_for,
 )
 from flask_login import login_required
-from werkzeug.utils import secure_filename
 from werkzeug.datastructures import FileStorage
-
-import os
-import json
-import pathlib
-import httpx
-from typing import Union
-from datetime import datetime
-from datetime import date
-from contextlib import suppress
+from werkzeug.utils import secure_filename
 
 from app import db
 from app.forms import BotForm
 from app.misc import generate_pid
 from app.misc.MakeTemplate import MakeXlsx as make_xlsx
-from app.models import BotsCrawJUD, LicensesUsers, Servers, Credentials
+from app.models import BotsCrawJUD, Credentials, LicensesUsers, Servers
 
 path_template = os.path.join(pathlib.Path(__file__).parent.resolve(), "templates")
 bot = Blueprint("bot", __name__, template_folder=path_template)

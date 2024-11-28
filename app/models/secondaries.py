@@ -1,6 +1,5 @@
 from app import db
 
-
 admins = db.Table(
     "admins",
     db.Column("users_id", db.Integer, db.ForeignKey("users.id")),

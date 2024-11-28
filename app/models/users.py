@@ -1,14 +1,12 @@
+from datetime import datetime
+from uuid import uuid4
+
+import bcrypt
+import pytz
 from flask import request
 from flask_login import UserMixin
 
-from app import db
-from app import login_manager
-
-import pytz
-from uuid import uuid4
-from datetime import datetime
-import bcrypt
-
+from app import db, login_manager
 
 salt = bcrypt.gensalt()
 

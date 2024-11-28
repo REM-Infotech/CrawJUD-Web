@@ -1,7 +1,8 @@
-from flask import Blueprint, render_template, abort
-from flask_login import login_required
 import os
 import pathlib
+
+from flask import Blueprint, abort, render_template
+from flask_login import login_required
 
 path_template = os.path.join(pathlib.Path(__file__).parent.resolve(), "templates")
 supersu = Blueprint("supersu", __name__, template_folder=path_template)

@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from flask_wtf.file import FileField, FileAllowed
-from wtforms import StringField, PasswordField, SubmitField, SelectField
+from flask_wtf.file import FileAllowed, FileField
+from wtforms import PasswordField, SelectField, StringField, SubmitField
 from wtforms.validators import DataRequired
 
 file_allowed = FileAllowed(["pfx", 'Apenas arquivos ".pfx" são permitidos!'])

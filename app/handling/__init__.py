@@ -1,7 +1,9 @@
 import logging
-from app import app
 from logging.handlers import SMTPHandler
+
 from dotenv import dotenv_values
+
+from app import app
 
 values = dotenv_values()
 
