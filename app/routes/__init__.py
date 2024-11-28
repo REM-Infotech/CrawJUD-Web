@@ -5,11 +5,19 @@ import re
 
 import httpx
 from deep_translator import GoogleTranslator
+
 # Flask Imports
 from flask import abort
 from flask import current_app as app
-from flask import (make_response, redirect, render_template, request,
-                   send_from_directory, session, url_for)
+from flask import (
+    make_response,
+    redirect,
+    render_template,
+    request,
+    send_from_directory,
+    session,
+    url_for,
+)
 from flask_login import current_user, login_required
 from werkzeug.exceptions import HTTPException
 

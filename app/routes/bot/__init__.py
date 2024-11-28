@@ -6,9 +6,19 @@ from datetime import date, datetime
 from typing import Union
 
 import httpx
-from flask import (Blueprint, abort, current_app, flash, make_response,
-                   redirect, render_template, request, send_file, session,
-                   url_for)
+from flask import (
+    Blueprint,
+    abort,
+    current_app,
+    flash,
+    make_response,
+    redirect,
+    render_template,
+    request,
+    send_file,
+    session,
+    url_for,
+)
 from flask_login import login_required
 from werkzeug.datastructures import FileStorage
 from werkzeug.utils import secure_filename

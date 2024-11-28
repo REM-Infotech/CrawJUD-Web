@@ -2,8 +2,15 @@ import os
 import pathlib
 from collections import Counter
 
-from flask import (Blueprint, current_app, flash, redirect, render_template,
-                   session, url_for)
+from flask import (
+    Blueprint,
+    current_app,
+    flash,
+    redirect,
+    render_template,
+    session,
+    url_for,
+)
 from flask_login import login_required
 from werkzeug.utils import secure_filename
 
