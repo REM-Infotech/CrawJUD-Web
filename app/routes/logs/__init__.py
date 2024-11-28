@@ -4,17 +4,8 @@ import pathlib
 from time import sleep
 
 import httpx as requests
-from flask import (
-    Blueprint,
-    flash,
-    jsonify,
-    make_response,
-    redirect,
-    render_template,
-    request,
-    session,
-    url_for,
-)
+from flask import (Blueprint, flash, jsonify, make_response, redirect,
+                   render_template, request, session, url_for)
 from flask_login import login_required
 
 from app import db
