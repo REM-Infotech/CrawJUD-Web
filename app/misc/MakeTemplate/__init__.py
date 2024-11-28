@@ -1,9 +1,9 @@
 import os
-import openpyxl
-from pytz import timezone
 from datetime import datetime
-from openpyxl.styles import Font
-from openpyxl.styles import PatternFill
+
+import openpyxl
+from openpyxl.styles import Font, PatternFill
+from pytz import timezone
 
 from app.misc.MakeTemplate.appends import listas
 

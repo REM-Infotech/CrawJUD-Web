@@ -1,17 +1,18 @@
-from flask import (
-    Blueprint,
-    render_template,
-    redirect,
-    make_response,
-    url_for,
-    flash,
-    session,
-    request,
-)
-from flask_login import login_user, logout_user
+import json
 import os
 import pathlib
-import json
+
+from flask import (
+    Blueprint,
+    flash,
+    make_response,
+    redirect,
+    render_template,
+    request,
+    session,
+    url_for,
+)
+from flask_login import login_user, logout_user
 
 from app.forms.auth.login import LoginForm
 from app.models.users import Users

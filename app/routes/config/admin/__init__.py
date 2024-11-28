@@ -1,12 +1,12 @@
-from flask import Blueprint, render_template, abort, flash, session, redirect, url_for
-from flask_login import login_required
 import os
 import pathlib
 
+from flask import Blueprint, abort, flash, redirect, render_template, session, url_for
+from flask_login import login_required
 
 from app import db
 from app.forms import UserForm
-from app.models import Users, SuperUser, LicensesUsers
+from app.models import LicensesUsers, SuperUser, Users
 
 path_template = os.path.join(pathlib.Path(__file__).parent.resolve(), "templates")
 admin = Blueprint("admin", __name__, template_folder=path_template)

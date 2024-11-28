@@ -1,25 +1,25 @@
+import datetime
+import json
 import os
 import re
-import json
+
 import httpx
-import datetime
-
-
-from flask import render_template
 from deep_translator import GoogleTranslator
-from werkzeug.exceptions import HTTPException
 
 # Flask Imports
-from flask import request
-from flask import session
 from flask import abort
-from flask import url_for
-from flask import redirect
 from flask import current_app as app
-from flask import send_from_directory
-from flask import make_response
-
-from flask_login import login_required, current_user
+from flask import (
+    make_response,
+    redirect,
+    render_template,
+    request,
+    send_from_directory,
+    session,
+    url_for,
+)
+from flask_login import current_user, login_required
+from werkzeug.exceptions import HTTPException
 
 
 @app.context_processor

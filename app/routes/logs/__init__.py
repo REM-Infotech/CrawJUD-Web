@@ -1,27 +1,25 @@
-import os
 import json
+import os
 import pathlib
 from time import sleep
+
 import httpx as requests
-
-
 from flask import (
     Blueprint,
-    url_for,
-    redirect,
-    render_template,
     flash,
     jsonify,
-    session,
-    request,
     make_response,
+    redirect,
+    render_template,
+    request,
+    session,
+    url_for,
 )
-
 from flask_login import login_required
 
 from app import db
 from app.misc import generate_signed_url
-from app.models import Users, Executions, LicensesUsers
+from app.models import Executions, LicensesUsers, Users
 
 path_template = os.path.join(pathlib.Path(__file__).parent.resolve(), "templates")
 logsbot = Blueprint("logsbot", __name__, template_folder=path_template)

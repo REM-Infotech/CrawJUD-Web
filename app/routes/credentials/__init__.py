@@ -1,22 +1,22 @@
-from flask import (
-    Blueprint,
-    render_template,
-    session,
-    url_for,
-    redirect,
-    flash,
-    current_app,
-)
-from flask_login import login_required
-from werkzeug.utils import secure_filename
-
 import os
 import pathlib
 from collections import Counter
 
+from flask import (
+    Blueprint,
+    current_app,
+    flash,
+    redirect,
+    render_template,
+    session,
+    url_for,
+)
+from flask_login import login_required
+from werkzeug.utils import secure_filename
+
 from app import db
 from app.forms.credentials import CredentialsForm
-from app.models import Credentials, BotsCrawJUD, LicensesUsers
+from app.models import BotsCrawJUD, Credentials, LicensesUsers
 
 path_template = os.path.join(pathlib.Path(__file__).parent.resolve(), "templates")
 cred = Blueprint("creds", __name__, template_folder=path_template)
