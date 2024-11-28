@@ -59,16 +59,36 @@ class MakeXlsx:
             item.font = bold_font
             item.fill = my_fill
 
-        # Ajustar a largura das colunas
+        # Issue: [B110:try_except_pass] Try, Except, Pass detected.
+        # Severity: Low   Confidence: High
+        # CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+        # vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+
+        # for col in sheet.columns:
+        #     max_length = 0
+        #     column = col[0].column_letter  # Get the column name
+        #     for cell in col:
+        #         try:  # Necessary to avoid error on empty cells
+        #             if len(str(cell.value)) > max_length:
+        #                 max_length = len(str(cell.value))
+        #         except Exception:
+        #             pass
+        #     adjusted_width = (max_length + 2) * 1.2
+        #     sheet.column_dimensions[column].width = adjusted_width
+
+        # workbook.save(path_template)
+        # return path_template, name_file
+
+        """Ajustar a largura das colunas"""
         for col in sheet.columns:
             max_length = 0
             column = col[0].column_letter  # Get the column name
             for cell in col:
-                try:  # Necessary to avoid error on empty cells
+
+                if cell.value:
                     if len(str(cell.value)) > max_length:
                         max_length = len(str(cell.value))
-                except Exception:
-                    pass
+
             adjusted_width = (max_length + 2) * 1.2
             sheet.column_dimensions[column].width = adjusted_width
 

@@ -1,6 +1,7 @@
 import os
-import platform
+import shutil
 from datetime import timedelta
+from pathlib import Path
 from uuid import uuid4
 
 from dotenv import dotenv_values, load_dotenv
@@ -58,21 +59,34 @@ CSV_TEMP_PATH = os.path.join(TEMP_PATH, "csv")
 PDF_TEMP_PATH = os.path.join(TEMP_PATH, "pdf")
 SRC_IMG_PATH = os.path.join(os.getcwd(), "app", "src", "assets", "img")
 
+
 for paths in [DOCS_PATH, TEMP_PATH, IMAGE_TEMP_PATH, CSV_TEMP_PATH, PDF_TEMP_PATH]:
+    if Path(paths).exists():
+        shutil.rmtree(paths)
 
-    if not os.path.exists(paths):
-        os.makedirs(paths, exist_ok=True)
+    Path(paths).mkdir(exist_ok=True)
 
-    else:
 
-        plataforma = platform.system()
+#  Issue: [B605:start_process_with_a_shell] Starting a process with a shell, possible injection detected, security issue.
+#    Severity: High   Confidence: High
+#    CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
+# vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
 
-        if plataforma == "Linux":
-            path = f"{paths}"
-            command = "rm -r " + path
+# for paths in [DOCS_PATH, TEMP_PATH, IMAGE_TEMP_PATH, CSV_TEMP_PATH, PDF_TEMP_PATH]:
 
-        elif plataforma == "Windows":
-            path = f"{paths}\\*"
-            command = "powershell rm -r " + path
+#     if not os.path.exists(paths):
+#         os.makedirs(paths, exist_ok=True)
 
-        os.system(command)
+#     else:
+
+#         plataforma = platform.system()
+
+#         if plataforma == "Linux":
+#             path = f"{paths}"
+#             command = "rm -r " + path
+
+#         elif plataforma == "Windows":
+#             path = f"{paths}\\*"
+#             command = "powershell rm -r " + path
+
+#         os.system(command)

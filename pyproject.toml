@@ -35,10 +35,6 @@ gevent-websocket = "^0.10.1"
 pygithub = "^2.5.0"
 eventlet = "^0.38.0"
 clear = "^2.0.0"
-black = "^24.10.0"
-isort = "^5.13.2"
-flake8 = "^7.1.1"
-ruff = "^0.8.0"
 
 
 [build-system]
