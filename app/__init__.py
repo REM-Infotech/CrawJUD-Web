@@ -93,9 +93,17 @@ class AppFactory:
     def init_database(self, app: Flask, db: SQLAlchemy):
 
         from app.models import init_database
+        from psycopg2.errors import UndefinedTable
+        from sqlalchemy.exc import ProgrammingError
 
         if not Path("is_init.txt").exists():
 
+            with open("is_init.txt", "w") as f:
+                f.write(f"{init_database(app, db)}")
+
+        from app.models import Users
+
+        if not db.engine.dialect.has_table(db.engine.connect(), Users.__tablename__):
             with open("is_init.txt", "w") as f:
                 f.write(f"{init_database(app, db)}")
 

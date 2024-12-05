@@ -270,13 +270,24 @@ def botlaunch(id: int, system: str, typebot: str):
                         data.update({"token": value})
 
             servers = Servers.query.all()
-            for server in servers:
-                data.update({"url_socket": server.address})
 
-                kwargs: dict[str, str] = {
-                    "url": f"https://{server.address}{request.path}",
-                    "json": json.dumps(data),
-                }
+            kwargs: dict[str, str] = {
+                "url": "https://",
+                "json": json.dumps(data),
+            }
+
+            if files:
+                kwargs.pop("json")
+                kwargs.update({"files": files, "data": data})
+
+            for server in servers:
+
+                kwargs.update(
+                    {
+                        "url": f"https://{server.address}{request.path}",
+                        "url_socket": server.address,
+                    }
+                )
 
                 if files:
                     kwargs.pop("json")

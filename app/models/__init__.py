@@ -6,6 +6,7 @@ import pandas as pd
 from dotenv import dotenv_values
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from flask_sqlalchemy.model import Model
 
 from app.models.bots import BotsCrawJUD, Credentials, Executions
 from app.models.secondaries import admins, execution_bots
