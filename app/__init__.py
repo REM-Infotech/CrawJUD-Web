@@ -92,9 +92,10 @@ class AppFactory:
 
     def init_database(self, app: Flask, db: SQLAlchemy):
 
-        from app.models import init_database
         from psycopg2.errors import UndefinedTable
         from sqlalchemy.exc import ProgrammingError
+
+        from app.models import init_database
 
         if not Path("is_init.txt").exists():
 

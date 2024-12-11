@@ -25,7 +25,7 @@ MAIL_PASSWORD = values["MAIL_PASSWORD"]
 MAIL_DEFAULT_SENDER = values["MAIL_DEFAULT_SENDER"]
 
 # SQLALCHEMY CONFIG
-debug = values.get("DEBUG", "False").lower() in ("true", "1", "t", "y", "yes")
+DEBUG = values.get("DEBUG", "False").lower() in ("true", "1", "t", "y", "yes")
 
 # SqlAlchemy config
 
