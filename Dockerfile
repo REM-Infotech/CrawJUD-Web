@@ -17,7 +17,7 @@ WORKDIR /webcrawjud
 COPY . /webcrawjud
 
 # Instalar dependências
-RUN poetry config virtualenvs.create false && poetry install --no-root
+RUN poetry config virtualenvs.in-project true && poetry install --no-root
 
 # Comando padrão
 CMD ["poetry", "run", "python", "main.py"]
