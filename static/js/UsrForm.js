@@ -10,25 +10,20 @@
 //     });
 // });
 
-function showPassWrd(element){
+function showPassWrd(element) {
+  var CheckBox = $(`#${element.id}`);
+  var Password = $("#password");
 
-    var CheckBox = $(`#${element.id}`)
-    var Password = $('#password')
-    
-    Password.attr("type", "password");
-    if (CheckBox.is(":checked")){
-        Password.attr("type", "text");
-    };
-    
+  Password.attr("type", "password");
+  if (CheckBox.is(":checked")) {
+    Password.attr("type", "text");
+  }
 }
 
-$(document).ready(function(){
+$(document).ready(function () {
+  $("#Form").attr("action", UrlAction());
+});
 
-    $('#Form').attr("action", UrlAction());
-
-})
-
-function UrlAction(){
-
-    return $(location).attr('href')
-};
+function UrlAction() {
+  return $(location).attr("href");
+}
