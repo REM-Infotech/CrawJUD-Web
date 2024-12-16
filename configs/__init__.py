@@ -21,7 +21,7 @@ class Configurator:
 
         class ConfigObject:
 
-            values = dotenv_values()
+            values = dotenv_values(self.env_file)
 
             login_db = values.get("login")
             passwd_db = values.get("password")
