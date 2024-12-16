@@ -11,10 +11,8 @@ from flask_mail import Mail
 from flask_sqlalchemy import SQLAlchemy
 from flask_talisman import Talisman
 
-from app import default_config
-
 # APP Imports
-from configs import csp
+from configs import csp, Configurator
 
 db = SQLAlchemy()
 tlsm = Talisman()
@@ -57,6 +55,8 @@ class AppFactory:
         """
         src_path = os.path.join(os.getcwd(), "static")
         app = Flask(__name__, static_folder=src_path)
+
+        default_config = Configurator().get_configurator()
 
         app.config.from_object(default_config)
         self.init_extensions(app)
