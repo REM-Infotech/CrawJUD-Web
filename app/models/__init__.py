@@ -87,7 +87,9 @@ def init_database(app: Flask, db: SQLAlchemy) -> str:
             db.session.add(license_user)
             db.session.commit()
 
-            return f" * Root Pw: {passwd}"
+            import hashlib
+            hashed_passwd = hashlib.sha256(passwd.encode()).hexdigest()
+            return f" * Root Pw (hashed): {hashed_passwd}"
 
     except Exception as e:
         raise e

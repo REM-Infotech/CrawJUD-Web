@@ -100,7 +100,8 @@ class AppFactory:
         if not Path("is_init.txt").exists():
 
             with open("is_init.txt", "w") as f:
-                f.write(f"{init_database(app, db)}")
+                result = init_database(app, db)
+                f.write(result)
 
         from app.models import Users
 
