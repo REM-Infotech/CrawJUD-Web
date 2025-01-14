@@ -7,12 +7,14 @@ import pytz
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileAllowed, FileField, MultipleFileField
 from wtforms import (
+    BooleanField,
     DateField,
     SelectField,
     SelectMultipleField,
     StringField,
     SubmitField,
 )
+from wtforms.validators import DataRequired
 
 permited_file = FileAllowed(
     ["xlsx", "xls", "csv"], 'Apenas arquivos |".xlsx"/".xls"/".csv"| são permitidos!'
@@ -25,7 +27,7 @@ permited_file2 = FileAllowed(
 class BotForm(FlaskForm):
 
     xlsx = FileField(
-        "Arquivo do robô",
+        "Arquivo de execução",
         validators=[permited_file],
         render_kw={"accept": ".xlsx, .xls, .csv"},
     )
@@ -33,7 +35,9 @@ class BotForm(FlaskForm):
     parte_name = StringField("Nome da parte")
     doc_parte = StringField("CPF/CNPJ da parte")
     polo_parte = SelectField(
-        "Classificação (Autor/Réu)", choices=[("autor", "Autor"), ("reu", "Réu")]
+        "Classificação (Autor/Réu)",
+        choices=[("", "Selecione"), ("autor", "Autor"), ("reu", "Réu")],
+        validators=[DataRequired(message="Você deve selecionar uma classificação.")],
     )
 
     data_inicio = DateField(
@@ -47,11 +51,35 @@ class BotForm(FlaskForm):
         render_kw={"accept": ".pdf, .jpg, .jpeg"},
     )
 
-    creds = SelectField("Selecione a Credencial", choices=[])
+    creds = SelectField(
+        "Selecione a Credencial",
+        choices=[("", "Selecione")],
+        validators=[DataRequired(message="Você deve selecionar uma credencial.")],
+    )
     password = StringField("Senha token")
-    state = SelectField("Selecione o Estado", choices=[("Selecione", "Selecione")])
-    varas = SelectMultipleField("Selecione a Vara", choices=[])
-    client = SelectField("Selecione o Cliente", choices=[])
+    state = SelectField(
+        "Selecione o Estado",
+        choices=[("", "Selecione")],
+        validators=[DataRequired(message="Você deve selecionar um estado.")],
+    )
+    varas = SelectMultipleField(
+        "Selecione a Vara",
+        choices=[("", "Selecione")],
+        validators=[DataRequired(message="Você deve selecionar uma vara.")],
+    )
+    client = SelectField(
+        "Selecione o Cliente",
+        choices=[("", "Selecione")],
+        validators=[DataRequired(message="Você deve selecionar um cliente.")],
+    )
+
+    confirm_fields = BooleanField(
+        "Confirmo que os dados enviados estão corretos.",
+        validators=[
+            DataRequired(message="Você deve confirmar que os dados estão corretos.")
+        ],
+    )
+
     submit = SubmitField("Iniciar Execução")
 
     def __init__(self, *args, dynamic_fields=None, **kwargs):
@@ -112,3 +140,16 @@ def varas() -> dict[str, dict[str, dict[str, dict[str, str]]]]:
         dict_files = json.loads(obj)
 
     return dict_files
+
+
+class AddBot(FlaskForm):
+
+    display_name = StringField("Nome do Robô")
+    system = SelectField("Sistema", choices=[("TJ", "TJ")])
+    state = SelectField("Estado", choices=[])
+    client = SelectField("Cliente", choices=[])
+    type = SelectField("Tipo", choices=[])
+    form_cfg = SelectField("Configuração", choices=[])
+    classification = SelectField("Classificação", choices=[])
+    text = StringField("Texto")
+    submit = SubmitField("Adicionar Robô")

@@ -34,9 +34,9 @@ bot = Blueprint("bot", __name__, template_folder=path_template)
 
 FORM_CONFIGURATOR = {
     "JURIDICO": {
-        "file_auth": ["xlsx", "creds", "state"],
-        "multipe_files": ["xlsx", "creds", "state", "otherfiles"],
-        "only_file": ["xlsx", "state"],
+        "file_auth": ["xlsx", "creds", "state", "confirm_fields"],
+        "multipe_files": ["xlsx", "creds", "state", "otherfiles", "confirm_fields"],
+        "only_file": ["xlsx", "state", "confirm_fields"],
         "pautas": ["data_inicio", "data_fim", "creds", "state", "varas"],
         "proc_parte": [
             "parte_name",
@@ -50,8 +50,8 @@ FORM_CONFIGURATOR = {
         ],
     },
     "ADMINISTRATIVO": {
-        "file_auth": ["xlsx", "creds", "client"],
-        "multipe_files": ["xlsx", "creds", "client", "otherfiles"],
+        "file_auth": ["xlsx", "creds", "client", "confirm_fields"],
+        "multipe_files": ["xlsx", "creds", "client", "otherfiles", "confirm_fields"],
     },
     "INTERNO": {"multipe_files": ["xlsx", "otherfiles"]},
 }
@@ -89,6 +89,11 @@ def dashboard():
 @bot.route("/bot/<id>/<system>/<typebot>", methods=["GET", "POST"])
 @login_required
 def botlaunch(id: int, system: str, typebot: str):
+
+    if not session.get("license_token"):
+
+        flash("Sessão expirada. Faça login novamente.", "error")
+        return redirect(url_for("auth.login"))
 
     try:
         bot_info = BotsCrawJUD.query.filter_by(id=id).first()
@@ -297,6 +302,12 @@ def botlaunch(id: int, system: str, typebot: str):
                         pass
 
             flash("Erro ao iniciar robô", "error")
+
+        if form.errors:
+
+            for field_err in form.errors:
+                for error in form.errors[field_err]:
+                    flash(f"Erro: {error}", "error")
 
         url = request.base_url.replace("http://", "https://")
         return render_template(

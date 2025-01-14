@@ -4,12 +4,12 @@ $(document).ready(function () {
   var licensesOptions = $("select[id='licenses']");
 
   // Armazena a primeira opção
-  var optionFirst = licensesOptions.find("option:first");
+  var optionFirst = licensesOptions.find("option:nth-child(2)");
   var lastOption = optionFirst.clone(); // Clona a primeira opção
   var lastOptionValue = optionFirst.val(); // Armazena o valor da primeira opção
 
   // Remove a primeira opção inicialmente
-  licensesOptions.find("option:first").remove();
+  licensesOptions.find("option:nth-child(2)").remove();
 
   TipoUser.change(function () {
     if (TipoUser.val() === "admin") {

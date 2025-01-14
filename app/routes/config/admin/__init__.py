@@ -1,10 +1,12 @@
 import os
 import pathlib
 
-from flask import Blueprint, abort, flash, redirect, render_template, session, url_for
+from flask import Blueprint, Response, abort
+from flask import current_app as app
+from flask import flash, make_response, redirect, render_template, session, url_for
 from flask_login import login_required
+from flask_sqlalchemy import SQLAlchemy
 
-from app import db
 from app.forms import UserForm
 from app.models import LicensesUsers, SuperUser, Users
 
@@ -14,10 +16,13 @@ admin = Blueprint("admin", __name__, template_folder=path_template)
 
 @admin.route("/users", methods=["GET"])
 @login_required
-def users():
+def users() -> Response:
 
     try:
-        user = Users.query.filter(Users.login == session["login"]).first()
+
+        db: SQLAlchemy = app.extensions["sqlalchemy"]
+
+        user = db.session.query(Users).filter(Users.login == session["login"]).first()
         user_id = user.id
 
         chksupersu = (
@@ -34,7 +39,9 @@ def users():
         database = users.all()
 
         page = "users.html"
-        return render_template("index.html", page=page, database=database)
+        return make_response(
+            render_template("index.html", page=page, database=database)
+        )
 
     except Exception as e:
         abort(500, description=f"Erro interno do servidor: {str(e)}")
@@ -42,11 +49,17 @@ def users():
 
 @admin.route("/cadastro/usuario", methods=["GET", "POST"])
 @login_required
-def cadastro_user():
+def cadastro_user() -> Response:
 
     try:
 
-        title = "Editar Usuário"
+        db: SQLAlchemy = app.extensions["sqlalchemy"]
+        if not session.get("license_token"):
+
+            flash("Sessão expirada. Faça login novamente.", "error")
+            return redirect(url_for("auth.login"))
+
+        title = "Cadastro Usuário"
         form = UserForm()
         page = "FormUsr.html"
 
@@ -65,9 +78,7 @@ def cadastro_user():
             for lcs in licenses_result:
                 licenses.append((str(lcs.license_token), str(lcs.name_client)))
 
-            form = UserForm(
-                tipoUsr=("supersu", "Super Administrador"), licenses=licenses
-            )
+            form = UserForm(licenses_add=licenses_result)
 
         if form.validate_on_submit():
 
@@ -111,7 +122,9 @@ def cadastro_user():
             for error in field.errors:
                 flash(f"Erro: {error}. Campo: {field.label.text}", "error")
 
-        return render_template("index.html", page=page, form=form, title=title)
+        return make_response(
+            render_template("index.html", page=page, form=form, title=title)
+        )
 
     except Exception as e:
         abort(500, description=f"Erro interno do servidor: {str(e)}")
@@ -119,15 +132,45 @@ def cadastro_user():
 
 @admin.route("/editar/usuario/<id>", methods=["GET", "POST"])
 @login_required
-def edit_usuario(id: int):
+def edit_usuario(id: int) -> Response:
 
     try:
 
-        title = "Cadastro Usuário"
-        form = UserForm()
+        db: SQLAlchemy = app.extensions["sqlalchemy"]
+        if not session.get("license_token"):
+
+            flash("Sessão expirada. Faça login novamente.", "error")
+            return redirect(url_for("auth.login"))
+
+        title = "Editar Usuário"
+
+        user = db.session.query(Users).filter(Users.id == id).first()
+
+        form = UserForm(**user.dict_query)
         page = "FormUsr.html"
 
-        return render_template("index.html", page=page, form=form, title=title)
+        chksupersu = (
+            db.session.query(SuperUser)
+            .join(Users)
+            .filter(Users.login == session["login"])
+            .first()
+        )
+
+        if form.validate_on_submit():
+            pass
+
+        if chksupersu:
+
+            licenses_result = db.session.query(LicensesUsers).all()
+
+            form = UserForm(
+                licenses_add=licenses_result,
+                **user.dict_query,
+            )
+
+        return make_response(
+            render_template("index.html", page=page, form=form, title=title)
+        )
 
     except Exception as e:
         abort(500, description=f"Erro interno do servidor: {str(e)}")
@@ -135,7 +178,7 @@ def edit_usuario(id: int):
 
 @admin.route("/deletar/usuario/<id>", methods=["GET", "POST"])
 @login_required
-def delete_usuario(id: int):
+def delete_usuario(id: int) -> Response:
 
     try:
 
@@ -144,7 +187,9 @@ def delete_usuario(id: int):
         page = "FormUsr.html"
 
         flash("Hello World!", "success")
-        return render_template("index.html", page=page, form=form, title=title)
+        return make_response(
+            render_template("index.html", page=page, form=form, title=title)
+        )
 
     except Exception as e:
         abort(500, description=f"Erro interno do servidor: {str(e)}")

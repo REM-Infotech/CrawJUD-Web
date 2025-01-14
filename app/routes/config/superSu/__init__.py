@@ -8,7 +8,7 @@ path_template = os.path.join(pathlib.Path(__file__).parent.resolve(), "templates
 supersu = Blueprint("supersu", __name__, template_folder=path_template)
 
 
-@supersu.route("/configurações", methods=["GET"])
+@supersu.route("/configurações_crawjud", methods=["GET"])
 @login_required
 def config():
 
@@ -19,7 +19,7 @@ def config():
         abort(500, description=f"Erro interno do servidor: {str(e)}")
 
 
-@supersu.route("/cadastro/usuario", methods=["GET", "POST"])
+@supersu.route("/cadastro/cliente", methods=["GET", "POST"])
 @login_required
 def cadastro_user():
 
@@ -30,9 +30,9 @@ def cadastro_user():
         abort(500, description=f"Erro interno do servidor: {str(e)}")
 
 
-@supersu.route("/editar/usuario", methods=["GET", "POST"])
+@supersu.route("/editar/cliente", methods=["GET", "POST"])
 @login_required
-def edit_usuario():
+def edit_cliente():
 
     try:
         return render_template("index.html")

@@ -12,7 +12,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_talisman import Talisman
 
 # APP Imports
-from configs import csp, Configurator
+from configs import Configurator, csp
 
 db = SQLAlchemy()
 tlsm = Talisman()

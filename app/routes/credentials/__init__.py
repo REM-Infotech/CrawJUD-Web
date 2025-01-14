@@ -26,6 +26,11 @@ cred = Blueprint("creds", __name__, template_folder=path_template)
 @login_required
 def credentials():
 
+    if not session.get("license_token"):
+
+        flash("Sessão expirada. Faça login novamente.", "error")
+        return redirect(url_for("auth.login"))
+
     database = (
         db.session.query(Credentials)
         .join(LicensesUsers)
@@ -41,6 +46,11 @@ def credentials():
 @cred.route("/credentials/cadastro", methods=["GET", "POST"])
 @login_required
 def cadastro():
+
+    if not session.get("license_token"):
+
+        flash("Sessão expirada. Faça login novamente.", "error")
+        return redirect(url_for("auth.login"))
 
     page = "FormCred.html"
 
