@@ -6,6 +6,7 @@ from time import sleep
 import httpx as requests
 from flask import (
     Blueprint,
+    abort,
     flash,
     jsonify,
     make_response,
@@ -42,6 +43,11 @@ def SendPid_UrlSocket():
 @logsbot.route("/logs_bot/<pid>")
 @login_required
 def logs_bot(pid: str):
+
+    if not session.get("license_token"):
+
+        flash("Sessão expirada. Faça login novamente.", "error")
+        return redirect(url_for("auth.login"))
 
     title = f"Execução {pid}"
     user_id = Users.query.filter(Users.login == session["login"]).first().id
@@ -127,6 +133,10 @@ def stop_bot(pid: str):
 @logsbot.route("/status/<pid>", methods=["GET"])
 @login_required
 def status(pid):
+
+    if not session.get("license_token"):
+
+        abort(405, description="Sessão expirada. Faça login novamente.")
 
     response_data = {"erro": "erro"}
     user_id = Users.query.filter(Users.login == session["login"]).first().id

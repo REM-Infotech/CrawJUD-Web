@@ -7,7 +7,7 @@ from datetime import datetime
 
 import pandas as pd
 from deep_translator import GoogleTranslator
-from flask import Blueprint, jsonify, render_template, request, session
+from flask import Blueprint, abort, jsonify, render_template, request, session
 from flask_login import login_required
 
 from app import db
@@ -62,6 +62,10 @@ def dashboard():
 @dash.route("/PerMonth", methods=["GET"])
 @login_required
 def perMonth():
+
+    if not session.get("license_token"):
+
+        abort(405, description="Sessão expirada. Faça login novamente.")
 
     # Define a localidade para português do Brasil
     locale.setlocale(locale.LC_TIME, "pt_BR.UTF-8")
@@ -136,6 +140,10 @@ def perMonth():
 @dash.route("/MostExecuted", methods=["GET"])
 @login_required
 def MostExecuted():
+
+    if not session.get("license_token"):
+
+        abort(405, description="Sessão expirada. Faça login novamente.")
 
     # Executa a query para obter todos os registros
     admin_cookie = request.cookies.get("roles_admin")

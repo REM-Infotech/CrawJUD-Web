@@ -2,6 +2,8 @@ from flask_wtf import FlaskForm
 from wtforms import BooleanField, PasswordField, SelectField, StringField, SubmitField
 from wtforms.validators import DataRequired, Length
 
+from ..validators import NotSelecioneValidator
+
 
 class UserForm(FlaskForm):
 
@@ -14,21 +16,39 @@ class UserForm(FlaskForm):
     show_password = BooleanField("Exibir senha", id="check")
     tipo_user = SelectField(
         label="Tipo de usuário",
-        choices=[("default_user", "Usuário Padrão"), ("admin", "Administrador")],
+        choices=[
+            ("Selecione", "Selecione"),
+            ("default_user", "Usuário Padrão"),
+            ("admin", "Administrador"),
+        ],
+        validators=[
+            DataRequired(message="Você deve selecionar um tipo de usuário."),
+            NotSelecioneValidator(message="Você deve selecionar um tipo de usuário."),
+        ],
     )
 
-    licenses = SelectField(label="Selecione a Licença", choices=[])
+    licenses = SelectField(
+        label="Selecione a Licença",
+        choices=[("", "Selecione")],
+        validators=[
+            DataRequired(message="Você deve selecionar uma licença."),
+            NotSelecioneValidator(message="Você deve selecionar uma licença."),
+        ],
+    )
     submit = SubmitField(label="Salvar Alterações")
 
-    def __init__(
-        self, tipoUsr: str = None, licenses: list[tuple] = None, *args, **kwargs
-    ):
+    def __init__(self, licenses_add: list = None, *args, **kwargs) -> None:
 
         super().__init__(*args, **kwargs)
-        if tipoUsr:
 
-            self.tipo_user.choices.extend([tipoUsr])
+        if licenses_add:
+
+            licenses = []
+            for lcs in licenses_add:
+                licenses.append((str(lcs.license_token), str(lcs.name_client)))
+
+            self.tipo_user.choices.extend([("supersu", "Super Administrador")])
             self.licenses.choices.extend(licenses)
 
-        elif tipoUsr is None:
+        elif licenses_add is None:
             del self.licenses
