@@ -90,10 +90,10 @@ class AppFactory:
         for bp in listBlueprints:
             app.register_blueprint(bp)
 
-    def init_database(self, app: Flask, db: SQLAlchemy):
+    def init_database(self, app: Flask, db: SQLAlchemy) -> None:
 
-        from psycopg2.errors import UndefinedTable
-        from sqlalchemy.exc import ProgrammingError
+        # from psycopg2.errors import UndefinedTable
+        # from sqlalchemy.exc import ProgrammingError
 
         from app.models import init_database
 

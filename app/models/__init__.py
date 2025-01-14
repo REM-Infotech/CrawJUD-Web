@@ -6,7 +6,6 @@ import pandas as pd
 from dotenv import dotenv_values
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from flask_sqlalchemy.model import Model
 
 from app.models.bots import BotsCrawJUD, Credentials, Executions
 from app.models.secondaries import admins, execution_bots
@@ -34,7 +33,7 @@ def init_database(app: Flask, db: SQLAlchemy) -> str:
         loginsys = values.get("loginsys")
         nomeusr = values.get("nomeusr")
         emailusr = values.get("emailusr")
-        passwd = values.get("passwd", str(uuid4()))
+        passwd = values.get("passusr")
 
         dbase = Users.query.filter(Users.login == loginsys).first()
         if not dbase:
@@ -87,7 +86,7 @@ def init_database(app: Flask, db: SQLAlchemy) -> str:
             db.session.add(license_user)
             db.session.commit()
 
-            return f" * Root Pw: {passwd}"
+            return True
 
     except Exception as e:
         raise e
