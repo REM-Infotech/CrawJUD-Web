@@ -25,7 +25,7 @@ class SuperUser(db.Model):
 
     __tablename__ = "superuser"
     id: int = db.Column(db.Integer, primary_key=True)
-    users_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+    users_id: int = db.Column(db.Integer, db.ForeignKey("users.id"))
     users = db.relationship("Users", backref=db.backref("supersu", lazy=True))
 
 
@@ -47,7 +47,7 @@ class Users(db.Model, UserMixin):
     filename: str = db.Column(db.String(length=128))
     blob_doc = db.Column(db.LargeBinary(length=(2**32) - 1))
 
-    licenseus_id = db.Column(db.Integer, db.ForeignKey("licenses_users.id"))
+    licenseus_id: int = db.Column(db.Integer, db.ForeignKey("licenses_users.id"))
     licenseusr = db.relationship("LicensesUsers", backref="user")
 
     def __init__(

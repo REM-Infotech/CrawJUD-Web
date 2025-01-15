@@ -6,10 +6,10 @@ from datetime import date, datetime
 from typing import Union
 
 import httpx
+from flask import Blueprint, Response, abort
+from flask import current_app
+from flask import current_app as app
 from flask import (
-    Blueprint,
-    abort,
-    current_app,
     flash,
     make_response,
     redirect,
@@ -20,14 +20,14 @@ from flask import (
     url_for,
 )
 from flask_login import login_required
+from flask_sqlalchemy import SQLAlchemy
 from werkzeug.datastructures import FileStorage
 from werkzeug.utils import secure_filename
 
-from app import db
-from app.forms import BotForm
-from app.misc import generate_pid
-from app.misc.MakeTemplate import MakeXlsx as make_xlsx
-from app.models import BotsCrawJUD, Credentials, LicensesUsers, Servers
+from ...forms import BotForm
+from ...misc import MakeXlsx as make_xlsx
+from ...misc import generate_pid
+from ...models import BotsCrawJUD, Credentials, LicensesUsers, Servers
 
 path_template = os.path.join(pathlib.Path(__file__).parent.resolve(), "templates")
 bot = Blueprint("bot", __name__, template_folder=path_template)
@@ -58,7 +58,7 @@ FORM_CONFIGURATOR = {
 
 
 @bot.route("/get_model/<id>/<system>/<typebot>/<filename>", methods=["GET"])
-def get_model(id: int, system: str, typebot: str, filename: str):
+def get_model(id: int, system: str, typebot: str, filename: str) -> Response:
 
     try:
 
@@ -73,14 +73,16 @@ def get_model(id: int, system: str, typebot: str, filename: str):
 
 @bot.route("/bot/dashboard", methods=["GET"])
 @login_required
-def dashboard():
+def dashboard() -> Response:
 
     try:
         title = "Robôs"
         page = "botboard.html"
         bots = BotsCrawJUD.query.all()
 
-        return render_template("index.html", page=page, bots=bots, title=title)
+        return make_response(
+            render_template("index.html", page=page, bots=bots, title=title)
+        )
 
     except Exception as e:
         abort(500, description=f"Erro interno. {str(e)}")
@@ -88,15 +90,31 @@ def dashboard():
 
 @bot.route("/bot/<id>/<system>/<typebot>", methods=["GET", "POST"])
 @login_required
-def botlaunch(id: int, system: str, typebot: str):
+def botlaunch(id: int, system: str, typebot: str) -> Response:
 
     if not session.get("license_token"):
 
         flash("Sessão expirada. Faça login novamente.", "error")
-        return redirect(url_for("auth.login"))
+        return make_response(redirect(url_for("auth.login")))
 
     try:
-        bot_info = BotsCrawJUD.query.filter_by(id=id).first()
+
+        db: SQLAlchemy = app.extensions["sqlalchemy"]
+
+        bot_info = (
+            db.session.query(BotsCrawJUD)
+            .select_from(LicensesUsers)
+            .join(LicensesUsers.bots)
+            .filter(LicensesUsers.license_token == session["license_token"])
+            .filter(BotsCrawJUD.id == id)
+            .first()
+        )
+
+        if not bot_info:
+
+            flash("Acesso negado!", "error")
+            return make_response(redirect(url_for("bot.dashboard")))
+
         display_name = bot_info.display_name
         title = display_name
 
@@ -296,7 +314,9 @@ def botlaunch(id: int, system: str, typebot: str):
                     if response.status_code == 200:
                         message = f"Execução iniciada com sucesso! PID: {pid}"
                         flash(message, "success")
-                        return redirect(url_for("logsbot.logs_bot", pid=pid))
+                        return make_response(
+                            redirect(url_for("logsbot.logs_bot", pid=pid))
+                        )
 
                     elif response.status_code == 500:
                         pass
@@ -310,17 +330,19 @@ def botlaunch(id: int, system: str, typebot: str):
                     flash(f"Erro: {error}", "error")
 
         url = request.base_url.replace("http://", "https://")
-        return render_template(
-            "index.html",
-            page=page,
-            url=url,
-            model_name=f"{system}_{typebot}",
-            display_name=display_name,
-            form=form,
-            title=title,
-            id=id,
-            system=system,
-            typebot=typebot,
+        return make_response(
+            render_template(
+                "index.html",
+                page=page,
+                url=url,
+                model_name=f"{system}_{typebot}",
+                display_name=display_name,
+                form=form,
+                title=title,
+                id=id,
+                system=system,
+                typebot=typebot,
+            )
         )
 
     except Exception as e:

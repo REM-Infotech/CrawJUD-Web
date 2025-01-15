@@ -8,7 +8,11 @@ from google.cloud.storage import Bucket, Client
 from google.oauth2.service_account import Credentials
 from itsdangerous import URLSafeTimedSerializer
 
+from .MakeTemplate import MakeXlsx
+
 signed_url_lifetime = 300
+
+__all__ = [MakeXlsx]
 
 
 # Função para criptografar os dados do cookie

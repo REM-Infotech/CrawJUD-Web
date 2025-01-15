@@ -1,15 +1,11 @@
 from functools import wraps
 from typing import Any
-from flask import (
-    current_app as app,
-    flash,
-    make_response,
-    redirect,
-    session,
-    url_for,
-    Response,
-)
+
+from flask import Response
+from flask import current_app as app
+from flask import flash, make_response, redirect, session, url_for
 from flask_sqlalchemy import SQLAlchemy
+
 from ..models import Users
 
 
