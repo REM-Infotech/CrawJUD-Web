@@ -4,10 +4,10 @@ from wtforms import SubmitField
 
 from app.forms.auth.login import LoginForm
 from app.forms.bot import BotForm, SearchExec
-from app.forms.config import UserForm
+from app.forms.config import UserForm, UserFormEdit
 from app.forms.credentials import CredentialsForm
 
-__all__ = [LoginForm, BotForm, SearchExec, CredentialsForm, UserForm]
+__all__ = [LoginForm, BotForm, SearchExec, CredentialsForm, UserForm, UserFormEdit]
 
 
 permited_file = FileAllowed(["xlsx", "xls"], 'Apenas arquivos ".xlsx" são permitidos!')

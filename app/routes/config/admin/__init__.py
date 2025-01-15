@@ -1,5 +1,6 @@
 import os
 import pathlib
+from typing import Dict
 
 from flask import Blueprint, Response, abort
 from flask import current_app as app
@@ -7,7 +8,7 @@ from flask import flash, make_response, redirect, render_template, session, url_
 from flask_login import login_required
 from flask_sqlalchemy import SQLAlchemy
 
-from app.forms import UserForm
+from app.forms import UserForm, UserFormEdit
 from app.models import LicensesUsers, SuperUser, Users
 
 path_template = os.path.join(pathlib.Path(__file__).parent.resolve(), "templates")
@@ -146,7 +147,7 @@ def edit_usuario(id: int) -> Response:
 
         user = db.session.query(Users).filter(Users.id == id).first()
 
-        form = UserForm(**user.dict_query)
+        form = UserFormEdit(**user.dict_query)
         page = "FormUsr.html"
 
         chksupersu = (
@@ -156,17 +157,82 @@ def edit_usuario(id: int) -> Response:
             .first()
         )
 
-        if form.validate_on_submit():
-            pass
-
         if chksupersu:
 
             licenses_result = db.session.query(LicensesUsers).all()
 
-            form = UserForm(
+            form = UserFormEdit(
                 licenses_add=licenses_result,
                 **user.dict_query,
             )
+
+        if form.validate_on_submit():
+
+            data: Dict[str, str | bool] = form.data
+
+            [
+                setattr(user, key, value)
+                for key, value in {
+                    key: value
+                    for key, value in data.items()
+                    if key
+                    not in [
+                        "show_password",
+                        "csrf_token",
+                        "submit",
+                        "password",
+                        "tipo_user",
+                        "license",
+                    ]
+                }.items()
+            ]
+
+            license_token = data.get("licenses", session["license_token"])
+            license_user = (
+                db.session.query(LicensesUsers)
+                .filter(LicensesUsers.license_token == license_token)
+                .first()
+            )
+
+            password = data.get("password")
+
+            if user.login != session["login"]:
+                if chksupersu:
+
+                    if data.get("tipo_user") == "supersu" and len(user.supersu) == 0:
+
+                        if chksupersu:
+                            super_user = SuperUser()
+                            super_user.users = user
+
+                            db.session.add(super_user)
+
+                    elif data.get("tipo_user") != "supersu" and len(user.supersu) > 0:
+
+                        supersu = (
+                            db.session.query(SuperUser)
+                            .filter(SuperUser.users_id == user.id)
+                            .first()
+                        )
+
+                        db.session.delete(supersu)
+
+                if data.get("tipo_user") == "admin" and len(user.admin) == 0:
+
+                    license_user.admins.append(user)
+
+                elif data.get("tipo_user") != "admin" and len(user.admin) > 0:
+
+                    license_user.admins.remove(user)
+
+            if password:
+                if user.check_password(password) is not True:
+                    user.senhacrip = password
+
+            db.session.commit()
+
+            flash("Usuário editado com sucesso!", "message")
+            return make_response(redirect(url_for("admin.users")))
 
         return make_response(
             render_template("index.html", page=page, form=form, title=title)

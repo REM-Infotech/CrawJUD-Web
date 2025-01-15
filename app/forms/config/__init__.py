@@ -1,3 +1,3 @@
-from app.forms.config.admin import UserForm
+from app.forms.config.admin import UserForm, UserFormEdit
 
-__all__ = [UserForm]
+__all__ = [UserForm, UserFormEdit]
