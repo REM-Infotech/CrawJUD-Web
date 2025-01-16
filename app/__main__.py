@@ -13,19 +13,10 @@ app = create_app()
 if __name__ == "__main__":
 
     clear()
+
     port = int(values().get("PORT", 5000))
-    print(
-        f"""
-=======================================================
-
-            Executando servidor Flask
-            * Porta: {int(values().get("PORT", "8000"))}
-
-=======================================================
-              """
-    )
-
     version_Path = Path(path.join(getcwd(), ".version"))
+
     if version_Path.exists() is False:
         from app.misc.checkout import checkout_release_tag
 
