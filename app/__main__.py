@@ -15,6 +15,7 @@ if __name__ == "__main__":
     clear()
 
     port = int(values().get("PORT", 5000))
+    hostname = values().get("SERVER_HOSTNAME", "localhost")
     version_Path = Path(path.join(getcwd(), ".version"))
 
     if version_Path.exists() is False:
@@ -23,4 +24,4 @@ if __name__ == "__main__":
         with open(".version", "w") as f:
             f.write(checkout_release_tag())
 
-    server(listen(("localhost", port)), app, log=app.logger)
+    server(listen((hostname, port)), app, log=app.logger)
