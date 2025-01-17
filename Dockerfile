@@ -6,6 +6,7 @@ RUN apt-get update && apt-get install -y locales && \
     dpkg-reconfigure --frontend=noninteractive locales && \
     apt-get clean
 
+ENV TERM xterm
 ENV LANG=pt_BR.UTF-8
 ENV LC_ALL=pt_BR.UTF-8
 
@@ -14,10 +15,12 @@ RUN pip install --no-cache-dir poetry
 
 # Criar diretório de trabalho e copiar arquivos
 WORKDIR /webcrawjud
-COPY . /webcrawjud
+ADD . /webcrawjud
 
 # Instalar dependências
 RUN poetry config virtualenvs.in-project true && poetry install --no-root
 
+EXPOSE 5000
+
 # Comando padrão
-CMD ["poetry", "run", "python", "main.py"]
+CMD ["poetry", "run", "python", "-m", "app"]
