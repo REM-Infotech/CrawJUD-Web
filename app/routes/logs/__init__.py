@@ -3,9 +3,11 @@ import os
 import pathlib
 from time import sleep
 
+from flask_sqlalchemy import SQLAlchemy
 import httpx as requests
 from flask import (
     Blueprint,
+    Response,
     abort,
     flash,
     jsonify,
@@ -17,8 +19,7 @@ from flask import (
     url_for,
 )
 from flask_login import login_required
-
-from app import db
+from flask import current_app as app
 from app.misc import generate_signed_url
 from app.models import Executions, LicensesUsers, Users
 
@@ -26,13 +27,13 @@ path_template = os.path.join(pathlib.Path(__file__).parent.resolve(), "templates
 logsbot = Blueprint("logsbot", __name__, template_folder=path_template)
 
 
-def stopbot(user: str, pid: str, socket: str):
+def stopbot(user: str, pid: str, socket: str) -> None:
 
     requests.post(url=f"{socket}/stop/{user}/{pid}", timeout=300)
 
 
 @logsbot.context_processor
-def SendPid_UrlSocket():
+def SendPid_UrlSocket() -> dict[str, str | None]:
 
     pid = request.cookies.get("pid")
     socket_bot = request.cookies.get("socket_bot")
@@ -42,12 +43,13 @@ def SendPid_UrlSocket():
 
 @logsbot.route("/logs_bot/<pid>")
 @login_required
-def logs_bot(pid: str):
+def logs_bot(pid: str) -> Response:
 
+    db: SQLAlchemy = app.extensions["sqlalchemy"]
     if not session.get("license_token"):
 
         flash("Sessão expirada. Faça login novamente.", "error")
-        return redirect(url_for("auth.login"))
+        return make_response(redirect(url_for("auth.login")))
 
     title = f"Execução {pid}"
     user_id = Users.query.filter(Users.login == session["login"]).first().id
@@ -81,10 +83,10 @@ def logs_bot(pid: str):
             execution = Executions.query.filter(Executions.pid == pid).first()
 
     if execution is None:
-        return redirect(f"{url_for('exe.executions')}")
+        return make_response(redirect(f"{url_for('exe.executions')}"))
 
     if execution.status == "Finalizado":
-        return redirect(f"{url_for('exe.executions')}?pid={pid}")
+        return make_response(redirect(f"{url_for('exe.executions')}?pid={pid}"))
 
     rows = execution.total_rows
     resp = make_response(
@@ -110,8 +112,9 @@ def logs_bot(pid: str):
 
 @logsbot.route("/stop_bot/<pid>", methods=["GET"])
 @login_required
-def stop_bot(pid: str):
+def stop_bot(pid: str) -> Response:
 
+    db: SQLAlchemy = app.extensions["sqlalchemy"]
     socket = request.cookies.get("socket_bot")
     stopbot(session["login"], pid, f"https://{socket}")
 
@@ -127,61 +130,71 @@ def stop_bot(pid: str):
         sleep(2)
 
     flash("Execução encerrada", "success")
-    return redirect(url_for("exe.executions"))
+    return make_response(redirect(url_for("exe.executions")))
 
 
 @logsbot.route("/status/<pid>", methods=["GET"])
 @login_required
-def status(pid):
+def status(pid) -> Response:
 
+    db: SQLAlchemy = app.extensions["sqlalchemy"]
+    i = 0
     if not session.get("license_token"):
 
         abort(405, description="Sessão expirada. Faça login novamente.")
 
     response_data = {"erro": "erro"}
-    user_id = Users.query.filter(Users.login == session["login"]).first().id
-    execution = (
-        db.session.query(Executions)
-        .join(Users, Users.id == user_id)
-        .filter(
-            Executions.pid == pid,
-        )
-        .first()
-    )
 
-    admin_cookie, supersu_cookie = None, None
-
-    admin_cookie = request.cookies.get("roles_admin")
-    supersu_cookie = request.cookies.get("roles_supersu")
-
-    if admin_cookie and not supersu_cookie:
-        if json.loads(admin_cookie).get("login_id") == session["_id"]:
-            execution = (
-                db.session.query(Executions)
-                .join(Users)
-                .join(LicensesUsers)
-                .filter(
-                    LicensesUsers.license_token == session["license_token"],
-                    Executions.pid == pid,
-                )
-                .first()
+    while i <= 5:
+        user_id = Users.query.filter(Users.login == session["login"]).first().id
+        execution = (
+            db.session.query(Executions)
+            .join(Users, Users.id == user_id)
+            .filter(
+                Executions.pid == pid,
             )
+            .first()
+        )
 
-    elif supersu_cookie:
-        if json.loads(supersu_cookie).get("login_id") == session["_id"]:
-            execution = Executions.query.filter(Executions.pid == pid).first()
+        admin_cookie, supersu_cookie = None, None
 
-    if execution.status and execution.status == "Finalizado":
-        signed_url = generate_signed_url(execution.file_output)
-        response_data = {"message": "OK", "document_url": signed_url}
-        return jsonify(response_data), 200
+        admin_cookie = request.cookies.get("roles_admin")
+        supersu_cookie = request.cookies.get("roles_supersu")
 
-    return jsonify(response_data), 500
+        if admin_cookie and not supersu_cookie:
+            if json.loads(admin_cookie).get("login_id") == session["_id"]:
+                execution = (
+                    db.session.query(Executions)
+                    .join(Users)
+                    .join(LicensesUsers)
+                    .filter(
+                        LicensesUsers.license_token == session["license_token"],
+                        Executions.pid == pid,
+                    )
+                    .first()
+                )
+
+        elif supersu_cookie:
+            if json.loads(supersu_cookie).get("login_id") == session["_id"]:
+                execution = (
+                    db.session.query(Executions).filter(Executions.pid == pid).first()
+                )
+
+        if execution.status and execution.status == "Finalizado":
+            signed_url = generate_signed_url(execution.file_output)
+            response_data = {"message": "OK", "document_url": signed_url}
+            return make_response(jsonify(response_data), 200)
+
+        sleep(1.5)
+        i += 1
+
+    return make_response(jsonify(response_data), 500)
 
 
 @logsbot.route("/url_server/<pid>", methods=["GET"])
 @login_required
-def url_server(pid):
+def url_server(pid) -> Response:
 
+    db: SQLAlchemy = app.extensions["sqlalchemy"]
     execution = db.session.query(Executions).filter(Executions.pid == pid).first()
-    return jsonify({"url_server": execution.url_socket})
+    return make_response(jsonify({"url_server": execution.url_socket}))
